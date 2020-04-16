@@ -1,13 +1,13 @@
 package io.github.cdgeass.formatter;
 
-import com.google.common.base.CharMatcher;
-import com.google.common.base.Splitter;
 
-import java.util.ArrayList;
+import io.github.cdgeass.util.FormatUtils;
+import org.apache.commons.lang3.RegExUtils;
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 /**
  * @author cdgeass
@@ -23,19 +23,25 @@ public class WithParamFormatter {
         return selectedText.contains("Preparing: ") && selectedText.contains("Parameters: ");
     }
 
-    private static final String REGEX = "(\\S+)\\(\\S+\\)";
+    private static final String SET_PARAM_REGEX = "(?<=[=(,]\\s?)\\?";
 
-    public static Map<Integer, String> format(String selectedText) {
-        Map<Integer, String> result = new HashMap<>();
+    public static String format(String selectedText) {
+        String preparing = "";
         var lines = selectedText.split("\n");
         for (String line : lines) {
             if (line.contains("Preparing:")) {
-                result.put(0, line.substring(line.indexOf("Preparing:")));
+                preparing = line.substring(line.indexOf("Preparing:") + 10).trim();
             } else if (line.contains("Parameters:")) {
-                // TODO how to get parameters
+                String parameterString = line.substring(
+                        line.indexOf("Parameters:") + 11);
+                String[] parameters = parameterString.split(",");
+                for (String parameter : parameters) {
+                    preparing = RegExUtils.replaceFirst(preparing, SET_PARAM_REGEX,
+                            Matcher.quoteReplacement(FormatUtils.beautifyParam(parameter)));
+                }
             }
         }
 
-        return result;
+        return preparing;
     }
 }

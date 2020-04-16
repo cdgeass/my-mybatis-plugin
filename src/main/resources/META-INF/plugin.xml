@@ -19,7 +19,7 @@
     <actions>
         <!-- Add your actions here -->
         <action id="io.github.cdgeass.action.FormatSelectAction"
-                class="io.github.cdgeass.action.io.github.cdgeass.action.FormatSelectionAction" text="Format Sql"
+                class="io.github.cdgeass.action.FormatSelectionAction" text="Format Sql"
                 description="An action to format sql which was selected">
             <add-to-group group-id="EditorPopupMenu" anchor="first"/>
         </action>

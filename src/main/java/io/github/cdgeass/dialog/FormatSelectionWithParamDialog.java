@@ -8,24 +8,19 @@ import javax.swing.*;
  */
 public class FormatSelectionWithParamDialog {
 
-    private final String sql;
     private final String formattedSql;
 
     private JPanel centerPane;
-    private JTextArea sqlTextArea;
-    private JScrollPane sqlPane;
     private JScrollPane formattedSqlPane;
     private JTextArea formattedSqlTextArea;
 
-    public FormatSelectionWithParamDialog(String sql, String formattedSql) {
-        this.sql = sql;
+    public FormatSelectionWithParamDialog(String formattedSql) {
         this.formattedSql = formattedSql;
 
         init();
     }
 
     public void init() {
-        sqlTextArea.setText(sql);
         formattedSqlTextArea.setText(formattedSql);
     }
 

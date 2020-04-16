@@ -36,8 +36,7 @@ public class FormatSelectDialogWrapper extends DialogWrapper {
         }
 
         if (WithParamFormatter.canFormatter(selectedText)) {
-            Map<Integer, String> format = WithParamFormatter.format(selectedText);
-            return new FormatSelectionWithParamDialog(format.get(0), format.get(1)).getContentPanel();
+            return new FormatSelectionWithParamDialog(WithParamFormatter.format(selectedText)).getContentPanel();
         }
 
         return null;
