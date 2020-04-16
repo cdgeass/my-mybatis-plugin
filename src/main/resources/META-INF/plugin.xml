@@ -14,10 +14,14 @@
 
     <extensions defaultExtensionNs="com.intellij">
         <!-- Add your extensions here -->
-        <toolWindow id="MyBatis" anchor="right" factoryClass="io.github.cdgeass.toolwindow.MyBatisLogFormatterToolWindowFactory"/>
     </extensions>
 
     <actions>
         <!-- Add your actions here -->
+        <action id="io.github.cdgeass.action.FormatSelectAction"
+                class="io.github.cdgeass.action.io.github.cdgeass.action.FormatSelectionAction" text="Format Sql"
+                description="An action to format sql which was selected">
+            <add-to-group group-id="EditorPopupMenu" anchor="first"/>
+        </action>
     </actions>
 </idea-plugin>
