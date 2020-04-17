@@ -4,8 +4,7 @@
     <vendor email="cdgeass.github.io" url="http://cdgess.github.io/blog">cdgeass</vendor>
 
     <description><![CDATA[
-    Enter short description for your plugin here.<br>
-    <em>most HTML tags may be used</em>
+    a simple plugin for formatting the log of mybatis and may add more functions
     ]]></description>
 
     <!-- please see https://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
@@ -22,6 +21,7 @@
                 class="io.github.cdgeass.action.FormatSelectionAction" text="Format Sql"
                 description="An action to format sql which was selected">
             <add-to-group group-id="EditorPopupMenu" anchor="first"/>
+            <add-to-group group-id="ConsoleEditorPopupMenu" anchor="first"/>
         </action>
     </actions>
 </idea-plugin>

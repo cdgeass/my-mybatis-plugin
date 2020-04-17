@@ -23,7 +23,7 @@ public class WithParamFormatter {
         return selectedText.contains("Preparing: ") && selectedText.contains("Parameters: ");
     }
 
-    private static final String SET_PARAM_REGEX = "(?<=[=(,]\\s?)\\?";
+    private static final String SET_PARAM_REGEX = "(?<=[=(,]\\s+)\\?|\\?(?:\\s+[=><])";
 
     public static String format(String selectedText) {
         String preparing = "";
