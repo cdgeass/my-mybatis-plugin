@@ -1,7 +1,13 @@
 package io.github.cdgeass.formatter;
 
 
+import com.intellij.formatting.FormattingModelBuilder;
+import com.intellij.lang.Language;
+import com.intellij.lang.LanguageFormatting;
 import io.github.cdgeass.util.FormatUtils;
+import net.sf.jsqlparser.JSQLParserException;
+import net.sf.jsqlparser.parser.CCJSqlParserUtil;
+import net.sf.jsqlparser.statement.Statement;
 import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -23,10 +29,9 @@ public class WithParamFormatter {
         return selectedText.contains("Preparing: ") && selectedText.contains("Parameters: ");
     }
 
-    private static final String SET_PARAM_REGEX = "(?<=[=(,]\\s+)\\?|\\?(?:\\s+[=><])";
-
     public static String format(String selectedText) {
         String preparing = "";
+        String[] parameters = null;
         var lines = selectedText.split("\n");
         for (String line : lines) {
             if (line.contains("Preparing:")) {
@@ -34,14 +39,10 @@ public class WithParamFormatter {
             } else if (line.contains("Parameters:")) {
                 String parameterString = line.substring(
                         line.indexOf("Parameters:") + 11);
-                String[] parameters = parameterString.split(",");
-                for (String parameter : parameters) {
-                    preparing = RegExUtils.replaceFirst(preparing, SET_PARAM_REGEX,
-                            Matcher.quoteReplacement(FormatUtils.beautifyParam(parameter)));
-                }
+                parameters = parameterString.split(",");
             }
         }
 
-        return preparing;
+        return FormatUtils.format(preparing, parameters);
     }
 }

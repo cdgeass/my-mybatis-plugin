@@ -4,7 +4,7 @@ import javax.swing.*;
 
 /**
  * @author cdgeass
- * @since  2020-04-15
+ * @since 2020-04-15
  */
 public class FormatSelectionWithParamDialog {
 
