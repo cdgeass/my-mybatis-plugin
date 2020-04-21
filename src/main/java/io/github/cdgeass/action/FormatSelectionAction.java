@@ -4,7 +4,7 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.diagnostic.Logger;
-import io.github.cdgeass.dialog.FormatSelectDialogWrapper;
+import io.github.cdgeass.dialog.FormatSelectionDialogWrapper;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public class FormatSelectionAction extends AnAction {
 
-    private static final Logger LOG = Logger.getInstance(FormatSelectionAction.class);
+    private static final Logger log = Logger.getInstance(FormatSelectionAction.class);
 
     public FormatSelectionAction() {
 
@@ -26,7 +26,7 @@ public class FormatSelectionAction extends AnAction {
             return;
         }
 
-        new FormatSelectDialogWrapper(editor.getSelectionModel()).show();
+        new FormatSelectionDialogWrapper(editor.getSelectionModel()).show();
     }
 
     @Override

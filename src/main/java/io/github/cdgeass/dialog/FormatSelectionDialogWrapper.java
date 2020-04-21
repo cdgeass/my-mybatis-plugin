@@ -13,13 +13,11 @@ import java.util.Map;
  * @author cdgeass
  * @since  2020-04-15
  */
-public class FormatSelectDialogWrapper extends DialogWrapper {
+public class FormatSelectionDialogWrapper extends DialogWrapper {
 
     private final SelectionModel selectionModel;
 
-    private JPanel centerPane;
-
-    public FormatSelectDialogWrapper(SelectionModel selectionModel) {
+    public FormatSelectionDialogWrapper(SelectionModel selectionModel) {
         super(true);
         this.selectionModel = selectionModel;
 
