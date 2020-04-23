@@ -30,4 +30,5 @@ tasks.getByName<org.jetbrains.intellij.tasks.PatchPluginXmlTask>("patchPluginXml
 }
 tasks.publishPlugin {
     channels("alpha")
+    token(System.getenv("ORG_GRADLE_PROJECT_intellijPublishToken"))
 }
