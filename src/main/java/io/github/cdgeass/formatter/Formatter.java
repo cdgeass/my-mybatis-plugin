@@ -1,7 +1,6 @@
 package io.github.cdgeass.formatter;
 
 import com.intellij.openapi.diagnostic.Logger;
-import io.github.cdgeass.action.FormatSelectionAction;
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
 import net.sf.jsqlparser.statement.Statement;

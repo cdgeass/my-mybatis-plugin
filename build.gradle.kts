@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "io.github.cdgeass"
-version = "1.0-SNAPSHOT"
+version = "0.0.1-alpha"
 
 repositories {
     mavenCentral()
@@ -25,6 +25,9 @@ configure<JavaPluginConvention> {
 }
 tasks.getByName<org.jetbrains.intellij.tasks.PatchPluginXmlTask>("patchPluginXml") {
     changeNotes("""
-      Add change notes here.<br>
-      <em>most HTML tags may be used</em>""")
+      first alpha version<br>
+      """)
+}
+tasks.publishPlugin {
+    channels("alpha")
 }
