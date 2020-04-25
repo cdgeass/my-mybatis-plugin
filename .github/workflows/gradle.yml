@@ -24,3 +24,5 @@ jobs:
       run: chmod +x gradlew
     - name: Build with Gradle
       run: ./gradlew publishPlugin
+      env:
+        ORG_GRADLE_PROJECT_intellijPublishToken: ${{secrets.inetllijPublishToken}}
