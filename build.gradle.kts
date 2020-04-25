@@ -26,6 +26,8 @@ configure<JavaPluginConvention> {
 tasks.getByName<org.jetbrains.intellij.tasks.PatchPluginXmlTask>("patchPluginXml") {
     changeNotes("""
       first alpha version<br>
+      format the log that mybatis
+      use control + alt + Y to copy the log
       """)
 }
 tasks.publishPlugin {
