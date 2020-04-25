@@ -1,6 +1,6 @@
 <idea-plugin>
     <id>io.github.cdgeass.mybatis</id>
-    <name>mybatis</name>
+    <name>my-mybatis</name>
     <vendor email="cdgeass.github.io" url="http://cdgess.github.io/blog">cdgeass</vendor>
 
     <description><![CDATA[
