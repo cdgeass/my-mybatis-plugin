@@ -1,19 +1,19 @@
 package io.github.cdgeass.formatter;
 
+import com.alibaba.druid.sql.SQLUtils;
+import com.alibaba.druid.util.JdbcUtils;
+import com.google.common.collect.Lists;
 import com.intellij.openapi.diagnostic.Logger;
-import net.sf.jsqlparser.JSQLParserException;
-import net.sf.jsqlparser.parser.CCJSqlParserUtil;
-import net.sf.jsqlparser.statement.Statement;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang3.RegExUtils;
 
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
  * @author cdgeass
- * @since  2020-04-21
+ * @since 2020-04-21
  */
 public class Formatter {
 
@@ -27,30 +27,31 @@ public class Formatter {
             return "";
         }
 
-        for (String parameter : parameters) {
-            Matcher matcher = GET_PARAM_TYPE_PATTERN.matcher(parameter);
-            if (matcher.find()) {
-                String param = matcher.group(1);
-                String paramType = matcher.group(2);
 
-                if (!StringUtils.isNumeric(param)) {
-                    param = "'" + param + "'";
+        return SQLUtils.format(preparing, JdbcUtils.MYSQL, parameters(parameters));
+    }
+
+    private static List<Object> parameters(String[] parametersWithType) {
+        List<Object> parameters = Lists.newArrayList();
+
+        for (String parameterWithType : parametersWithType) {
+            var matcher = GET_PARAM_TYPE_PATTERN.matcher(parameterWithType);
+            if (matcher.find()) {
+                var parameter = matcher.group(1);
+                var parameterType = matcher.group(2);
+
+                switch (parameterType) {
+                    case "Integer":
+                        parameters.add(Integer.valueOf(parameter));
+                        break;
+                    // TODO: add other type
+                    default:
+                        parameters.add(parameter);
+                        break;
                 }
-                preparing = RegExUtils.replaceFirst(preparing, SET_PARAM_REGEX, param);
             }
         }
 
-        Statement parse;
-        try {
-            parse = CCJSqlParserUtil.parse(preparing);
-        } catch (JSQLParserException e) {
-            log.debug(e);
-            return e.getMessage();
-        }
-
-        String sql = parse.toString();
-        sql = StringUtils.replaceOnce(sql, "WHERE", "\nWHERE");
-        sql = StringUtils.replaceOnce(sql, "FROM", "\nFROM");
-        return sql;
+        return parameters;
     }
 }

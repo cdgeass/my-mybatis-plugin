@@ -13,7 +13,7 @@ repositories {
 dependencies {
     testCompile("junit", "junit", "4.12")
     implementation("com.google.guava:guava:28.2-jre")
-    implementation("com.github.jsqlparser:jsqlparser:3.1")
+    implementation("com.alibaba:druid:1.1.22")
 }
 
 // See https://github.com/JetBrains/gradle-intellij-plugin/
