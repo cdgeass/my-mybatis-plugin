@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "io.github.cdgeass"
-version = "0.0.4-alpha"
+version = "1.0.0"
 
 repositories {
     mavenCentral()
@@ -25,12 +25,11 @@ configure<JavaPluginConvention> {
 }
 tasks.getByName<org.jetbrains.intellij.tasks.PatchPluginXmlTask>("patchPluginXml") {
     changeNotes("""
-      0.0.4-alpha<br>
-      1. fix with multi threads
-      2. fix npe when without preparing
+      1.0.0<br>
+      1. format log
       """)
 }
 tasks.publishPlugin {
-    channels("alpha")
+    channels("stable")
     token(System.getenv("ORG_GRADLE_PROJECT_intellijPublishToken"))
 }
