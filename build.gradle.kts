@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "io.github.cdgeass"
-version = "1.0.0"
+version = "1.0.1"
 
 repositories {
     mavenCentral()
@@ -25,12 +25,11 @@ configure<JavaPluginConvention> {
 }
 tasks.getByName<org.jetbrains.intellij.tasks.PatchPluginXmlTask>("patchPluginXml") {
     changeNotes("""
-    1.0.0<br>
+    1.0.1<br>
     <ul>
         <li>add log format</li>
     </ul>
       """)
-    version("""1.0.0""")
 }
 tasks.publishPlugin {
     channels("stable")
