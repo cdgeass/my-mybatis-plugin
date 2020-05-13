@@ -4,7 +4,11 @@
     <vendor email="cdgeass.github.io" url="http://cdgess.github.io/blog">cdgeass</vendor>
 
     <description><![CDATA[
-    a simple plugin to format the logs of mybatis
+    a plugin to help you to use mybatis in IDEA<br>
+    for now you can
+    <ul>
+        <li>format the log that print by mybatis to display or copy to clipboard</li>
+    </ul>
     ]]></description>
 
     <!-- please see https://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
