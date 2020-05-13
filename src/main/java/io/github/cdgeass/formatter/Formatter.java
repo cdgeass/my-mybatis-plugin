@@ -4,6 +4,7 @@ import com.alibaba.druid.sql.SQLUtils;
 import com.alibaba.druid.util.JdbcUtils;
 import com.google.common.collect.Lists;
 import com.intellij.openapi.diagnostic.Logger;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 
@@ -22,16 +23,17 @@ public class Formatter {
     private static final Pattern SET_PARAM_REGEX = Pattern.compile("(?<=[=(,]\\s)\\?|\\?(?:\\s+[=><])");
     private static final Pattern GET_PARAM_TYPE_PATTERN = Pattern.compile("(\\b.*)\\((\\S+)\\)");
 
-    protected static String format(String preparing, String[] parameters) {
-        if (StringUtils.isBlank(preparing) || ArrayUtils.isEmpty(parameters)) {
+    protected static String format(String preparing, List<String> parameters) {
+        if (StringUtils.isBlank(preparing) && CollectionUtils.isEmpty(parameters)) {
             return "";
+        } else if (CollectionUtils.isEmpty(parameters)) {
+            return SQLUtils.format(preparing, JdbcUtils.MYSQL);
         }
-
 
         return SQLUtils.format(preparing, JdbcUtils.MYSQL, parameters(parameters));
     }
 
-    private static List<Object> parameters(String[] parametersWithType) {
+    private static List<Object> parameters(List<String> parametersWithType) {
         List<Object> parameters = Lists.newArrayList();
 
         for (String parameterWithType : parametersWithType) {

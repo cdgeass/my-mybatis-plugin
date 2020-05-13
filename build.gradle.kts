@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "io.github.cdgeass"
-version = "0.0.2-alpha"
+version = "0.0.4-alpha"
 
 repositories {
     mavenCentral()
@@ -25,9 +25,9 @@ configure<JavaPluginConvention> {
 }
 tasks.getByName<org.jetbrains.intellij.tasks.PatchPluginXmlTask>("patchPluginXml") {
     changeNotes("""
-      first alpha version<br>
-      format the log that mybatis
-      use control + alt + Y to copy the log
+      0.0.4-alpha<br>
+      1. fix with multi threads
+      2. fix npe when without preparing
       """)
 }
 tasks.publishPlugin {

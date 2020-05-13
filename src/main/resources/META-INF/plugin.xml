@@ -4,7 +4,7 @@
     <vendor email="cdgeass.github.io" url="http://cdgess.github.io/blog">cdgeass</vendor>
 
     <description><![CDATA[
-    a simple plugin for formatting the log of mybatis and may add more functions
+    a simple plugin to format the logs of mybatis
     ]]></description>
 
     <!-- please see https://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
