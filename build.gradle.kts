@@ -1,10 +1,10 @@
 plugins {
-    id("org.jetbrains.intellij") version "0.4.18"
+    id("org.jetbrains.intellij") version "0.4.20"
     java
 }
 
 group = "io.github.cdgeass"
-version = "1.0.1"
+version = "1.0.1-alpha"
 
 repositories {
     mavenCentral()
@@ -18,7 +18,8 @@ dependencies {
 
 // See https://github.com/JetBrains/gradle-intellij-plugin/
 intellij {
-    version = "2020.1"
+    version = "IC-2020.1"
+    setPlugins("java")
 }
 configure<JavaPluginConvention> {
     sourceCompatibility = JavaVersion.VERSION_11
