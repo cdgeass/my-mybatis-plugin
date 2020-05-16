@@ -3,6 +3,7 @@ package io.github.cdgeass.editor;
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerInfo;
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerProvider;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -17,6 +18,10 @@ public class InterfaceXmlLineMarkerProvider extends RelatedItemLineMarkerProvide
 
     @Override
     protected void collectNavigationMarkers(@NotNull PsiElement element, @NotNull Collection<? super RelatedItemLineMarkerInfo> result) {
+        if (!(element instanceof PsiFile)) {
+            return;
+        }
 
+        result.addAll(XmlNavUtil.findByScan(element.getProject()));
     }
 }
