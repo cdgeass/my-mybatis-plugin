@@ -16,31 +16,31 @@ import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.indexing.FileBasedIndex;
 import org.apache.commons.collections.CollectionUtils;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 /**
  * @author cdgeass
- * @since  2020-05-16
+ * @since 2020-05-16
  */
-public class XmlNavUtil {
+public class XmlNavHolder {
 
     private static final List<String> ELEMENT_NAMES = Lists.newArrayList("select", "insert", "update", "delete");
 
     private static final ConcurrentHashMap<String, PsiElement> XML_TAG_MAP = new ConcurrentHashMap<>();
 
-    private XmlNavUtil() {}
+    private XmlNavHolder() {
+    }
 
-    public static List<RelatedItemLineMarkerInfo<PsiElement>> findByScan(Project project) {
+    public static void scan(Project project) {
         var javaVirtualFiles = FileBasedIndex.getInstance()
                 .getContainingFiles(FileTypeIndex.NAME, JavaFileType.INSTANCE, GlobalSearchScope.projectScope(project));
         var xmlVirtualFiles = FileBasedIndex.getInstance()
                 .getContainingFiles(FileTypeIndex.NAME, XmlFileType.INSTANCE, GlobalSearchScope.projectScope(project));
 
         if (CollectionUtils.isEmpty(javaVirtualFiles) || CollectionUtils.isEmpty(xmlVirtualFiles)) {
-            return Collections.emptyList();
+            return;
         }
 
         var psiManager = PsiManager.getInstance(project);
@@ -89,31 +89,37 @@ public class XmlNavUtil {
                 XML_TAG_MAP.put(namespace + "." + id, subTag);
             }
         }
+    }
 
+    public static List<RelatedItemLineMarkerInfo<PsiElement>> build(PsiJavaFile javaFile) {
         List<RelatedItemLineMarkerInfo<PsiElement>> lineMarkerInfos = Lists.newArrayList();
-        for (var javaFile : javaFiles) {
-            var clazz = PsiTreeUtil.findChildOfType(javaFile, PsiClass.class);
-            if (clazz == null) {
+        var clazz = PsiTreeUtil.findChildOfType(javaFile, PsiClass.class);
+        if (clazz == null) {
+            return lineMarkerInfos;
+        }
+
+        var qualifiedName = clazz.getQualifiedName();
+        if (qualifiedName == null || clazz.getNameIdentifier() == null || !XML_TAG_MAP.containsKey(qualifiedName)) {
+            return lineMarkerInfos;
+        }
+
+        var xmlTag = XML_TAG_MAP.get(qualifiedName).getNavigationElement();
+        NavigationGutterIconBuilder<PsiElement> clazzIconBuilder = NavigationGutterIconBuilder.create(AllIcons.Gutter.ImplementedMethod)
+                .setTarget(xmlTag)
+                .setTooltipText(qualifiedName);
+        lineMarkerInfos.add(clazzIconBuilder.createLineMarkerInfo(clazz.getNameIdentifier()));
+
+        var methods = PsiTreeUtil.findChildrenOfType(clazz, PsiMethod.class);
+        for (var method : methods) {
+            if (method == null || method.getNameIdentifier() == null || !XML_TAG_MAP.containsKey(qualifiedName + "." + method.getName())) {
                 continue;
             }
 
-            var qualifiedName = clazz.getQualifiedName();
-            if (qualifiedName == null || !XML_TAG_MAP.containsKey(qualifiedName)) {
-                continue;
-            }
-
-            var methods = PsiTreeUtil.findChildrenOfType(clazz, PsiMethod.class);
-            for (var method : methods) {
-                if (method == null || method.getNameIdentifier() == null || !XML_TAG_MAP.containsKey(qualifiedName + "." + method.getName())) {
-                    continue;
-                }
-                var xmlTag = XML_TAG_MAP.get(qualifiedName + "." + method.getName());
-
-                NavigationGutterIconBuilder<PsiElement> methodIconBuilder = NavigationGutterIconBuilder.create(AllIcons.Gutter.ImplementedMethod)
-                        .setTarget(xmlTag.getNavigationElement())
-                        .setTooltipText(qualifiedName);
-                lineMarkerInfos.add(methodIconBuilder.createLineMarkerInfo(method.getNameIdentifier()));
-            }
+            var subXmlTag = XML_TAG_MAP.get(qualifiedName + "." + method.getName());
+            NavigationGutterIconBuilder<PsiElement> methodIconBuilder = NavigationGutterIconBuilder.create(AllIcons.Gutter.ImplementedMethod)
+                    .setTarget(subXmlTag)
+                    .setTooltipText(qualifiedName);
+            lineMarkerInfos.add(methodIconBuilder.createLineMarkerInfo(method.getNameIdentifier()));
         }
 
         return lineMarkerInfos;

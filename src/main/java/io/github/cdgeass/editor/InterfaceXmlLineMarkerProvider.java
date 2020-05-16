@@ -4,6 +4,7 @@ import com.intellij.codeInsight.daemon.RelatedItemLineMarkerInfo;
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerProvider;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiJavaFile;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -22,6 +23,9 @@ public class InterfaceXmlLineMarkerProvider extends RelatedItemLineMarkerProvide
             return;
         }
 
-        result.addAll(XmlNavUtil.findByScan(element.getProject()));
+        XmlNavHolder.scan(element.getProject());
+        if (element instanceof PsiJavaFile) {
+            result.addAll(XmlNavHolder.build((PsiJavaFile) element));
+        }
     }
 }
