@@ -13,7 +13,7 @@ import java.util.Collection;
  * @author cdgeass
  * @since 2020-05-14
  */
-public class InterfaceXmlLineMarkerProvider extends RelatedItemLineMarkerProvider {
+public class DaoLineMarkerProvider extends RelatedItemLineMarkerProvider {
 
     // implementedMethod.svg
 
