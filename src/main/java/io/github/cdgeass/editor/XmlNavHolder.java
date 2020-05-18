@@ -42,13 +42,8 @@ public class XmlNavHolder {
     }
 
     public static void scan(Project project) {
-        XML_MAP.clear();
-        DAO_MAP.clear();
-
-        var javaVirtualFiles = FileBasedIndex.getInstance()
-                .getContainingFiles(FileTypeIndex.NAME, JavaFileType.INSTANCE, GlobalSearchScope.projectScope(project));
-        var xmlVirtualFiles = FileBasedIndex.getInstance()
-                .getContainingFiles(FileTypeIndex.NAME, XmlFileType.INSTANCE, GlobalSearchScope.projectScope(project));
+        var javaVirtualFiles = FileTypeIndex.getFiles(JavaFileType.INSTANCE, GlobalSearchScope.projectScope(project));
+        var xmlVirtualFiles = FileTypeIndex.getFiles(XmlFileType.INSTANCE, GlobalSearchScope.projectScope(project));
 
         if (CollectionUtils.isEmpty(javaVirtualFiles) || CollectionUtils.isEmpty(xmlVirtualFiles)) {
             return;
@@ -98,10 +93,7 @@ public class XmlNavHolder {
                 }
 
                 var id = idAttribute.getValue();
-                var subElements = Optional.ofNullable(XML_MAP.get(namespace + "." + id))
-                        .orElseGet(Sets::newHashSet);
-                subElements.add(subTag);
-                XML_MAP.put(namespace + "." + id, subElements);
+                XML_MAP.put(namespace + "." + id, Sets.newHashSet(subTag));
             }
         }
 
@@ -206,7 +198,11 @@ public class XmlNavHolder {
         var javaFile = (PsiFile) PsiTreeUtil.findFirstParent(dao, psiElement -> psiElement instanceof PsiFile);
         if (XML_DAO_MAP.containsKey(fileName) && !Objects.equals(XML_DAO_MAP.get(fileName), javaFile)) {
             var originJavaFile = XML_DAO_MAP.get(fileName);
-            DaemonCodeAnalyzer.getInstance(originJavaFile.getProject()).restart(originJavaFile);
+            var clazz = PsiTreeUtil.findChildOfAnyType(originJavaFile, PsiClass.class);
+            if (clazz != null && clazz.getQualifiedName() != null) {
+                XML_MAP.remove(clazz.getQualifiedName());
+                DaemonCodeAnalyzer.getInstance(originJavaFile.getProject()).restart(originJavaFile);
+            }
         }
         if (javaFile != null) {
             XML_DAO_MAP.put(fileName, javaFile);

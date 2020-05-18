@@ -26,9 +26,10 @@ configure<JavaPluginConvention> {
 }
 tasks.getByName<org.jetbrains.intellij.tasks.PatchPluginXmlTask>("patchPluginXml") {
     changeNotes("""
-    1.0.6-alpha<br>
+    1.0.7-alpha<br>
     <ul>
-        <li>add dao and xml line marker</li>
+        <li>add mapper navigation</li>
+        <li>modify sql dialog font to Jetbrains Mono</li>
         <li>fix issues</>
     </ul>
     
@@ -39,6 +40,6 @@ tasks.getByName<org.jetbrains.intellij.tasks.PatchPluginXmlTask>("patchPluginXml
       """)
 }
 tasks.publishPlugin {
-    channels("stable")
+    channels("alpha")
     token(System.getenv("ORG_GRADLE_PROJECT_intellijPublishToken"))
 }
