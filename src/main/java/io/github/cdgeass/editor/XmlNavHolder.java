@@ -1,6 +1,8 @@
 package io.github.cdgeass.editor;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerInfo;
 import com.intellij.codeInsight.navigation.NavigationGutterIconBuilder;
 import com.intellij.icons.AllIcons;
@@ -11,15 +13,15 @@ import com.intellij.psi.*;
 import com.intellij.psi.search.FileTypeIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.psi.xml.XmlAttribute;
-import com.intellij.psi.xml.XmlDocument;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.indexing.FileBasedIndex;
 import org.apache.commons.collections.CollectionUtils;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
@@ -31,13 +33,18 @@ public class XmlNavHolder {
 
     private static final List<String> ELEMENT_NAMES = Lists.newArrayList("select", "insert", "update", "delete");
 
-    private static final ConcurrentHashMap<String, PsiElement> XML_MAP = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<String, Set<PsiElement>> XML_MAP = new ConcurrentHashMap<>();
     private static final ConcurrentHashMap<String, PsiElement> DAO_MAP = new ConcurrentHashMap<>();
+
+    private static final ConcurrentHashMap<String, PsiFile> XML_DAO_MAP = new ConcurrentHashMap<>();
 
     private XmlNavHolder() {
     }
 
     public static void scan(Project project) {
+        XML_MAP.clear();
+        DAO_MAP.clear();
+
         var javaVirtualFiles = FileBasedIndex.getInstance()
                 .getContainingFiles(FileTypeIndex.NAME, JavaFileType.INSTANCE, GlobalSearchScope.projectScope(project));
         var xmlVirtualFiles = FileBasedIndex.getInstance()
@@ -67,12 +74,14 @@ public class XmlNavHolder {
                 continue;
             }
 
-            // namespace
             String namespace = namespaceAttribute.getValue();
             if (namespace == null) {
                 continue;
             }
-            XML_MAP.put(namespace, rootTag);
+            var rootElements = Optional.ofNullable(XML_MAP.get(namespace))
+                    .orElseGet(Sets::newHashSet);
+            rootElements.add(rootTag);
+            XML_MAP.put(namespace, rootElements);
 
             var subTags = rootTag.getSubTags();
             for (XmlTag subTag : subTags) {
@@ -86,7 +95,10 @@ public class XmlNavHolder {
                 }
 
                 var id = idAttribute.getValue();
-                XML_MAP.put(namespace + "." + id, subTag);
+                var subElements = Optional.ofNullable(XML_MAP.get(namespace + "." + id))
+                        .orElseGet(Sets::newHashSet);
+                subElements.add(subTag);
+                XML_MAP.put(namespace + "." + id, subElements);
             }
         }
 
@@ -130,10 +142,16 @@ public class XmlNavHolder {
             return lineMarkerInfos;
         }
 
-        var xmlTag = XML_MAP.get(qualifiedName).getNavigationElement();
+        List<PsiElement> xmlTags = Lists.newArrayList();
+        for (var xmlTag : XML_MAP.get(qualifiedName)) {
+            var xmlFile = (XmlFile) PsiTreeUtil.findFirstParent(xmlTag, parent -> parent instanceof XmlFile);
+            if (xmlFile == null) {
+                continue;
+            }
+            xmlTags.add(xmlTag);
+        }
         NavigationGutterIconBuilder<PsiElement> interfaceIconBuilder = NavigationGutterIconBuilder.create(AllIcons.Gutter.ImplementedMethod)
-                .setTarget(xmlTag)
-                .setTooltipText(qualifiedName);
+                .setTargets(xmlTags);
         lineMarkerInfos.add(interfaceIconBuilder.createLineMarkerInfo(clazz.getNameIdentifier()));
 
         var methods = PsiTreeUtil.findChildrenOfType(clazz, PsiMethod.class);
@@ -142,14 +160,15 @@ public class XmlNavHolder {
                 continue;
             }
 
-            var subXmlTag = XML_MAP.get(qualifiedName + "." + method.getName());
-            NavigationGutterIconBuilder<PsiElement> methodIconBuilder = NavigationGutterIconBuilder.create(AllIcons.Gutter.ImplementedMethod)
-                    .setTarget(subXmlTag)
-                    .setTooltipText(qualifiedName);
-            lineMarkerInfos.add(methodIconBuilder.createLineMarkerInfo(method.getNameIdentifier()));
+            for (var subXmlTag : XML_MAP.get(qualifiedName + "." + method.getName())) {
+                NavigationGutterIconBuilder<PsiElement> methodIconBuilder = NavigationGutterIconBuilder.create(AllIcons.Gutter.ImplementedMethod)
+                        .setTarget(subXmlTag.getNavigationElement())
+                        .setTooltipText(method.getName());
+                lineMarkerInfos.add(methodIconBuilder.createLineMarkerInfo(method.getNameIdentifier()));
+            }
         }
 
-        return lineMarkerInfos;
+        return lineMarkerInfos.stream().distinct().collect(Collectors.toList());
     }
 
     public static List<RelatedItemLineMarkerInfo<PsiElement>> build(XmlFile xmlFile) {
@@ -179,6 +198,16 @@ public class XmlNavHolder {
                 .setTarget(dao)
                 .setTooltipText(namespace);
         lineMarkerInfos.add(rootIconBuilder.createLineMarkerInfo(rootTag.getFirstChild()));
+
+        var fileName = xmlFile.getName();
+        var javaFile = (PsiFile) PsiTreeUtil.findFirstParent(dao, psiElement -> psiElement instanceof PsiFile);
+        if (XML_DAO_MAP.containsKey(fileName) && !Objects.equals(XML_DAO_MAP.get(fileName), javaFile)) {
+            var originJavaFile = XML_DAO_MAP.get(fileName);
+            DaemonCodeAnalyzer.getInstance(originJavaFile.getProject()).restart(originJavaFile);
+        }
+        if (javaFile != null) {
+            XML_DAO_MAP.put(fileName, javaFile);
+        }
 
         var subTags = rootTag.getSubTags();
         for (var subTag : subTags) {

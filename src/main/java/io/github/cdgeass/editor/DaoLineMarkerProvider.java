@@ -8,14 +8,14 @@ import com.intellij.psi.PsiJavaFile;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author cdgeass
  * @since 2020-05-14
  */
 public class DaoLineMarkerProvider extends RelatedItemLineMarkerProvider {
-
-    // implementedMethod.svg
 
     @Override
     protected void collectNavigationMarkers(@NotNull PsiElement element, @NotNull Collection<? super RelatedItemLineMarkerInfo> result) {
