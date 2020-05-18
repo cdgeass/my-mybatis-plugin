@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "io.github.cdgeass"
-version = "1.0.6-alpha"
+version = "1.1.0"
 
 repositories {
     mavenCentral()
@@ -26,7 +26,7 @@ configure<JavaPluginConvention> {
 }
 tasks.getByName<org.jetbrains.intellij.tasks.PatchPluginXmlTask>("patchPluginXml") {
     changeNotes("""
-    1.0.7-alpha<br>
+    1.1.0<br>
     <ul>
         <li>add mapper navigation</li>
         <li>modify sql dialog font to Jetbrains Mono</li>
@@ -40,6 +40,6 @@ tasks.getByName<org.jetbrains.intellij.tasks.PatchPluginXmlTask>("patchPluginXml
       """)
 }
 tasks.publishPlugin {
-    channels("alpha")
+    channels("stable")
     token(System.getenv("ORG_GRADLE_PROJECT_intellijPublishToken"))
 }
