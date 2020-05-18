@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "io.github.cdgeass"
-version = "1.0.5-alpha"
+version = "1.0.6-alpha"
 
 repositories {
     mavenCentral()
@@ -26,9 +26,10 @@ configure<JavaPluginConvention> {
 }
 tasks.getByName<org.jetbrains.intellij.tasks.PatchPluginXmlTask>("patchPluginXml") {
     changeNotes("""
-    1.0.5-alpha<br>
+    1.0.6-alpha<br>
     <ul>
         <li>add dao and xml line marker</li>
+        <li>fix issues</>
     </ul>
     
     1.0.1<br>

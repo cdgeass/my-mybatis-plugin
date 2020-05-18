@@ -59,6 +59,9 @@ public class XmlNavHolder {
         var xmlFiles = xmlVirtualFiles.stream().map(psiManager::findFile).collect(Collectors.toList());
 
         for (var xmlFile : xmlFiles) {
+            if (!(xmlFile instanceof XmlFile)) {
+                continue;
+            }
             var document = ((XmlFile) xmlFile).getDocument();
             if (document == null) {
                 continue;
