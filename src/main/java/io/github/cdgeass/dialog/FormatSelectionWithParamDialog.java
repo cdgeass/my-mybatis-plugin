@@ -1,6 +1,7 @@
 package io.github.cdgeass.dialog;
 
 import javax.swing.*;
+import java.awt.*;
 
 /**
  * @author cdgeass
@@ -14,14 +15,18 @@ public class FormatSelectionWithParamDialog {
     private JScrollPane formattedSqlPane;
     private JTextArea formattedSqlTextArea;
 
+    private Font font;
+
     public FormatSelectionWithParamDialog(String formattedSql) {
         this.formattedSql = formattedSql;
+        this.font = new Font("JetBrains Mono", Font.PLAIN, 14);
 
         init();
     }
 
     public void init() {
         formattedSqlTextArea.setText(formattedSql);
+        formattedSqlTextArea.setFont(font);
     }
 
     public JPanel getContentPanel() {

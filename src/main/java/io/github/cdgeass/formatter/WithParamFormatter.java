@@ -82,7 +82,7 @@ public class WithParamFormatter extends Formatter {
         List<String> sqlList = format(sqlMap);
         StringBuilder stringBuilder = new StringBuilder();
         for (int i = 0; i < sqlList.size(); i++) {
-            stringBuilder.append(sqlList.get(i)).append(LINE_SPLIT).append(SEMICOLON);
+            stringBuilder.append(sqlList.get(i)).append(SEMICOLON).append(LINE_SPLIT);
             if (i != 0 || i != sqlList.size() - 1) {
                 stringBuilder.append("-- -----------------------------------").append(LINE_SPLIT);
             }
