@@ -232,4 +232,12 @@ public class XmlNavHolder {
 
         return lineMarkerInfos;
     }
+
+    public static Set<PsiElement> getXmlTag(String key) {
+        return XML_MAP.get(key);
+    }
+
+    public static PsiElement getDao(String key) {
+        return DAO_MAP.get(key);
+    }
 }

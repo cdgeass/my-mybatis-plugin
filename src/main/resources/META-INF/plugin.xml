@@ -20,6 +20,7 @@
         <!-- Add your extensions here -->
         <codeInsight.lineMarkerProvider language="JAVA"
                                         implementationClass="io.github.cdgeass.editor.DaoLineMarkerProvider"/>
+        <psi.referenceContributor implementation="io.github.cdgeass.editor.XmlReferenceContributor"/>
         <codeInsight.lineMarkerProvider language="XML"
                                         implementationClass="io.github.cdgeass.editor.XmlLineMarkerProvider"/>
     </extensions>
