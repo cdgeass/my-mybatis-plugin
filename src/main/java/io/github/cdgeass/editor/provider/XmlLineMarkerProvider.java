@@ -1,11 +1,13 @@
-package io.github.cdgeass.editor;
+package io.github.cdgeass.editor.provider;
 
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerInfo;
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerProvider;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiJavaFile;
 import com.intellij.psi.xml.XmlFile;
+import com.intellij.util.xml.DomManager;
+import io.github.cdgeass.editor.XmlNavHolder;
+import io.github.cdgeass.editor.dom.Mapper;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;

@@ -19,10 +19,10 @@
     <extensions defaultExtensionNs="com.intellij">
         <!-- Add your extensions here -->
         <codeInsight.lineMarkerProvider language="JAVA"
-                                        implementationClass="io.github.cdgeass.editor.DaoLineMarkerProvider"/>
-        <psi.referenceContributor implementation="io.github.cdgeass.editor.XmlReferenceContributor"/>
+                                        implementationClass="io.github.cdgeass.editor.provider.DaoLineMarkerProvider"/>
         <codeInsight.lineMarkerProvider language="XML"
-                                        implementationClass="io.github.cdgeass.editor.XmlLineMarkerProvider"/>
+                                        implementationClass="io.github.cdgeass.editor.provider.XmlLineMarkerProvider"/>
+        <dom.fileDescription implementation="io.github.cdgeass.editor.dom.MapperDescription"/>
     </extensions>
 
     <actions>
