@@ -9,8 +9,6 @@ import io.github.cdgeass.editor.XmlNavHolder;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @author cdgeass
