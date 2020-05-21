@@ -1,8 +1,9 @@
 package io.github.cdgeass.editor.dom;
 
-import com.intellij.util.xml.Attribute;
-import com.intellij.util.xml.DomElement;
-import com.intellij.util.xml.GenericAttributeValue;
+import com.intellij.psi.PsiClass;
+import com.intellij.util.xml.*;
+
+import java.util.List;
 
 /**
  * @author cdgass
@@ -11,5 +12,8 @@ import com.intellij.util.xml.GenericAttributeValue;
 public interface Mapper extends DomElement {
 
     @Attribute("namespace")
-    GenericAttributeValue<String> getNamespace();
+    GenericAttributeValue<PsiClass> getNamespace();
+
+    @NameValue
+    List<Select> getSelects();
 }

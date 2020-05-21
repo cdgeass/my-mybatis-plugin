@@ -5,6 +5,7 @@ import com.intellij.codeInsight.daemon.RelatedItemLineMarkerProvider;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.xml.XmlFile;
+import com.intellij.util.xml.DomFileElement;
 import com.intellij.util.xml.DomManager;
 import io.github.cdgeass.editor.XmlNavHolder;
 import io.github.cdgeass.editor.dom.Mapper;
@@ -14,7 +15,7 @@ import java.util.Collection;
 
 /**
  * @author cdgeass
- * @since  2020-05-17
+ * @since 2020-05-17
  */
 public class XmlLineMarkerProvider extends RelatedItemLineMarkerProvider {
 
@@ -23,6 +24,10 @@ public class XmlLineMarkerProvider extends RelatedItemLineMarkerProvider {
         if (!(element instanceof PsiFile)) {
             return;
         }
+
+        var domManager = DomManager.getDomManager(element.getProject());
+        DomFileElement<Mapper> fileElement = domManager.getFileElement((XmlFile) element, Mapper.class);
+        Mapper rootElement = fileElement.getRootElement();
 
         XmlNavHolder.scan(element.getProject());
         if (element instanceof XmlFile) {
