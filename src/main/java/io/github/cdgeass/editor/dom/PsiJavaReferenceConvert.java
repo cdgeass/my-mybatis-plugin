@@ -6,10 +6,7 @@ import com.intellij.psi.PsiReference;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.psi.xml.XmlFile;
-import com.intellij.util.xml.ConvertContext;
-import com.intellij.util.xml.Converter;
-import com.intellij.util.xml.CustomReferenceConverter;
-import com.intellij.util.xml.GenericDomValue;
+import com.intellij.util.xml.*;
 import io.github.cdgeass.util.PsiUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -18,7 +15,7 @@ import org.jetbrains.annotations.Nullable;
  * @author cdgeass
  * @since 2020-05-21
  */
-public class ReferenceConvert extends Converter<PsiElement> implements CustomReferenceConverter<PsiElement> {
+public class PsiJavaReferenceConvert extends Converter<PsiElement> implements CustomReferenceConverter<PsiElement> {
 
     @Nullable
     @Override

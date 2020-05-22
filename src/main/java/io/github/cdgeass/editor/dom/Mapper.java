@@ -11,9 +11,13 @@ import java.util.List;
  */
 public interface Mapper extends DomElement {
 
-    @Attribute("namespace")
     GenericAttributeValue<PsiClass> getNamespace();
 
-    @NameValue
-    List<Select> getSelects();
+    List<SelectStatement> getSelects();
+
+    List<ModificationStatement> getInserts();
+
+    List<ModificationStatement> getUpdates();
+
+    List<ModificationStatement> getDeletes();
 }

@@ -55,6 +55,16 @@ public class PsiUtil {
             }
         }
 
+        var superClasses = psiClass.getSupers();
+        for (PsiClass superClass : superClasses) {
+            var superPsiMethods = PsiTreeUtil.findChildrenOfAnyType(superClass, PsiMethod.class);
+            for (PsiMethod superPsiMethod : superPsiMethods) {
+                if (methodName.equals(superPsiMethod.getName())) {
+                    return superPsiMethod;
+                }
+            }
+        }
+
         return null;
     }
 }

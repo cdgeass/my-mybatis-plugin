@@ -6,8 +6,10 @@ import com.intellij.util.xml.*;
  * @author cdgeass
  * @since  2020-05-21
  */
-public interface Select extends DomElement {
+public interface SelectStatement extends DomElement {
 
-    @Convert(ReferenceConvert.class)
+    @Convert(PsiJavaReferenceConvert.class)
     GenericAttributeValue<String> getId();
+
+    ResultMap getResultMap();
 }
