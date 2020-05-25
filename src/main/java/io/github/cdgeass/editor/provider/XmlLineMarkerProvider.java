@@ -25,10 +25,6 @@ public class XmlLineMarkerProvider extends RelatedItemLineMarkerProvider {
             return;
         }
 
-        var domManager = DomManager.getDomManager(element.getProject());
-        DomFileElement<Mapper> fileElement = domManager.getFileElement((XmlFile) element, Mapper.class);
-        Mapper rootElement = fileElement.getRootElement();
-
         XmlNavHolder.scan(element.getProject());
         if (element instanceof XmlFile) {
             result.addAll(XmlNavHolder.build((XmlFile) element));

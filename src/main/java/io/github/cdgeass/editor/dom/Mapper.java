@@ -20,4 +20,7 @@ public interface Mapper extends DomElement {
     List<ModificationStatement> getUpdates();
 
     List<ModificationStatement> getDeletes();
+
+    @SubTagList("resultMap")
+    List<ResultMap> getResultMaps();
 }

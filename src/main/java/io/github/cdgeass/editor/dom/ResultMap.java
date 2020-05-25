@@ -12,5 +12,5 @@ public interface ResultMap extends DomElement {
 
     GenericAttributeValue<String> getId();
 
-    GenericAttributeValue<String>getType();
+    GenericAttributeValue<String> getType();
 }

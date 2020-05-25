@@ -11,5 +11,7 @@ public interface SelectStatement extends DomElement {
     @Convert(PsiJavaReferenceConvert.class)
     GenericAttributeValue<String> getId();
 
-    ResultMap getResultMap();
+    @Attribute("resultMap")
+    @Convert(ResultMapReferenceConvert.class)
+    GenericAttributeValue<ResultMap> getResultMap();
 }

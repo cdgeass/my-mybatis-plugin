@@ -32,11 +32,7 @@ public class PsiJavaReferenceConvert extends Converter<PsiElement> implements Cu
     @NotNull
     @Override
     public PsiReference[] createReferences(GenericDomValue value, PsiElement element, ConvertContext context) {
-        return createReferences(element);
-    }
-
-    public PsiReference[] createReferences(@NotNull PsiElement psiElement) {
-        var xmlFile = (XmlFile) PsiTreeUtil.findFirstParent(psiElement, element -> element instanceof XmlFile);
+        var xmlFile = (XmlFile) PsiTreeUtil.findFirstParent(element, parent -> parent instanceof XmlFile);
         if (xmlFile == null || xmlFile.getRootTag() == null) {
             return PsiReference.EMPTY_ARRAY;
         }
@@ -46,12 +42,12 @@ public class PsiJavaReferenceConvert extends Converter<PsiElement> implements Cu
             return PsiReference.EMPTY_ARRAY;
         }
 
-        var qualifiedName = namespaceValue.getValue() + "." + ((XmlAttributeValue) psiElement).getValue();
-        var psiMethod = PsiUtil.findMethod(psiElement.getProject(), qualifiedName);
+        var qualifiedName = namespaceValue.getValue() + "." + ((XmlAttributeValue) element).getValue();
+        var psiMethod = PsiUtil.findMethod(element.getProject(), qualifiedName);
         if (psiMethod == null || psiMethod.getNameIdentifier() == null) {
             return PsiReference.EMPTY_ARRAY;
         }
 
-        return new PsiReference[]{new XmlReference(psiElement, Lists.newArrayList(psiMethod))};
+        return new PsiReference[]{new XmlReference(element, Lists.newArrayList(psiMethod))};
     }
 }
