@@ -4,9 +4,11 @@ import com.alibaba.druid.sql.SQLUtils;
 import com.alibaba.druid.util.JdbcUtils;
 import com.google.common.collect.Lists;
 import com.intellij.openapi.diagnostic.Logger;
+import net.sf.jsqlparser.parser.CCJSqlParserUtil;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.RegExUtils;
 
 import java.util.List;
 import java.util.regex.Matcher;
@@ -20,6 +22,7 @@ public class Formatter {
 
     private static final Logger log = Logger.getInstance(Formatter.class);
 
+    private static final String NULL = "null";
     private static final Pattern SET_PARAM_REGEX = Pattern.compile("(?<=[=(,]\\s)\\?|\\?(?:\\s+[=><])");
     private static final Pattern GET_PARAM_TYPE_PATTERN = Pattern.compile("(\\b.*)\\((\\S+)\\)");
 
@@ -37,6 +40,10 @@ public class Formatter {
         List<Object> parameters = Lists.newArrayList();
 
         for (String parameterWithType : parametersWithType) {
+            if (NULL.equals(parameterWithType)) {
+                parameters.add(null);
+                continue;
+            }
             var matcher = GET_PARAM_TYPE_PATTERN.matcher(parameterWithType);
             if (matcher.find()) {
                 var parameter = matcher.group(1);
