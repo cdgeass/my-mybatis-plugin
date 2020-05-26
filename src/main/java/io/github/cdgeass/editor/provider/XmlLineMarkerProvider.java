@@ -2,16 +2,20 @@ package io.github.cdgeass.editor.provider;
 
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerInfo;
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerProvider;
+import com.intellij.codeInsight.navigation.NavigationGutterIconBuilder;
+import com.intellij.icons.AllIcons;
+import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
 import com.intellij.psi.xml.XmlFile;
-import com.intellij.util.xml.DomFileElement;
 import com.intellij.util.xml.DomManager;
-import io.github.cdgeass.editor.XmlNavHolder;
 import io.github.cdgeass.editor.dom.Mapper;
+import io.github.cdgeass.editor.dom.Statement;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Optional;
+import java.util.function.Consumer;
 
 /**
  * @author cdgeass
@@ -21,13 +25,48 @@ public class XmlLineMarkerProvider extends RelatedItemLineMarkerProvider {
 
     @Override
     protected void collectNavigationMarkers(@NotNull PsiElement element, @NotNull Collection<? super RelatedItemLineMarkerInfo> result) {
-        if (!(element instanceof PsiFile)) {
+        if (!(element instanceof XmlFile)) {
             return;
         }
 
-        XmlNavHolder.scan(element.getProject());
-        if (element instanceof XmlFile) {
-            result.addAll(XmlNavHolder.build((XmlFile) element));
+        var domManager = DomManager.getDomManager(element.getProject());
+        var fileElement = domManager.getFileElement((XmlFile) element, Mapper.class);
+        if (fileElement == null) {
+            return;
         }
+
+        var mapper = fileElement.getRootElement();
+        if (mapper.getXmlTag() == null) {
+            return;
+        }
+        var namespaceAttributeValue = mapper.getNamespace();
+        PsiClass psiClass = namespaceAttributeValue.getValue();
+        if (psiClass == null || psiClass.getQualifiedName() == null) {
+            return;
+        }
+        var rootIconBuilder = NavigationGutterIconBuilder.create(AllIcons.Gutter.ImplementingMethod)
+                .setTarget(psiClass)
+                .setTooltipText(psiClass.getQualifiedName());
+        result.add(rootIconBuilder.createLineMarkerInfo(mapper.getXmlTag()));
+
+
+        Consumer<Statement> consumer = statement -> {
+            if (statement.getXmlTag() == null) {
+                return;
+            }
+            var methodAttributeValue = statement.getId();
+            var psiMethod = methodAttributeValue.getValue();
+            if (psiMethod == null) {
+                return;
+            }
+            NavigationGutterIconBuilder<PsiElement> subIconBuilder = NavigationGutterIconBuilder.create(AllIcons.Gutter.ImplementingMethod)
+                    .setTarget(psiMethod)
+                    .setTooltipText(psiMethod.getName());
+            result.add(subIconBuilder.createLineMarkerInfo(statement.getXmlTag().getFirstChild()));
+        };
+        Optional.ofNullable(mapper.getSelects()).orElse(Collections.emptyList()).forEach(consumer);
+        Optional.ofNullable(mapper.getDeletes()).orElse(Collections.emptyList()).forEach(consumer);
+        Optional.ofNullable(mapper.getInserts()).orElse(Collections.emptyList()).forEach(consumer);
+        Optional.ofNullable(mapper.getUpdates()).orElse(Collections.emptyList()).forEach(consumer);
     }
 }
