@@ -19,14 +19,14 @@ public class FormatSelectionWithParamDialog {
 
     public FormatSelectionWithParamDialog(String formattedSql) {
         this.formattedSql = formattedSql;
-        this.font = new Font("JetBrains Mono", Font.PLAIN, 14);
+//        this.font = new Font("JetBrains Mono", Font.PLAIN, 14);
 
         init();
     }
 
     public void init() {
         formattedSqlTextArea.setText(formattedSql);
-        formattedSqlTextArea.setFont(font);
+//        formattedSqlTextArea.setFont(font);
     }
 
     public JPanel getContentPanel() {
