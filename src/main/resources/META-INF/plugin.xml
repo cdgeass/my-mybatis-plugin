@@ -1,13 +1,14 @@
 <idea-plugin>
     <id>io.github.cdgeass.mybatis</id>
     <name>my-mybatis</name>
-    <vendor email="cdgeass97@gmail.com" url="https://cdgeass.github.io/blog/">cdgeass</vendor>
+    <vendor email="cdgeass97@gmail.com" url="https://github.com/cdgeass/my-mybatis-plugin">cdgeass</vendor>
 
     <description><![CDATA[
     a plugin to help you to use mybatis in IDEA<br>
     for now you can
     <ul>
         <li>format the log that print by mybatis to display or copy to clipboard</li>
+        <li>navigation between dao and xml</li>
     </ul>
     ]]></description>
 
