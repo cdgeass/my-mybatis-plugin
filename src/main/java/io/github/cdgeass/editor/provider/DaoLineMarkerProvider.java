@@ -17,6 +17,7 @@ import com.intellij.util.xml.DomFileElement;
 import com.intellij.util.xml.DomManager;
 import io.github.cdgeass.editor.dom.Mapper;
 import io.github.cdgeass.editor.dom.Statement;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ObjectUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -56,6 +57,9 @@ public class DaoLineMarkerProvider extends RelatedItemLineMarkerProvider {
                 .filter(mapper -> ObjectUtils.equals(mapper.getNamespace().getValue(), psiClass))
                 .collect(Collectors.toList());
 
+        if (CollectionUtils.isEmpty(mappers)) {
+            return;
+        }
         NavigationGutterIconBuilder<PsiElement> interfaceIconBuilder = NavigationGutterIconBuilder.create(AllIcons.Gutter.ImplementedMethod)
                 .setTargets(mappers.stream().map(Mapper::getXmlTag).collect(Collectors.toList()));
         result.add(interfaceIconBuilder.createLineMarkerInfo(psiClass.getNameIdentifier()));
