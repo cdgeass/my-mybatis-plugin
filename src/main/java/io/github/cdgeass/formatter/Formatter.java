@@ -8,6 +8,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.regex.Pattern;
 
 /**
@@ -20,7 +21,7 @@ public class Formatter {
 
     private static final String NULL = "null";
     private static final Pattern SET_PARAM_REGEX = Pattern.compile("(?<=[=(,]\\s)\\?|\\?(?:\\s+[=><])");
-    private static final Pattern GET_PARAM_TYPE_PATTERN = Pattern.compile("(\\b.*)\\((\\S+)\\)");
+    private static final Pattern GET_PARAM_TYPE_PATTERN = Pattern.compile("(\\b.*)?\\((\\S+)\\)");
 
     protected static String format(String preparing, List<String> parameters) {
         if (StringUtils.isBlank(preparing) && CollectionUtils.isEmpty(parameters)) {
@@ -42,7 +43,7 @@ public class Formatter {
             }
             var matcher = GET_PARAM_TYPE_PATTERN.matcher(parameterWithType);
             if (matcher.find()) {
-                var parameter = matcher.group(1);
+                var parameter = Optional.ofNullable(matcher.group(1)).orElse("");
                 var parameterType = matcher.group(2);
 
                 switch (parameterType) {
