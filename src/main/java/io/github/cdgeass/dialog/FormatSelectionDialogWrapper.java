@@ -6,8 +6,6 @@ import io.github.cdgeass.formatter.WithParamFormatter;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.util.Arrays;
-import java.util.Map;
 
 /**
  * @author cdgeass
@@ -34,7 +32,7 @@ public class FormatSelectionDialogWrapper extends DialogWrapper {
         }
 
         if (WithParamFormatter.canFormatter(selectedText)) {
-            return new FormatSelectionWithParamDialog(WithParamFormatter.format(selectedText)).getContentPanel();
+            return new FormatSelectionWithParamDialog(WithParamFormatter.format(selectedText), selectionModel.getEditor().getProject()).getContentPanel();
         }
 
         return null;

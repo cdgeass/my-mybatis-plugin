@@ -19,7 +19,7 @@
         </properties>
         <border type="none"/>
         <children>
-          <component id="6705d" class="javax.swing.JTextArea" binding="formattedSqlTextArea">
+          <component id="3934c" class="com.intellij.ui.EditorTextField" binding="formattedSqlTextField" custom-create="true" default-binding="true">
             <constraints/>
             <properties/>
           </component>
