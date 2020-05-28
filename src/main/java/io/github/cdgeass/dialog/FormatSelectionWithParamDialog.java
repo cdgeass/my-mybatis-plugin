@@ -1,10 +1,9 @@
 package io.github.cdgeass.dialog;
 
-import com.intellij.ide.highlighter.JavaFileType;
+import com.intellij.codeInsight.highlighting.HighlightManager;
 import com.intellij.openapi.editor.ex.EditorEx;
+import com.intellij.openapi.fileTypes.PlainTextFileType;
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.JavaCodeFragmentFactory;
-import com.intellij.psi.PsiDocumentManager;
 import com.intellij.ui.EditorTextField;
 
 import javax.swing.*;
@@ -32,10 +31,7 @@ public class FormatSelectionWithParamDialog {
     }
 
     private void createUIComponents() {
-        var expressionCodeFragment = JavaCodeFragmentFactory.getInstance(project)
-                .createExpressionCodeFragment(formattedSql, null, null, true);
-        var document = PsiDocumentManager.getInstance(project).getDocument(expressionCodeFragment);
-        formattedSqlTextField = new EditorTextField(document, project, JavaFileType.INSTANCE) {
+        formattedSqlTextField = new EditorTextField(formattedSql, project, PlainTextFileType.INSTANCE) {
             @Override
             protected EditorEx createEditor() {
                 var editor = super.createEditor();
@@ -44,5 +40,7 @@ public class FormatSelectionWithParamDialog {
                 return editor;
             }
         };
+
+        var highlightManager = HighlightManager.getInstance(project);
     }
 }

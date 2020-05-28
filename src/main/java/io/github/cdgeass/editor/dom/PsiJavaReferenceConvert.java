@@ -1,9 +1,9 @@
 package io.github.cdgeass.editor.dom;
 
-import com.alibaba.druid.util.StringUtils;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.util.xml.*;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
