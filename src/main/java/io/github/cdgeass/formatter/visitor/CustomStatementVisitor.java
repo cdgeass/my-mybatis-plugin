@@ -1,4 +1,4 @@
-package io.github.cdgeass.formatter;
+package io.github.cdgeass.formatter.visitor;
 
 import net.sf.jsqlparser.statement.*;
 import net.sf.jsqlparser.statement.alter.Alter;
@@ -25,10 +25,10 @@ import net.sf.jsqlparser.statement.values.ValuesStatement;
  */
 public class CustomStatementVisitor implements StatementVisitor {
 
-    private final StringBuilder sqlStringBuilder = new StringBuilder();
+    private final StringBuilder sqlStringBuilder;
 
     public CustomStatementVisitor() {
-
+        sqlStringBuilder = new StringBuilder();
     }
 
     public String getSql() {
@@ -127,7 +127,22 @@ public class CustomStatementVisitor implements StatementVisitor {
 
     @Override
     public void visit(Select select) {
-        select.getSelectBody();
+        var withItemsList = select.getWithItemsList();
+        if (withItemsList != null && !withItemsList.isEmpty()) {
+            sqlStringBuilder.append("WITH ");
+            for (var iterator = withItemsList.iterator(); iterator.hasNext(); ) {
+                var withItem = iterator.next();
+                sqlStringBuilder.append(withItem);
+                if (iterator.hasNext()) {
+                    sqlStringBuilder.append(",");
+                }
+                sqlStringBuilder.append("\n");
+            }
+        }
+        var selectBody = select.getSelectBody();
+        var customSelectVisitor = new CustomSelectVisitor();
+        selectBody.accept(customSelectVisitor);
+        sqlStringBuilder.append(customSelectVisitor.getSql());
     }
 
     @Override

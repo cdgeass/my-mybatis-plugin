@@ -2,6 +2,7 @@ package io.github.cdgeass.formatter;
 
 import com.google.common.collect.Lists;
 import com.intellij.openapi.diagnostic.Logger;
+import io.github.cdgeass.formatter.visitor.CustomStatementVisitor;
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
 import net.sf.jsqlparser.statement.Statement;
@@ -21,7 +22,6 @@ public class Formatter {
     private static final Logger log = Logger.getInstance(Formatter.class);
 
     private static final String NULL = "null";
-    private static final Pattern SET_PARAM_REGEX = Pattern.compile("(?<=[=(,]\\s)\\?|\\?(?:\\s+[=><])");
     private static final Pattern GET_PARAM_TYPE_PATTERN = Pattern.compile("(\\b.*)\\((\\S+)\\)");
 
     protected static String format(String preparing, List<String> parametersWithType) {
@@ -36,15 +36,15 @@ public class Formatter {
 
         var statementVisitor = new CustomStatementVisitor();
         try {
-            if (CollectionUtils.isEmpty(parametersWithType)) {
-                Statement statement = CCJSqlParserUtil.parse(preparing);
-                statement.accept(statementVisitor);
-            }
+            Statement statement = CCJSqlParserUtil.parse(preparing);
+            statement.accept(statementVisitor);
+            return statementVisitor.getSql();
         } catch (JSQLParserException e) {
+            log.error("sql parser error", e);
             e.printStackTrace();
         }
 
-        return statementVisitor.getSql();
+        return "";
     }
 
     private static List<String> parameters(List<String> parametersWithType) {

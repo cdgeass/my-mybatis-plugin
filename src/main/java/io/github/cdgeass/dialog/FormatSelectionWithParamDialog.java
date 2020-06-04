@@ -36,6 +36,7 @@ public class FormatSelectionWithParamDialog {
             protected EditorEx createEditor() {
                 var editor = super.createEditor();
                 editor.setVerticalScrollbarVisible(true);
+                editor.setVerticalScrollbarOrientation(EditorEx.VERTICAL_SCROLLBAR_RIGHT);
                 editor.setHorizontalScrollbarVisible(true);
                 return editor;
             }

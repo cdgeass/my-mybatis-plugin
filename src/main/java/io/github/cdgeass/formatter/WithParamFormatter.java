@@ -22,6 +22,7 @@ public class WithParamFormatter extends Formatter {
 
     private final static String LINE_SPLIT = "\n";
     private final static String SEMICOLON = ";";
+    private final static String EMPTY_LINE = "-- -----------------------------------";
 
     private final static Pattern GET_THREAD_NAME_PATTERN = Pattern.compile("\\[([a-zA-Z\\d-]+)]");
     private final static Pattern GET_METHOD_NAME_PATTERN = Pattern.compile("(([a-zA-Z]+\\.)+[a-zA-Z]+)");
@@ -79,14 +80,15 @@ public class WithParamFormatter extends Formatter {
             }
         }
 
-        List<String> sqlList = format(sqlMap);
-        StringBuilder stringBuilder = new StringBuilder();
-        for (int i = 0; i < sqlList.size(); i++) {
-            stringBuilder.append(sqlList.get(i)).append(SEMICOLON).append(LINE_SPLIT);
-            if (i != 0 || i != sqlList.size() - 1) {
-                stringBuilder.append("-- -----------------------------------").append(LINE_SPLIT);
+        var sqlList = format(sqlMap);
+        var stringBuilder = new StringBuilder();
+        for (var iterator = sqlList.iterator(); iterator.hasNext(); ) {
+            stringBuilder.append(StringUtils.substringBeforeLast(iterator.next().trim(), "\n"));
+            if (iterator.hasNext()) {
+                stringBuilder.append(SEMICOLON).append(LINE_SPLIT).append(EMPTY_LINE).append(LINE_SPLIT);
             }
         }
+
         return stringBuilder.toString();
     }
 
