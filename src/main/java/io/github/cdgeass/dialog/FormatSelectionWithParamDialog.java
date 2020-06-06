@@ -8,6 +8,8 @@ import com.intellij.ui.EditorTextField;
 
 import javax.swing.*;
 
+import static com.intellij.openapi.editor.ex.EditorEx.VERTICAL_SCROLLBAR_RIGHT;
+
 /**
  * @author cdgeass
  * @since 2020-04-15
@@ -18,7 +20,6 @@ public class FormatSelectionWithParamDialog {
     private final Project project;
 
     private JPanel centerPane;
-    private JScrollPane formattedSqlPane;
     private EditorTextField formattedSqlTextField;
 
     public FormatSelectionWithParamDialog(String formattedSql, Project project) {
@@ -36,7 +37,7 @@ public class FormatSelectionWithParamDialog {
             protected EditorEx createEditor() {
                 var editor = super.createEditor();
                 editor.setVerticalScrollbarVisible(true);
-                editor.setVerticalScrollbarOrientation(EditorEx.VERTICAL_SCROLLBAR_RIGHT);
+                editor.setVerticalScrollbarOrientation(VERTICAL_SCROLLBAR_RIGHT);
                 editor.setHorizontalScrollbarVisible(true);
                 return editor;
             }

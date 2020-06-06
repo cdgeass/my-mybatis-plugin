@@ -21,7 +21,7 @@ public class CustomFromItemSelectVisitor implements FromItemVisitor {
 
     @Override
     public void visit(Table tableName) {
-
+        sqlStringBuilder.append(tableName);
     }
 
     @Override
@@ -62,7 +62,19 @@ public class CustomFromItemSelectVisitor implements FromItemVisitor {
 
     @Override
     public void visit(SubJoin subjoin) {
+        sqlStringBuilder.append("(");
+        var left = subjoin.getLeft();
+        left.accept(this);
+        for (var join : subjoin.getJoinList()) {
+            if (join.isSimple()) {
+                sqlStringBuilder.append(", ");
+            }
+            sqlStringBuilder.append(VisitorUtil.join(join));
+        }
 
+        sqlStringBuilder.append(")").append((subjoin.getAlias() != null) ? (" " + subjoin.getAlias().toString()) : "")
+                .append((subjoin.getPivot() != null) ? " " + subjoin.getPivot() : "")
+                .append((subjoin.getUnPivot() != null) ? " " + subjoin.getUnPivot() : "");
     }
 
     @Override
@@ -82,6 +94,8 @@ public class CustomFromItemSelectVisitor implements FromItemVisitor {
 
     @Override
     public void visit(ParenthesisFromItem aThis) {
-
+        sqlStringBuilder.append("( ");
+        aThis.accept(this);
+        sqlStringBuilder.append(" )");
     }
 }

@@ -81,10 +81,9 @@ public class CustomSelectVisitor implements SelectVisitor {
             if (plainSelect.getJoins() != null) {
                 for (Join join : plainSelect.getJoins()) {
                     if (join.isSimple()) {
-                        sqlStringBuilder.append(", ").append(join).append("\n");
-                    } else {
-                        sqlStringBuilder.append(" ").append(join).append("\n");
+                        sqlStringBuilder.append(", ");
                     }
+                    sqlStringBuilder.append(VisitorUtil.join(join)).append("\n");
                 }
             }
 

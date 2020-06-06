@@ -8,23 +8,14 @@
     <properties/>
     <border type="none"/>
     <children>
-      <scrollpane id="de314" binding="formattedSqlPane">
+      <component id="3934c" class="com.intellij.ui.EditorTextField" binding="formattedSqlTextField" custom-create="true" default-binding="true">
         <constraints>
-          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false">
-            <minimum-size width="500" height="450"/>
+          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="0" indent="0" use-parent-layout="false">
+            <preferred-size width="500" height="500"/>
           </grid>
         </constraints>
-        <properties>
-          <enabled value="false"/>
-        </properties>
-        <border type="none"/>
-        <children>
-          <component id="3934c" class="com.intellij.ui.EditorTextField" binding="formattedSqlTextField" custom-create="true" default-binding="true">
-            <constraints/>
-            <properties/>
-          </component>
-        </children>
-      </scrollpane>
+        <properties/>
+      </component>
     </children>
   </grid>
 </form>
