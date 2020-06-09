@@ -4,9 +4,7 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.util.xml.DomManager;
-import io.github.cdgeass.dialog.FormatSelectionDialogWrapper;
+import io.github.cdgeass.dialog.FormatSelectionDialog;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -28,7 +26,7 @@ public class FormatSelectionAction extends AnAction {
             return;
         }
 
-        new FormatSelectionDialogWrapper(editor.getSelectionModel()).show();
+        new FormatSelectionDialog(editor.getSelectionModel()).show();
     }
 
     @Override

@@ -140,7 +140,7 @@ public class CustomStatementVisitor implements StatementVisitor {
             }
         }
         var selectBody = select.getSelectBody();
-        var customSelectVisitor = new CustomSelectVisitor();
+        var customSelectVisitor = new CustomSelectVisitor(0);
         selectBody.accept(customSelectVisitor);
         sqlStringBuilder.append(customSelectVisitor.getSql());
     }

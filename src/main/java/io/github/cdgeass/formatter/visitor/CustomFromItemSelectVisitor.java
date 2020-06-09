@@ -9,10 +9,19 @@ import net.sf.jsqlparser.statement.select.*;
  */
 public class CustomFromItemSelectVisitor implements FromItemVisitor {
 
+    private final int level;
+
+    private final String TAB_CHARACTER;
     private final StringBuilder sqlStringBuilder;
 
     public CustomFromItemSelectVisitor() {
+        this(0);
+    }
+
+    public CustomFromItemSelectVisitor(int level) {
         sqlStringBuilder = new StringBuilder();
+        TAB_CHARACTER = "\t".repeat(Math.max(0, level));
+        this.level = level;
     }
 
     public String getSql() {
@@ -27,7 +36,7 @@ public class CustomFromItemSelectVisitor implements FromItemVisitor {
     @Override
     public void visit(SubSelect subSelect) {
         if (subSelect.isUseBrackets()) {
-            sqlStringBuilder.append("(\n\t");
+            sqlStringBuilder.append("(\n").append(TAB_CHARACTER);
         }
         var withItemsList = subSelect.getWithItemsList();
         if (withItemsList != null && !withItemsList.isEmpty()) {
@@ -38,7 +47,7 @@ public class CustomFromItemSelectVisitor implements FromItemVisitor {
                 if (iterator.hasNext()) {
                     sqlStringBuilder.append(",");
                 }
-                sqlStringBuilder.append("\n");
+                sqlStringBuilder.append("\n").append(TAB_CHARACTER);
             }
         }
         var selectBody = subSelect.getSelectBody();
@@ -69,7 +78,7 @@ public class CustomFromItemSelectVisitor implements FromItemVisitor {
             if (join.isSimple()) {
                 sqlStringBuilder.append(", ");
             }
-            sqlStringBuilder.append(VisitorUtil.join(join));
+            sqlStringBuilder.append(VisitorUtil.join(join, level));
         }
 
         sqlStringBuilder.append(")").append((subjoin.getAlias() != null) ? (" " + subjoin.getAlias().toString()) : "")

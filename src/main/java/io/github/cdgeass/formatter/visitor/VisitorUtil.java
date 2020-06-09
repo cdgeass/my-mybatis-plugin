@@ -13,13 +13,14 @@ public class VisitorUtil {
 
     }
 
-    public static String join(Join join) {
+    public static String join(Join join, int level) {
+
         if (join.isSimple() && join.isOuter()) {
-            return "OUTER " + join.getRightItem();
+            return "\t".repeat(Math.max(0, level)) + "OUTER " + join.getRightItem();
         } else if (join.isSimple()) {
-            return "" + join.getRightItem();
+            return "\t".repeat(Math.max(0, level)) + join.getRightItem();
         } else {
-            String type = "";
+            String type = "\t".repeat(Math.max(0, level));
 
             if (join.isRight()) {
                 type += "RIGHT ";
@@ -50,7 +51,7 @@ public class VisitorUtil {
             }
 
             var rightItem = join.getRightItem();
-            var customFromItemSelectVisitor = new CustomFromItemSelectVisitor();
+            var customFromItemSelectVisitor = new CustomFromItemSelectVisitor(level + 1);
             rightItem.accept(customFromItemSelectVisitor);
             return type + customFromItemSelectVisitor.getSql() + ((join.getJoinWindow() != null) ? " WITHIN " + join.getJoinWindow() : "")
                     + ((join.getOnExpression() != null) ? " ON " + join.getOnExpression() + "" : "")

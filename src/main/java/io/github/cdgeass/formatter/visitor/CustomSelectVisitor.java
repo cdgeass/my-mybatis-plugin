@@ -12,20 +12,29 @@ import java.util.Iterator;
  */
 public class CustomSelectVisitor implements SelectVisitor {
 
+    private final int level;
+    private final String TAB_CHARACTER;
     private final StringBuilder sqlStringBuilder;
 
     public CustomSelectVisitor() {
+        this(0);
+    }
+
+    public CustomSelectVisitor(int level) {
         sqlStringBuilder = new StringBuilder();
+        TAB_CHARACTER = "\t".repeat(Math.max(0, level));
+        this.level = level;
     }
 
     public String getSql() {
         return sqlStringBuilder.toString();
     }
 
+    @SuppressWarnings("AlibabaMethodTooLong")
     @Override
     public void visit(PlainSelect plainSelect) {
         if (plainSelect.isUseBrackets()) {
-            sqlStringBuilder.append("(\n\t");
+            sqlStringBuilder.append("(\n").append(TAB_CHARACTER);
         }
         sqlStringBuilder.append("SELECT ");
 
@@ -57,7 +66,7 @@ public class CustomSelectVisitor implements SelectVisitor {
         if (selectItems != null) {
             for (var iterator = selectItems.iterator(); iterator.hasNext(); ) {
                 var selectItem = iterator.next();
-                sqlStringBuilder.append(selectItem).append("\n");
+                sqlStringBuilder.append(selectItem).append("\n").append(TAB_CHARACTER);
                 if (iterator.hasNext()) {
                     sqlStringBuilder.append("\t,");
                 }
@@ -75,15 +84,15 @@ public class CustomSelectVisitor implements SelectVisitor {
         }
 
         if (plainSelect.getFromItem() != null) {
-            var customFromItemSelectVisitor = new CustomFromItemSelectVisitor();
+            var customFromItemSelectVisitor = new CustomFromItemSelectVisitor(level + 1);
             plainSelect.getFromItem().accept(customFromItemSelectVisitor);
-            sqlStringBuilder.append("FROM ").append(customFromItemSelectVisitor.getSql()).append("\n");
+            sqlStringBuilder.append("FROM ").append(customFromItemSelectVisitor.getSql()).append("\n").append(TAB_CHARACTER);
             if (plainSelect.getJoins() != null) {
                 for (Join join : plainSelect.getJoins()) {
                     if (join.isSimple()) {
                         sqlStringBuilder.append(", ");
                     }
-                    sqlStringBuilder.append(VisitorUtil.join(join)).append("\n");
+                    sqlStringBuilder.append(VisitorUtil.join(join, level)).append("\n").append(TAB_CHARACTER);
                 }
             }
 
@@ -91,16 +100,16 @@ public class CustomSelectVisitor implements SelectVisitor {
                 sqlStringBuilder.append(" WINDOW ").append(plainSelect.getKsqlWindow().toString());
             }
             if (plainSelect.getWhere() != null) {
-                sqlStringBuilder.append("WHERE ").append(plainSelect.getWhere()).append("\n");
+                sqlStringBuilder.append("WHERE ").append(plainSelect.getWhere()).append("\n").append(TAB_CHARACTER);
             }
             if (plainSelect.getOracleHierarchical() != null) {
                 sqlStringBuilder.append(plainSelect.getOracleHierarchical().toString());
             }
             if (plainSelect.getGroupBy() != null) {
-                sqlStringBuilder.append(plainSelect.getGroupBy().toString()).append("\n");
+                sqlStringBuilder.append(plainSelect.getGroupBy().toString()).append("\n").append(TAB_CHARACTER);
             }
             if (plainSelect.getHaving() != null) {
-                sqlStringBuilder.append("HAVING ").append(plainSelect.getHaving()).append("\n");
+                sqlStringBuilder.append("HAVING ").append(plainSelect.getHaving()).append("\n").append(TAB_CHARACTER);
             }
             sqlStringBuilder.append(PlainSelect.getFormatedList(plainSelect.getOrderByElements(), "ORDER BY"));
             if (plainSelect.getLimit() != null) {
@@ -113,7 +122,7 @@ public class CustomSelectVisitor implements SelectVisitor {
                 sqlStringBuilder.append(plainSelect.getFetch());
             }
             if (plainSelect.isForUpdate()) {
-                sqlStringBuilder.append("\nFOR UPDATE");
+                sqlStringBuilder.append("\n").append(TAB_CHARACTER).append("FOR UPDATE");
 
                 if (plainSelect.getForUpdateTable() != null) {
                     sqlStringBuilder.append(" OF ").append(plainSelect.getForUpdateTable());
@@ -123,19 +132,19 @@ public class CustomSelectVisitor implements SelectVisitor {
                     // Wait's toString will do the formatting for us
                     sqlStringBuilder.append(plainSelect.getWait());
                 }
-                sqlStringBuilder.append("\n");
+                sqlStringBuilder.append("\n").append(TAB_CHARACTER);
             }
             if (plainSelect.getOptimizeFor() != null) {
-                sqlStringBuilder.append(plainSelect.getOptimizeFor()).append("\n");
+                sqlStringBuilder.append(plainSelect.getOptimizeFor()).append("\n").append(TAB_CHARACTER);
             }
         } else {
             //without from
             if (plainSelect.getWhere() != null) {
-                sqlStringBuilder.append("WHERE ").append(plainSelect.getWhere()).append("\n");
+                sqlStringBuilder.append("WHERE ").append(plainSelect.getWhere()).append("\n").append(TAB_CHARACTER);
             }
         }
         if (plainSelect.getForXmlPath() != null) {
-            sqlStringBuilder.append("FOR XML PATH(").append(plainSelect.getForXmlPath()).append(")").append("\n");
+            sqlStringBuilder.append("FOR XML PATH(").append(plainSelect.getForXmlPath()).append(")").append("\n").append(TAB_CHARACTER);
         }
         if (plainSelect.isUseBrackets()) {
             sqlStringBuilder.append(")");
