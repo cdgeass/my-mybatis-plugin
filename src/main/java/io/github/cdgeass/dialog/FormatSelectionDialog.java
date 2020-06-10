@@ -56,8 +56,8 @@ public class FormatSelectionDialog extends DialogWrapper {
         var editorColorsManager = EditorColorsManager.getInstance();
         var font = editorColorsManager.getGlobalScheme().getFont(EditorFontType.PLAIN);
         sqlEditorTextField.setFont(font);
-
         sqlEditorTextField.setPreferredSize(new Dimension(500, 450));
+        sqlEditorTextField.setCaretPosition(0);
         return sqlEditorTextField;
     }
 

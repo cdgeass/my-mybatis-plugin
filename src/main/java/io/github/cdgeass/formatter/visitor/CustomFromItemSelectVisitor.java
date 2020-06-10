@@ -51,7 +51,7 @@ public class CustomFromItemSelectVisitor implements FromItemVisitor {
             }
         }
         var selectBody = subSelect.getSelectBody();
-        var customSelectVisitor = new CustomSelectVisitor();
+        var customSelectVisitor = new CustomSelectVisitor(level);
         selectBody.accept(customSelectVisitor);
         sqlStringBuilder.append(customSelectVisitor.getSql());
         if (subSelect.isUseBrackets()) {
