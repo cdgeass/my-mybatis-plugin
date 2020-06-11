@@ -2,10 +2,10 @@ package io.github.cdgeass.dialog;
 
 import com.intellij.codeInsight.highlighting.HighlightManager;
 import com.intellij.openapi.editor.SelectionModel;
-import com.intellij.openapi.editor.colors.EditorColors;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.EditorFontType;
 import com.intellij.openapi.editor.ex.EditorEx;
+import com.intellij.openapi.editor.markup.TextAttributes;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.ui.EditorTextField;
 import com.intellij.ui.JBColor;
@@ -67,8 +67,9 @@ public class FormatSelectionDialog extends DialogWrapper {
 
         var project = selectionModel.getEditor().getProject();
         if (project != null) {
-            var textAttributes1 = editorColorsManager.getSchemeForCurrentUITheme().getAttributes(EditorColors.DELETED_TEXT_ATTRIBUTES);
-            var textAttributes2 = editorColorsManager.getSchemeForCurrentUITheme().getAttributes(EditorColors.SEARCH_RESULT_ATTRIBUTES);
+            var textAttributes1 = new TextAttributes();
+            textAttributes1.setForegroundColor(JBColor.LIGHT_GRAY);
+            var textAttributes2 = new TextAttributes();
 
             var highlightManager = HighlightManager.getInstance(project);
             sqlEditorTextField.addSettingsProvider(editor -> {
@@ -77,21 +78,20 @@ public class FormatSelectionDialog extends DialogWrapper {
                 var emptyLineCount = StringUtils.countMatches(text, StringConstants.EMPTY_LINE);
 
                 var startOffset = 0;
-                for (var i = 1; i <= emptyLineCount; i++) {
+                var i = 0;
+                for (i = 1; i <= emptyLineCount; i++) {
                     var indexOf = StringUtils.ordinalIndexOf(text, StringConstants.EMPTY_LINE, i);
                     highlightManager.addRangeHighlight(editor, indexOf, indexOf + StringConstants.EMPTY_LINE.length() + 1,
                             textAttributes1, false, null);
 
                     var textAttributes2Copy = textAttributes2.clone();
-                    textAttributes2Copy.setBackgroundColor(i % 2 == 0 ? JBColor.PINK : JBColor.ORANGE);
+                    textAttributes2Copy.setForegroundColor(i % 2 == 0 ? JBColor.PINK : JBColor.ORANGE);
                     highlightManager.addRangeHighlight(editor, startOffset, indexOf, textAttributes2Copy, false, null);
                     startOffset = indexOf + StringConstants.EMPTY_LINE.length() + 1;
-                    if (i == emptyLineCount) {
-                        var lastTextAttributes2Copy = textAttributes2.clone();
-                        lastTextAttributes2Copy.setBackgroundColor((i + 1) % 2 == 0 ? JBColor.PINK : JBColor.ORANGE);
-                        highlightManager.addRangeHighlight(editor, startOffset, text.length(), lastTextAttributes2Copy, false, null);
-                    }
                 }
+                var lastTextAttributes2Copy = textAttributes2.clone();
+                lastTextAttributes2Copy.setForegroundColor((i) % 2 == 0 ? JBColor.PINK : JBColor.ORANGE);
+                highlightManager.addRangeHighlight(editor, startOffset, text.length(), lastTextAttributes2Copy, false, null);
             });
         }
         return sqlEditorTextField;

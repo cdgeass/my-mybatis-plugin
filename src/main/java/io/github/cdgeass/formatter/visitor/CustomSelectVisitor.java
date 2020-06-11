@@ -30,7 +30,6 @@ public class CustomSelectVisitor implements SelectVisitor {
         return sqlStringBuilder.toString();
     }
 
-    @SuppressWarnings("AlibabaMethodTooLong")
     @Override
     public void visit(PlainSelect plainSelect) {
         if (plainSelect.isUseBrackets()) {
@@ -147,7 +146,7 @@ public class CustomSelectVisitor implements SelectVisitor {
             sqlStringBuilder.append("FOR XML PATH(").append(plainSelect.getForXmlPath()).append(")").append("\n").append(TAB_CHARACTER);
         }
         if (plainSelect.isUseBrackets()) {
-            sqlStringBuilder.append(")");
+            sqlStringBuilder.replace(sqlStringBuilder.lastIndexOf(TAB_CHARACTER), sqlStringBuilder.lastIndexOf(TAB_CHARACTER) + TAB_CHARACTER.length(), ")");
         }
     }
 

@@ -2,6 +2,7 @@ package io.github.cdgeass.formatter.visitor;
 
 import net.sf.jsqlparser.statement.select.Join;
 import net.sf.jsqlparser.statement.select.PlainSelect;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * @author cdgeass
@@ -14,7 +15,6 @@ public class VisitorUtil {
     }
 
     public static String join(Join join, int level) {
-
         if (join.isSimple() && join.isOuter()) {
             return "\t".repeat(Math.max(0, level)) + "OUTER " + join.getRightItem();
         } else if (join.isSimple()) {
@@ -53,7 +53,7 @@ public class VisitorUtil {
             var rightItem = join.getRightItem();
             var customFromItemSelectVisitor = new CustomFromItemSelectVisitor(level + 1);
             rightItem.accept(customFromItemSelectVisitor);
-            return type + customFromItemSelectVisitor.getSql() + ((join.getJoinWindow() != null) ? " WITHIN " + join.getJoinWindow() : "")
+            return type + StringUtils.removeEnd(customFromItemSelectVisitor.getSql(), "\t".repeat(level + 1)) + ((join.getJoinWindow() != null) ? " WITHIN " + join.getJoinWindow() : "")
                     + ((join.getOnExpression() != null) ? " ON " + join.getOnExpression() + "" : "")
                     + PlainSelect.getFormatedList(join.getUsingColumns(), "USING", true, true);
         }

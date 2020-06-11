@@ -1,5 +1,6 @@
 package io.github.cdgeass.formatter.visitor;
 
+import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.*;
 import net.sf.jsqlparser.statement.alter.Alter;
 import net.sf.jsqlparser.statement.comment.Comment;
@@ -13,11 +14,14 @@ import net.sf.jsqlparser.statement.execute.Execute;
 import net.sf.jsqlparser.statement.insert.Insert;
 import net.sf.jsqlparser.statement.merge.Merge;
 import net.sf.jsqlparser.statement.replace.Replace;
+import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.Select;
 import net.sf.jsqlparser.statement.truncate.Truncate;
 import net.sf.jsqlparser.statement.update.Update;
 import net.sf.jsqlparser.statement.upsert.Upsert;
 import net.sf.jsqlparser.statement.values.ValuesStatement;
+
+import static java.util.stream.Collectors.joining;
 
 /**
  * @author cdgeass
@@ -37,22 +41,121 @@ public class CustomStatementVisitor implements StatementVisitor {
 
     @Override
     public void visit(Comment comment) {
-
+        sqlStringBuilder.append(comment);
     }
 
     @Override
     public void visit(Commit commit) {
-
+        sqlStringBuilder.append(commit);
     }
 
     @Override
     public void visit(Delete delete) {
+        sqlStringBuilder.append("DELETE");
 
+        if (delete.getTables() != null && delete.getTables().size() > 0) {
+            sqlStringBuilder.append(" ");
+            sqlStringBuilder.append(delete.getTables().stream()
+                    .map(Table::toString)
+                    .collect(joining(", ")));
+        }
+
+        sqlStringBuilder.append(" FROM ");
+        sqlStringBuilder.append(delete.getTable());
+
+        if (delete.getJoins() != null) {
+            for (var join : delete.getJoins()) {
+                if (join.isSimple()) {
+                    sqlStringBuilder.append(", ").append(VisitorUtil.join(join, 0));
+                } else {
+                    sqlStringBuilder.append(" ").append(VisitorUtil.join(join, 0));
+                }
+            }
+        }
+
+        if (delete.getWhere() != null) {
+            sqlStringBuilder.append("\nWHERE ").append(delete.getWhere());
+        }
+
+        if (delete.getOrderByElements() != null) {
+            sqlStringBuilder.append("\n").append(PlainSelect.orderByToString(delete.getOrderByElements()));
+        }
+
+        if (delete.getLimit() != null) {
+            sqlStringBuilder.append("\n").append(delete.getLimit());
+        }
     }
 
     @Override
     public void visit(Update update) {
+        sqlStringBuilder.append("UPDATE ");
+        sqlStringBuilder.append(update.getTable());
+        if (update.getStartJoins() != null) {
+            for (var join : update.getStartJoins()) {
+                if (join.isSimple()) {
+                    sqlStringBuilder.append(", ").append(VisitorUtil.join(join, 0));
+                } else {
+                    sqlStringBuilder.append(" ").append(VisitorUtil.join(join, 0));
+                }
+            }
+        }
+        sqlStringBuilder.append("\nSET ");
 
+        if (!update.isUseSelect()) {
+            for (var i = 0; i < update.getColumns().size(); i++) {
+                if (i != 0) {
+                    sqlStringBuilder.append(", ");
+                }
+                sqlStringBuilder.append(update.getColumns().get(i)).append(" = ");
+                sqlStringBuilder.append(update.getExpressions().get(i));
+            }
+        } else {
+            if (update.isUseColumnsBrackets()) {
+                sqlStringBuilder.append("(");
+            }
+            for (var i = 0; i < update.getColumns().size(); i++) {
+                if (i != 0) {
+                    sqlStringBuilder.append(", ");
+                }
+                sqlStringBuilder.append(update.getColumns().get(i));
+            }
+            if (update.isUseColumnsBrackets()) {
+                sqlStringBuilder.append(")");
+            }
+            sqlStringBuilder.append(" = ");
+            sqlStringBuilder.append("(").append(update.getSelect()).append(")");
+        }
+
+        if (update.getFromItem() != null) {
+            sqlStringBuilder.append(" FROM ").append(update.getFromItem());
+            if (update.getJoins() != null) {
+                for (var join : update.getJoins()) {
+                    if (join.isSimple()) {
+                        sqlStringBuilder.append(", ").append(join);
+                    } else {
+                        sqlStringBuilder.append(" ").append(join);
+                    }
+                }
+            }
+        }
+
+        if (update.getWhere() != null) {
+            sqlStringBuilder.append(" WHERE ");
+            sqlStringBuilder.append(update.getWhere());
+        }
+        if (update.getOrderByElements() != null) {
+            sqlStringBuilder.append(PlainSelect.orderByToString(update.getOrderByElements()));
+        }
+        if (update.getLimit() != null) {
+            sqlStringBuilder.append(update.getLimit());
+        }
+
+        if (update.isReturningAllColumns()) {
+            sqlStringBuilder.append(" RETURNING *");
+        } else if (update.getReturningExpressionList() != null) {
+            sqlStringBuilder.append(" RETURNING ").append(PlainSelect.
+                    getStringList(update.getReturningExpressionList(), true, false));
+        }
     }
 
     @Override
@@ -140,7 +243,7 @@ public class CustomStatementVisitor implements StatementVisitor {
             }
         }
         var selectBody = select.getSelectBody();
-        var customSelectVisitor = new CustomSelectVisitor(0);
+        var customSelectVisitor = new CustomSelectVisitor();
         selectBody.accept(customSelectVisitor);
         sqlStringBuilder.append(customSelectVisitor.getSql());
     }

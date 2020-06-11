@@ -55,7 +55,7 @@ public class CustomFromItemSelectVisitor implements FromItemVisitor {
         selectBody.accept(customSelectVisitor);
         sqlStringBuilder.append(customSelectVisitor.getSql());
         if (subSelect.isUseBrackets()) {
-            sqlStringBuilder.append(")");
+            sqlStringBuilder.replace(sqlStringBuilder.lastIndexOf(TAB_CHARACTER), sqlStringBuilder.lastIndexOf(TAB_CHARACTER) + TAB_CHARACTER.length(), ")");
         }
 
         if (subSelect.getAlias() != null) {

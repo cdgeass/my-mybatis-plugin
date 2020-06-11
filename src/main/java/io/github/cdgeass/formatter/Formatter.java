@@ -38,7 +38,8 @@ public class Formatter {
         try {
             Statement statement = CCJSqlParserUtil.parse(preparing);
             statement.accept(statementVisitor);
-            return statementVisitor.getSql();
+            log.debug("sql: {}", statementVisitor.getSql());
+            return statement.toString();
         } catch (JSQLParserException e) {
             log.error("sql parser error", e);
             e.printStackTrace();
