@@ -11,6 +11,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import static io.github.cdgeass.constants.StringConstants.*;
+
 /**
  * @author cdgeass
  * @since 2020-04-15
@@ -19,10 +21,6 @@ public class WithParamFormatter extends Formatter {
 
     private final static String PREPARING_LABEL = "Preparing:";
     private final static String PARAMETERS_LABEL = "Parameters:";
-
-    private final static String LINE_SPLIT = "\n";
-    private final static String SEMICOLON = ";";
-    private final static String EMPTY_LINE = "-- -----------------------------------";
 
     private final static Pattern GET_THREAD_NAME_PATTERN = Pattern.compile("\\[([a-zA-Z\\d-]+)]");
     private final static Pattern GET_METHOD_NAME_PATTERN = Pattern.compile("(([a-zA-Z]+\\.)+[a-zA-Z]+)");
@@ -83,9 +81,9 @@ public class WithParamFormatter extends Formatter {
         var sqlList = format(sqlMap);
         var stringBuilder = new StringBuilder();
         for (var iterator = sqlList.iterator(); iterator.hasNext(); ) {
-            stringBuilder.append(StringUtils.substringBeforeLast(iterator.next().trim(), "\n"));
+            stringBuilder.append(StringUtils.substringBeforeLast(iterator.next().trim(), "\n")).append(SEMICOLON).append(LINE_SPLIT);
             if (iterator.hasNext()) {
-                stringBuilder.append(SEMICOLON).append(LINE_SPLIT).append(EMPTY_LINE).append(LINE_SPLIT);
+                stringBuilder.append(EMPTY_LINE).append(LINE_SPLIT);
             }
         }
 
