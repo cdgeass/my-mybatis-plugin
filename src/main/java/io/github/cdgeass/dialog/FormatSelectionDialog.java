@@ -75,19 +75,19 @@ public class FormatSelectionDialog extends DialogWrapper {
             sqlEditorTextField.addSettingsProvider(editor -> {
                 var document = editor.getDocument();
                 var text = document.getText();
-                var emptyLineCount = StringUtils.countMatches(text, StringConstants.EMPTY_LINE);
+                var emptyLineCount = StringUtils.countMatches(text, StringConstants.SEPARATOR_LINE);
 
                 var startOffset = 0;
                 var i = 0;
                 for (i = 1; i <= emptyLineCount; i++) {
-                    var indexOf = StringUtils.ordinalIndexOf(text, StringConstants.EMPTY_LINE, i);
-                    highlightManager.addRangeHighlight(editor, indexOf, indexOf + StringConstants.EMPTY_LINE.length() + 1,
+                    var indexOf = StringUtils.ordinalIndexOf(text, StringConstants.SEPARATOR_LINE, i);
+                    highlightManager.addRangeHighlight(editor, indexOf, indexOf + StringConstants.SEPARATOR_LINE.length() + 1,
                             textAttributes1, false, null);
 
                     var textAttributes2Copy = textAttributes2.clone();
                     textAttributes2Copy.setForegroundColor(i % 2 == 0 ? JBColor.PINK : JBColor.ORANGE);
                     highlightManager.addRangeHighlight(editor, startOffset, indexOf, textAttributes2Copy, false, null);
-                    startOffset = indexOf + StringConstants.EMPTY_LINE.length() + 1;
+                    startOffset = indexOf + StringConstants.SEPARATOR_LINE.length() + 1;
                 }
                 var lastTextAttributes2Copy = textAttributes2.clone();
                 lastTextAttributes2Copy.setForegroundColor((i) % 2 == 0 ? JBColor.PINK : JBColor.ORANGE);

@@ -27,225 +27,326 @@ import static java.util.stream.Collectors.joining;
  * @author cdgeass
  * @since 2020-05-28
  */
-public class CustomStatementVisitor implements StatementVisitor {
+public class CustomStatementVisitor extends AbstractCustomVisitor implements StatementVisitor {
 
-    private final StringBuilder sqlStringBuilder;
-
-    public CustomStatementVisitor() {
-        sqlStringBuilder = new StringBuilder();
-    }
-
-    public String getSql() {
-        return sqlStringBuilder.toString();
+    public CustomStatementVisitor(int level) {
+        super(level);
     }
 
     @Override
     public void visit(Comment comment) {
-        sqlStringBuilder.append(comment);
+        append(comment.toString());
     }
 
     @Override
     public void visit(Commit commit) {
-        sqlStringBuilder.append(commit);
+        append(commit.toString());
     }
 
     @Override
     public void visit(Delete delete) {
-        sqlStringBuilder.append("DELETE");
+        appendTab().append("DELETE");
 
         if (delete.getTables() != null && delete.getTables().size() > 0) {
-            sqlStringBuilder.append(" ");
-            sqlStringBuilder.append(delete.getTables().stream()
+            append(" ");
+            append(delete.getTables().stream()
                     .map(Table::toString)
                     .collect(joining(", ")));
         }
 
-        sqlStringBuilder.append(" FROM ");
-        sqlStringBuilder.append(delete.getTable());
+        append("\n").appendTab().append("FROM ");
+        append(delete.getTable().toString());
 
         if (delete.getJoins() != null) {
             for (var join : delete.getJoins()) {
                 if (join.isSimple()) {
-                    sqlStringBuilder.append(", ").append(VisitorUtil.join(join, 0));
+                    append(", ").append(VisitorUtil.join(join, currentLevel()));
                 } else {
-                    sqlStringBuilder.append(" ").append(VisitorUtil.join(join, 0));
+                    append("\n").appendTab().append(VisitorUtil.join(join, nextLevel()));
                 }
             }
         }
 
         if (delete.getWhere() != null) {
-            sqlStringBuilder.append("\nWHERE ").append(delete.getWhere());
+            append("\n").appendTab().append("WHERE ").append(delete.getWhere().toString());
         }
 
         if (delete.getOrderByElements() != null) {
-            sqlStringBuilder.append("\n").append(PlainSelect.orderByToString(delete.getOrderByElements()));
+            append("\n").appendTab().append(PlainSelect.orderByToString(delete.getOrderByElements()));
         }
 
         if (delete.getLimit() != null) {
-            sqlStringBuilder.append("\n").append(delete.getLimit());
+            append("\n").appendTab().append(delete.getLimit().toString());
         }
     }
 
     @Override
     public void visit(Update update) {
-        sqlStringBuilder.append("UPDATE ");
-        sqlStringBuilder.append(update.getTable());
+        appendTab().append("UPDATE ");
+        append(update.getTable().toString());
         if (update.getStartJoins() != null) {
             for (var join : update.getStartJoins()) {
                 if (join.isSimple()) {
-                    sqlStringBuilder.append(", ").append(VisitorUtil.join(join, 0));
+                    append(", ").append(VisitorUtil.join(join, currentLevel()));
                 } else {
-                    sqlStringBuilder.append(" ").append(VisitorUtil.join(join, 0));
+                    append("\n").appendTab().append(VisitorUtil.join(join, nextLevel()));
                 }
             }
         }
-        sqlStringBuilder.append("\nSET ");
+        append("\n").appendTab().append("SET ");
 
         if (!update.isUseSelect()) {
-            for (var i = 0; i < update.getColumns().size(); i++) {
+            for (int i = 0; i < update.getColumns().size(); i++) {
                 if (i != 0) {
-                    sqlStringBuilder.append(", ");
+                    append(", ");
                 }
-                sqlStringBuilder.append(update.getColumns().get(i)).append(" = ");
-                sqlStringBuilder.append(update.getExpressions().get(i));
+                append(update.getColumns().get(i).toString()).append(" = ")
+                        .append(update.getExpressions().get(i).toString());
             }
         } else {
             if (update.isUseColumnsBrackets()) {
-                sqlStringBuilder.append("(");
+                append("(").append("\n").appendTab();
             }
-            for (var i = 0; i < update.getColumns().size(); i++) {
+            for (int i = 0; i < update.getColumns().size(); i++) {
                 if (i != 0) {
-                    sqlStringBuilder.append(", ");
+                    append(", ");
                 }
-                sqlStringBuilder.append(update.getColumns().get(i));
+                append(update.getColumns().get(i).toString());
             }
             if (update.isUseColumnsBrackets()) {
-                sqlStringBuilder.append(")");
+                append("\n").appendTab().append(")");
             }
-            sqlStringBuilder.append(" = ");
-            sqlStringBuilder.append("(").append(update.getSelect()).append(")");
+            append(" = ");
+            var customStatementVisitor = new CustomStatementVisitor(nextLevel());
+            update.getSelect().accept(customStatementVisitor);
+            append("(\n").append(customStatementVisitor.toString()).append("\n").appendTab().append(")");
         }
 
         if (update.getFromItem() != null) {
-            sqlStringBuilder.append(" FROM ").append(update.getFromItem());
+            var customFromItemSelectVisitor = new CustomFromItemVisitor(currentLevel());
+            update.getFromItem().accept(customFromItemSelectVisitor);
+            append("\n").appendTab().append("FROM ").append(customFromItemSelectVisitor.toString());
             if (update.getJoins() != null) {
                 for (var join : update.getJoins()) {
                     if (join.isSimple()) {
-                        sqlStringBuilder.append(", ").append(join);
+                        append(", ").append(VisitorUtil.join(join, currentLevel()));
                     } else {
-                        sqlStringBuilder.append(" ").append(join);
+                        append("\n").appendTab().append(VisitorUtil.join(join, nextLevel()));
                     }
                 }
             }
         }
 
         if (update.getWhere() != null) {
-            sqlStringBuilder.append(" WHERE ");
-            sqlStringBuilder.append(update.getWhere());
+            append("WHERE ").append(update.getWhere().toString());
         }
         if (update.getOrderByElements() != null) {
-            sqlStringBuilder.append(PlainSelect.orderByToString(update.getOrderByElements()));
+            append("\n").appendTab().append(PlainSelect.orderByToString(update.getOrderByElements()));
         }
         if (update.getLimit() != null) {
-            sqlStringBuilder.append(update.getLimit());
+            append("\n").appendTab().append(update.getLimit().toString());
         }
 
         if (update.isReturningAllColumns()) {
-            sqlStringBuilder.append(" RETURNING *");
+            append("\n").appendTab().append("RETURNING *");
         } else if (update.getReturningExpressionList() != null) {
-            sqlStringBuilder.append(" RETURNING ").append(PlainSelect.
+            append("\n").appendTab().append("RETURNING ").append(PlainSelect.
                     getStringList(update.getReturningExpressionList(), true, false));
         }
     }
 
     @Override
     public void visit(Insert insert) {
+        appendTab().append("INSERT ");
 
+        if (insert.getModifierPriority() != null) {
+            append(insert.getModifierPriority().name()).append(" ");
+        }
+        if (insert.isModifierIgnore()) {
+            append("IGNORE ");
+        }
+        append("INTO ");
+        append(insert.getTable().toString()).append(" ");
+        if (insert.getColumns() != null) {
+            append(PlainSelect.getStringList(insert.getColumns(), true, true)).append(" ");
+        }
+
+        if (insert.isUseValues()) {
+            append("\n").appendTab().append("VALUES ");
+        }
+
+        if (insert.getItemsList() != null) {
+            append("\n").appendTab().append(insert.getItemsList().toString());
+        } else {
+            if (insert.isUseSelectBrackets()) {
+                append("(\n");
+            }
+            if (insert.getSelect() != null) {
+                var customStatementVisitor = new CustomStatementVisitor(nextLevel());
+                insert.getSelect().accept(customStatementVisitor);
+                append(customStatementVisitor.toString());
+            }
+            if (insert.isUseSelectBrackets()) {
+                append("\n").appendTab().append(")");
+            }
+        }
+
+        if (insert.isUseSet()) {
+            append("\n").appendTab().append("SET ");
+            for (int i = 0; i < insert.getColumns().size(); i++) {
+                if (i != 0) {
+                    append(", ");
+                }
+                append(insert.getSetColumns().get(i).toString()).append(" = ");
+                append(insert.getSetExpressionList().get(i).toString());
+            }
+        }
+
+        if (insert.isUseDuplicate()) {
+            append("\n").appendTab().append("ON DUPLICATE KEY UPDATE ");
+            for (int i = 0; i < insert.getDuplicateUpdateColumns().size(); i++) {
+                if (i != 0) {
+                    append(", ");
+                }
+                append(insert.getDuplicateUpdateColumns().get(i).toString()).append(" = ");
+                append(insert.getDuplicateUpdateExpressionList().get(i).toString());
+            }
+        }
+
+        if (insert.isReturningAllColumns()) {
+            append("\n").appendTab().append("RETURNING *");
+        } else if (insert.getReturningExpressionList() != null) {
+            append("\n").appendTab().append("RETURNING ").append(PlainSelect.
+                    getStringList(insert.getReturningExpressionList(), true, false));
+        }
     }
 
     @Override
     public void visit(Replace replace) {
+        appendTab().append("REPLACE ");
+        if (replace.isUseIntoTables()) {
+            append("INTO ");
+        }
+        append(replace.getTable().toString());
 
+        if (replace.getExpressions() != null && replace.getColumns() != null) {
+            append("\n").appendTab().append("SET ");
+            for (int i = 0, s = replace.getColumns().size(); i < s; i++) {
+                append(replace.getColumns().get(i).toString()).append(" = ").append(replace.getExpressions().get(i).toString());
+                append((i < s - 1) ? ", " : "");
+            }
+        } else if (replace.getColumns() != null) {
+            append(" ").append(PlainSelect.getStringList(replace.getColumns(), true, true));
+        }
+
+        if (replace.getItemsList() != null) {
+
+            if (replace.isUseValues()) {
+                append("\n").appendTab().append("VALUES");
+            }
+
+            append("\n").appendTab().append(replace.getItemsList().toString());
+        }
     }
 
     @Override
     public void visit(Drop drop) {
-
+        appendTab().append(drop.toString());
     }
 
     @Override
     public void visit(Truncate truncate) {
-
+        appendTab().append(truncate.toString());
     }
 
     @Override
     public void visit(CreateIndex createIndex) {
-
+        appendTab().append(createIndex.toString());
     }
 
     @Override
     public void visit(CreateTable createTable) {
-
+        appendTab().append(createTable.toString());
     }
 
     @Override
     public void visit(CreateView createView) {
-
+        appendTab().append(createView.toString());
     }
 
     @Override
     public void visit(AlterView alterView) {
-
+        appendTab().append(alterView.toString());
     }
 
     @Override
     public void visit(Alter alter) {
-
+        appendTab().append(alter.toString());
     }
 
     @Override
     public void visit(Statements stmts) {
-
+        for (var statement : stmts.getStatements()) {
+            statement.accept(this);
+            append("\n");
+        }
     }
 
     @Override
     public void visit(Execute execute) {
-
+        appendTab().append(execute.toString());
     }
 
     @Override
     public void visit(SetStatement set) {
-
+        appendTab().append(set.toString());
     }
 
     @Override
     public void visit(ShowColumnsStatement set) {
-
+        appendTab().append(set.toString());
     }
 
     @Override
     public void visit(Merge merge) {
+        appendTab().append("MERGE INTO ");
+        append(merge.getTable().toString());
+        append(" USING ");
+        if (merge.getUsingTable() != null) {
+            append(merge.getUsingTable().toString());
+        } else if (merge.getUsingSelect() != null) {
+            var customFromItemVisitor = new CustomFromItemVisitor(nextLevel());
+            merge.getUsingSelect().accept(customFromItemVisitor);
+            append("(").append("\n").append(customFromItemVisitor.toString()).append("\n").appendTab().append(")");
+        }
 
+        if (merge.getUsingAlias() != null) {
+            append(merge.getUsingAlias().toString());
+        }
+        append("\n").appendTab().append("ON (");
+        append("\n").appendTab().append(merge.getOnCondition().toString());
+        append("\n").appendTab().append(")");
+
+        if (merge.isInsertFirst()) {
+            if (merge.getMergeInsert() != null) {
+                append("\n").appendTab().append(merge.getMergeInsert().toString());
+            }
+        }
+
+        if (merge.getMergeUpdate() != null) {
+            append("\n").appendTab().append(merge.getMergeUpdate().toString());
+        }
+
+        if (!merge.isInsertFirst()) {
+            if (merge.getMergeInsert() != null) {
+                append("\n").appendTab().append(merge.getMergeInsert().toString());
+            }
+        }
     }
 
     @Override
     public void visit(Select select) {
-        var withItemsList = select.getWithItemsList();
-        if (withItemsList != null && !withItemsList.isEmpty()) {
-            sqlStringBuilder.append("WITH ");
-            for (var iterator = withItemsList.iterator(); iterator.hasNext(); ) {
-                var withItem = iterator.next();
-                sqlStringBuilder.append(withItem);
-                if (iterator.hasNext()) {
-                    sqlStringBuilder.append(",");
-                }
-                sqlStringBuilder.append("\n");
-            }
-        }
-        var selectBody = select.getSelectBody();
-        var customSelectVisitor = new CustomSelectVisitor();
-        selectBody.accept(customSelectVisitor);
-        sqlStringBuilder.append(customSelectVisitor.getSql());
+
     }
 
     @Override

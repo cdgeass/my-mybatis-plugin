@@ -34,12 +34,12 @@ public class Formatter {
             preparing = RegExUtils.replaceFirst(preparing, "\\?", parameterString);
         }
 
-        var statementVisitor = new CustomStatementVisitor();
+        var statementVisitor = new CustomStatementVisitor(0);
         try {
             Statement statement = CCJSqlParserUtil.parse(preparing);
             statement.accept(statementVisitor);
-            log.debug("sql: {}", statementVisitor.getSql());
-            return statement.toString();
+            log.debug("sql: {}", statementVisitor);
+            return statementVisitor.toString();
         } catch (JSQLParserException e) {
             log.error("sql parser error", e);
             e.printStackTrace();

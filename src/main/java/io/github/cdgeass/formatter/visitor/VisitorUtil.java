@@ -1,8 +1,8 @@
 package io.github.cdgeass.formatter.visitor;
 
+import io.github.cdgeass.constants.StringConstants;
 import net.sf.jsqlparser.statement.select.Join;
 import net.sf.jsqlparser.statement.select.PlainSelect;
-import org.apache.commons.lang.StringUtils;
 
 /**
  * @author cdgeass
@@ -15,12 +15,18 @@ public class VisitorUtil {
     }
 
     public static String join(Join join, int level) {
+        String tabCharacter = StringConstants.TAB_CHARACTER.repeat(Math.max(0, level));
+
+        var customFromItemSelectVisitor = new CustomFromItemVisitor();
+
         if (join.isSimple() && join.isOuter()) {
-            return "\t".repeat(Math.max(0, level)) + "OUTER " + join.getRightItem();
+            join.getRightItem().accept(customFromItemSelectVisitor);
+            return tabCharacter + "OUTER " + customFromItemSelectVisitor;
         } else if (join.isSimple()) {
-            return "\t".repeat(Math.max(0, level)) + join.getRightItem();
+            join.getRightItem().accept(customFromItemSelectVisitor);
+            return tabCharacter + customFromItemSelectVisitor;
         } else {
-            String type = "\t".repeat(Math.max(0, level));
+            String type = tabCharacter;
 
             if (join.isRight()) {
                 type += "RIGHT ";
@@ -50,12 +56,19 @@ public class VisitorUtil {
                 type += "JOIN ";
             }
 
-            var rightItem = join.getRightItem();
-            var customFromItemSelectVisitor = new CustomFromItemSelectVisitor(level + 1);
-            rightItem.accept(customFromItemSelectVisitor);
-            return type + StringUtils.removeEnd(customFromItemSelectVisitor.getSql(), "\t".repeat(level + 1)) + ((join.getJoinWindow() != null) ? " WITHIN " + join.getJoinWindow() : "")
-                    + ((join.getOnExpression() != null) ? " ON " + join.getOnExpression() + "" : "")
-                    + PlainSelect.getFormatedList(join.getUsingColumns(), "USING", true, true);
+            join.getRightItem().accept(customFromItemSelectVisitor);
+            type += customFromItemSelectVisitor;
+
+            if (join.getJoinWindow() != null) {
+                type += " WITHIN" + join.getJoinWindow();
+            }
+
+            if (join.getOnExpression() != null) {
+                type += "\n" + tabCharacter + "ON " + join.getOnExpression();
+            }
+
+            type += PlainSelect.getFormatedList(join.getUsingColumns(), "USING", true, true);
+            return type;
         }
     }
 }

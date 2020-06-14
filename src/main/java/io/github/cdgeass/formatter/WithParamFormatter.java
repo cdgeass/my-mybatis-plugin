@@ -34,7 +34,7 @@ public class WithParamFormatter extends Formatter {
     }
 
     public static String format(String selectedText) {
-        String[] lines = selectedText.split(LINE_SPLIT);
+        String[] lines = selectedText.split(LINE_BREAK);
 
         LinkedHashMap<String, Pair<String, String>> sqlMap = Maps.newLinkedHashMap();
         int j = 0; int k = 0;
@@ -81,9 +81,9 @@ public class WithParamFormatter extends Formatter {
         var sqlList = format(sqlMap);
         var stringBuilder = new StringBuilder();
         for (var iterator = sqlList.iterator(); iterator.hasNext(); ) {
-            stringBuilder.append(StringUtils.substringBeforeLast(iterator.next().trim(), "\n")).append(SEMICOLON).append(LINE_SPLIT);
+            stringBuilder.append(StringUtils.substringBeforeLast(iterator.next().trim(), "\n")).append(SEMICOLON).append(LINE_BREAK);
             if (iterator.hasNext()) {
-                stringBuilder.append(EMPTY_LINE).append(LINE_SPLIT);
+                stringBuilder.append(SEPARATOR_LINE).append(LINE_BREAK);
             }
         }
 
