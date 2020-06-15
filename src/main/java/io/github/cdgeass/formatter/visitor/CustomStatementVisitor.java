@@ -16,10 +16,13 @@ import net.sf.jsqlparser.statement.merge.Merge;
 import net.sf.jsqlparser.statement.replace.Replace;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.Select;
+import net.sf.jsqlparser.statement.select.WithItem;
 import net.sf.jsqlparser.statement.truncate.Truncate;
 import net.sf.jsqlparser.statement.update.Update;
 import net.sf.jsqlparser.statement.upsert.Upsert;
 import net.sf.jsqlparser.statement.values.ValuesStatement;
+
+import java.util.Iterator;
 
 import static java.util.stream.Collectors.joining;
 
@@ -346,46 +349,126 @@ public class CustomStatementVisitor extends AbstractCustomVisitor implements Sta
 
     @Override
     public void visit(Select select) {
-
+        if (select.getWithItemsList() != null && !select.getWithItemsList().isEmpty()) {
+            appendTab().append("WITH ");
+            for (Iterator<WithItem> iter = select.getWithItemsList().iterator(); iter.hasNext(); ) {
+                WithItem withItem = iter.next();
+                append(withItem.toString());
+                if (iter.hasNext()) {
+                    append(",");
+                }
+                append(" ");
+            }
+        }
+        var customSelectVisitor = new CustomSelectVisitor(currentLevel());
+        select.getSelectBody().accept(customSelectVisitor);
+        append(customSelectVisitor.toString());
     }
 
     @Override
     public void visit(Upsert upsert) {
+        appendTab().append("UPSERT INTO ");
+        append(upsert.getTable().toString()).append(" ");
+        if (upsert.getColumns() != null) {
+            append(PlainSelect.getStringList(upsert.getColumns(), true, true)).append(" ");
+        }
+        if (upsert.isUseValues()) {
+            append("\n").appendTab().append("VALUES ");
+        }
 
+        if (upsert.getItemsList() != null) {
+            append(upsert.getItemsList().toString());
+        } else {
+            if (upsert.isUseSelectBrackets()) {
+                append("(");
+            }
+            if (upsert.getSelect() != null) {
+                var customStatementVisitor = new CustomStatementVisitor(nextLevel());
+                upsert.getSelect().accept(customStatementVisitor);
+                append(customStatementVisitor.toString());
+            }
+            if (upsert.isUseSelectBrackets()) {
+                append("\n").appendTab().append(")");
+            }
+        }
+
+        if (upsert.isUseDuplicate()) {
+            append("\n").appendTab().append("ON DUPLICATE KEY UPDATE ");
+            for (int i = 0; i < upsert.getDuplicateUpdateColumns().size(); i++) {
+                if (i != 0) {
+                    append(", ");
+                }
+                append(upsert.getDuplicateUpdateColumns().get(i).toString()).append(" = ");
+                append(upsert.getDuplicateUpdateExpressionList().get(i).toString());
+            }
+        }
     }
 
     @Override
     public void visit(UseStatement use) {
-
+        appendTab().append(use.toString());
     }
 
     @Override
     public void visit(Block block) {
-
+        appendTab().append(block.toString());
     }
 
     @Override
     public void visit(ValuesStatement values) {
-
+        appendTab().append("VALUES ").append(PlainSelect.getStringList(values.getExpressions(), true, true));
     }
 
     @Override
     public void visit(DescribeStatement describe) {
-
+        appendTab().append(describe.toString());
     }
 
     @Override
     public void visit(ExplainStatement aThis) {
-
+        appendTab().append("EXPLAIN");
+        var customStatementVisitor = new CustomStatementVisitor(currentLevel());
+        aThis.accept(customStatementVisitor);
+        append("\n").append(customStatementVisitor.toString());
     }
 
     @Override
     public void visit(ShowStatement aThis) {
-
+        appendTab().append(aThis.toString());
     }
 
     @Override
     public void visit(DeclareStatement aThis) {
-
+        appendTab().append("DECLARE ");
+        if (aThis.getType() == DeclareType.AS) {
+            append(aThis.getUserVariable().toString());
+            append(" AS ").append(aThis.getTypeName());
+        } else {
+            if (aThis.getType() == DeclareType.TABLE) {
+                append(aThis.getUserVariable().toString());
+                append(" TABLE (");
+                for (int i = 0; i < aThis.getColumnDefinitions().size(); i++) {
+                    if (i > 0) {
+                        append(", ");
+                    }
+                    append(aThis.getColumnDefinitions().get(i).toString());
+                }
+                append(")");
+            } else {
+                for (int i = 0; i < aThis.getTypeDefinitions().size(); i++) {
+                    if (i > 0) {
+                        append(", ");
+                    }
+                    final DeclareStatement.TypeDefExpr type = aThis.getTypeDefinitions().get(i);
+                    if (type.userVariable != null) {
+                        append(type.userVariable.toString()).append(" ");
+                    }
+                    append(type.colDataType.toString());
+                    if (type.defaultExpr != null) {
+                        append(" = ").append(type.defaultExpr.toString());
+                    }
+                }
+            }
+        }
     }
 }
