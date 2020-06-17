@@ -4,7 +4,6 @@ import com.intellij.codeInsight.highlighting.HighlightManager;
 import com.intellij.openapi.editor.SelectionModel;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.EditorFontType;
-import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.editor.markup.TextAttributes;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.ui.EditorTextField;
@@ -46,18 +45,7 @@ public class FormatSelectionDialog extends DialogWrapper {
         }
 
         var formattedSql = WithParamFormatter.format(selectedText);
-        var sqlEditorTextField = new EditorTextField(formattedSql) {
-            @Override
-            protected EditorEx createEditor() {
-                var editor = super.createEditor();
-                editor.setHorizontalScrollbarVisible(true);
-                editor.setVerticalScrollbarVisible(true);
-                editor.setOneLineMode(false);
-                editor.setCaretEnabled(false);
-
-                return editor;
-            }
-        };
+        var sqlEditorTextField = new EditorTextField(formattedSql);
 
         var editorColorsManager = EditorColorsManager.getInstance();
         var font = editorColorsManager.getSchemeForCurrentUITheme().getFont(EditorFontType.PLAIN);
@@ -73,8 +61,12 @@ public class FormatSelectionDialog extends DialogWrapper {
 
             var highlightManager = HighlightManager.getInstance(project);
             sqlEditorTextField.addSettingsProvider(editor -> {
-                var document = editor.getDocument();
-                var text = document.getText();
+                editor.setHorizontalScrollbarVisible(true);
+                editor.setVerticalScrollbarVisible(true);
+                editor.setOneLineMode(false);
+                editor.setCaretEnabled(false);
+
+                var text = editor.getDocument().getText();
                 var emptyLineCount = StringUtils.countMatches(text, StringConstants.SEPARATOR_LINE);
 
                 var startOffset = 0;
