@@ -17,7 +17,7 @@ public class VisitorUtil {
     public static String join(Join join, int level) {
         String tabCharacter = StringConstants.TAB_CHARACTER.repeat(Math.max(0, level));
 
-        var customFromItemSelectVisitor = new CustomFromItemVisitor();
+        var customFromItemSelectVisitor = new CustomFromItemVisitor(level);
 
         if (join.isSimple() && join.isOuter()) {
             join.getRightItem().accept(customFromItemSelectVisitor);

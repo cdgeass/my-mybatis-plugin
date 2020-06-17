@@ -50,6 +50,9 @@ public class Formatter {
 
     private static List<String> parameters(List<String> parametersWithType) {
         List<String> parameters = Lists.newArrayList();
+        if (parametersWithType == null) {
+            return parameters;
+        }
 
         for (String parameterWithType : parametersWithType) {
             if (NULL.equals(parameterWithType)) {

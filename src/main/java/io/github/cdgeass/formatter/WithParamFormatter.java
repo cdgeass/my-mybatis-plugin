@@ -22,7 +22,7 @@ public class WithParamFormatter extends Formatter {
     private final static String PREPARING_LABEL = "Preparing:";
     private final static String PARAMETERS_LABEL = "Parameters:";
 
-    private final static Pattern GET_THREAD_NAME_PATTERN = Pattern.compile("\\[([a-zA-Z\\d-]+)]");
+    private final static Pattern GET_THREAD_NAME_PATTERN = Pattern.compile("\\[\\s?([a-zA-Z\\d-]+)\\s?]");
     private final static Pattern GET_METHOD_NAME_PATTERN = Pattern.compile("(([a-zA-Z]+\\.)+[a-zA-Z]+)");
 
     private WithParamFormatter() {
@@ -34,11 +34,11 @@ public class WithParamFormatter extends Formatter {
     }
 
     public static String format(String selectedText) {
-        String[] lines = selectedText.split(LINE_BREAK);
+        var lines = selectedText.split(LINE_BREAK);
 
         LinkedHashMap<String, Pair<String, String>> sqlMap = Maps.newLinkedHashMap();
-        int j = 0; int k = 0;
-        for (String line : lines) {
+        var j = 0; var k = 0;
+        for (var line : lines) {
             if (line.contains(PREPARING_LABEL) && !line.contains(PARAMETERS_LABEL)) {
                 String preparingTag;
 
@@ -46,7 +46,7 @@ public class WithParamFormatter extends Formatter {
                 if (matcher.find()) {
                     preparingTag = matcher.group(1);
                 } else {
-                    preparingTag = "" + j;
+                    preparingTag = "" + ++j;
                 }
 
                 var preparing = line.substring(StringUtils.indexOf(line, PREPARING_LABEL) + PREPARING_LABEL.length());
@@ -63,12 +63,12 @@ public class WithParamFormatter extends Formatter {
                 if (matcher.find()) {
                     parametersTag = matcher.group(1);
                 } else {
-                    parametersTag = "" + j++;
+                    parametersTag = "" + j;
                 }
 
                 var parameters = line.substring(StringUtils.indexOf(line, PARAMETERS_LABEL) + PARAMETERS_LABEL.length());
                 if (!sqlMap.containsKey(parametersTag + k)) {
-                    parametersTag = "" + j++;
+                    parametersTag = "" + j;
                 }
                 var pair = sqlMap.get(parametersTag + k);
                 if (pair == null) {
