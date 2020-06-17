@@ -11,6 +11,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import static io.github.cdgeass.constants.StringConstants.*;
+
 /**
  * @author cdgeass
  * @since 2020-04-15
@@ -20,10 +22,7 @@ public class WithParamFormatter extends Formatter {
     private final static String PREPARING_LABEL = "Preparing:";
     private final static String PARAMETERS_LABEL = "Parameters:";
 
-    private final static String LINE_SPLIT = "\n";
-    private final static String SEMICOLON = ";";
-
-    private final static Pattern GET_THREAD_NAME_PATTERN = Pattern.compile("\\[([a-zA-Z\\d-]+)]");
+    private final static Pattern GET_THREAD_NAME_PATTERN = Pattern.compile("\\[\\s?([a-zA-Z\\d-]+)\\s?]");
     private final static Pattern GET_METHOD_NAME_PATTERN = Pattern.compile("(([a-zA-Z]+\\.)+[a-zA-Z]+)");
 
     private WithParamFormatter() {
@@ -35,11 +34,11 @@ public class WithParamFormatter extends Formatter {
     }
 
     public static String format(String selectedText) {
-        String[] lines = selectedText.split(LINE_SPLIT);
+        var lines = selectedText.split(LINE_BREAK);
 
         LinkedHashMap<String, Pair<String, String>> sqlMap = Maps.newLinkedHashMap();
-        int j = 0; int k = 0;
-        for (String line : lines) {
+        var j = 0; var k = 0;
+        for (var line : lines) {
             if (line.contains(PREPARING_LABEL) && !line.contains(PARAMETERS_LABEL)) {
                 String preparingTag;
 
@@ -47,7 +46,7 @@ public class WithParamFormatter extends Formatter {
                 if (matcher.find()) {
                     preparingTag = matcher.group(1);
                 } else {
-                    preparingTag = "" + j;
+                    preparingTag = "" + ++j;
                 }
 
                 var preparing = line.substring(StringUtils.indexOf(line, PREPARING_LABEL) + PREPARING_LABEL.length());
@@ -64,12 +63,12 @@ public class WithParamFormatter extends Formatter {
                 if (matcher.find()) {
                     parametersTag = matcher.group(1);
                 } else {
-                    parametersTag = "" + j++;
+                    parametersTag = "" + j;
                 }
 
                 var parameters = line.substring(StringUtils.indexOf(line, PARAMETERS_LABEL) + PARAMETERS_LABEL.length());
                 if (!sqlMap.containsKey(parametersTag + k)) {
-                    parametersTag = "" + j++;
+                    parametersTag = "" + j;
                 }
                 var pair = sqlMap.get(parametersTag + k);
                 if (pair == null) {
@@ -79,14 +78,15 @@ public class WithParamFormatter extends Formatter {
             }
         }
 
-        List<String> sqlList = format(sqlMap);
-        StringBuilder stringBuilder = new StringBuilder();
-        for (int i = 0; i < sqlList.size(); i++) {
-            stringBuilder.append(sqlList.get(i)).append(SEMICOLON).append(LINE_SPLIT);
-            if (i != 0 || i != sqlList.size() - 1) {
-                stringBuilder.append("-- -----------------------------------").append(LINE_SPLIT);
+        var sqlList = format(sqlMap);
+        var stringBuilder = new StringBuilder();
+        for (var iterator = sqlList.iterator(); iterator.hasNext(); ) {
+            stringBuilder.append(StringUtils.substringBeforeLast(iterator.next().trim(), "\n")).append(SEMICOLON).append(LINE_BREAK);
+            if (iterator.hasNext()) {
+                stringBuilder.append(SEPARATOR_LINE).append(LINE_BREAK);
             }
         }
+
         return stringBuilder.toString();
     }
 
