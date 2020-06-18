@@ -15,6 +15,8 @@ import org.apache.commons.lang.StringUtils;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.datatransfer.StringSelection;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.function.Consumer;
 
 /**
@@ -30,43 +32,16 @@ public class FormatToolWindow {
     private JButton copyButton;
     private EditorTextField unformattedTextField;
     private EditorTextField formattedTextField;
-    private JPanel unformattedPanel;
-    private JPanel formattedPanel;
 
     public FormatToolWindow(Project project) {
         this.project = project;
-        init();
-    }
 
-    private void init() {
-        var editorColorsManager = EditorColorsManager.getInstance();
-        var font = editorColorsManager.getSchemeForCurrentUITheme().getFont(EditorFontType.PLAIN);
-
-        unformattedTextField.setPreferredSize(new Dimension(500, 500));
-        unformattedTextField.setOneLineMode(false);
-        unformattedTextField.setFont(font);
-
-        unformattedTextField.addSettingsProvider(editor -> {
-            editor.setHorizontalScrollbarVisible(true);
-            editor.setVerticalScrollbarVisible(true);
-        });
-
-        formattedTextField.setPreferredSize(new Dimension(500, 500));
-        formattedTextField.setOneLineMode(false);
-        formattedTextField.setFont(font);
-
-        formattedTextField.addSettingsProvider(editor -> {
-            editor.setHorizontalScrollbarVisible(true);
-            editor.setVerticalScrollbarVisible(true);
-            editor.setCaretEnabled(false);
-        });
-
-        var textAttributes1 = new TextAttributes();
-        textAttributes1.setForegroundColor(JBColor.LIGHT_GRAY);
-        var textAttributes2 = new TextAttributes();
-
-        var highlightManager = HighlightManager.getInstance(project);
         Consumer<Editor> highlightConsumer = editor -> {
+            var textAttributes1 = new TextAttributes();
+            textAttributes1.setForegroundColor(JBColor.LIGHT_GRAY);
+            var textAttributes2 = new TextAttributes();
+            var highlightManager = HighlightManager.getInstance(project);
+
             var text = editor.getDocument().getText();
             var emptyLineCount = StringUtils.countMatches(text, StringConstants.SEPARATOR_LINE);
 
@@ -105,5 +80,58 @@ public class FormatToolWindow {
 
     public JComponent getContent() {
         return centerPanel;
+    }
+
+    private void createUIComponents() {
+        var editorColorsManager = EditorColorsManager.getInstance();
+        var font = editorColorsManager.getSchemeForCurrentUITheme().getFont(EditorFontType.PLAIN);
+
+        unformattedTextField = new EditorTextField();
+
+        unformattedTextField.setPreferredSize(new Dimension(500, 300));
+        unformattedTextField.setOneLineMode(false);
+        unformattedTextField.setFont(font);
+
+        unformattedTextField.addSettingsProvider(editor -> {
+            editor.setHorizontalScrollbarVisible(true);
+            editor.setVerticalScrollbarVisible(true);
+        });
+
+        formattedTextField = new EditorTextField();
+
+        formattedTextField.setPreferredSize(new Dimension(500, 300));
+        formattedTextField.setOneLineMode(false);
+        formattedTextField.setFont(font);
+
+        formattedTextField.addSettingsProvider(editor -> {
+            editor.setHorizontalScrollbarVisible(true);
+            editor.setVerticalScrollbarVisible(true);
+            editor.setCaretEnabled(false);
+            editor.getCaretModel().moveToOffset(0);
+
+            var textAttributes1 = new TextAttributes();
+            textAttributes1.setForegroundColor(JBColor.LIGHT_GRAY);
+            var textAttributes2 = new TextAttributes();
+            var highlightManager = HighlightManager.getInstance(project);
+
+            var text = editor.getDocument().getText();
+            var emptyLineCount = StringUtils.countMatches(text, StringConstants.SEPARATOR_LINE);
+
+            var startOffset = 0;
+            var i = 0;
+            for (i = 1; i <= emptyLineCount; i++) {
+                var indexOf = StringUtils.ordinalIndexOf(text, StringConstants.SEPARATOR_LINE, i);
+                highlightManager.addRangeHighlight(editor, indexOf, indexOf + StringConstants.SEPARATOR_LINE.length() + 1,
+                        textAttributes1, false, null);
+
+                var textAttributes2Copy = textAttributes2.clone();
+                textAttributes2Copy.setForegroundColor(i % 2 == 0 ? JBColor.PINK : JBColor.ORANGE);
+                highlightManager.addRangeHighlight(editor, startOffset, indexOf, textAttributes2Copy, false, null);
+                startOffset = indexOf + StringConstants.SEPARATOR_LINE.length() + 1;
+            }
+            var lastTextAttributes2Copy = textAttributes2.clone();
+            lastTextAttributes2Copy.setForegroundColor((i) % 2 == 0 ? JBColor.PINK : JBColor.ORANGE);
+            highlightManager.addRangeHighlight(editor, startOffset, text.length(), lastTextAttributes2Copy, false, null);
+        });
     }
 }

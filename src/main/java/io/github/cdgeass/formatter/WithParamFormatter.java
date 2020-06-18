@@ -5,6 +5,7 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.intellij.openapi.util.Pair;
+import io.github.cdgeass.constants.StringConstants;
 import org.apache.commons.lang.StringUtils;
 
 import java.util.LinkedHashMap;
@@ -82,8 +83,8 @@ public class WithParamFormatter extends Formatter {
         var stringBuilder = new StringBuilder();
         for (var iterator = sqlList.iterator(); iterator.hasNext(); ) {
             var sql = iterator.next().trim();
-            if (sql.endsWith("\n")) {
-                sql = StringUtils.substringBeforeLast(iterator.next().trim(), "\n");
+            if (sql.endsWith(StringConstants.LINE_BREAK)) {
+                sql = StringUtils.substringBeforeLast(iterator.next().trim(), StringConstants.LINE_BREAK);
             }
             stringBuilder.append(sql).append(SEMICOLON).append(LINE_BREAK);
             if (iterator.hasNext()) {

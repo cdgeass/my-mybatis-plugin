@@ -11,6 +11,8 @@ public class StringConstants {
     public final static String SEMICOLON = ";";
     public final static String SEPARATOR_LINE = "-- -----------------------------------";
 
+    public final static String AND = "AND";
+
     private StringConstants() {
 
     }

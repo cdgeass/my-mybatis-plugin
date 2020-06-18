@@ -1,5 +1,6 @@
 package io.github.cdgeass.formatter.visitor;
 
+import io.github.cdgeass.constants.StringConstants;
 import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.select.*;
 
@@ -38,17 +39,17 @@ public class CustomFromItemVisitor extends AbstractCustomVisitor implements From
         subSelect.getSelectBody().accept(customSelectVisitor);
         append(customSelectVisitor.toString());
         if (subSelect.isUseBrackets()) {
-            append("\n").appendPreTab().append(")");
+            append(StringConstants.LINE_BREAK).appendPreTab().append(")");
         }
 
         if (subSelect.getAlias() != null) {
             append(subSelect.getAlias().toString());
         }
         if (subSelect.getPivot() != null) {
-            append("\n").appendTab().append(subSelect.getPivot().toString());
+            append(StringConstants.LINE_BREAK).appendTab().append(subSelect.getPivot().toString());
         }
         if (subSelect.getUnPivot() != null) {
-            append("\n").appendTab().append(subSelect.getUnPivot().toString());
+            append(StringConstants.LINE_BREAK).appendTab().append(subSelect.getUnPivot().toString());
         }
     }
 
@@ -63,15 +64,15 @@ public class CustomFromItemVisitor extends AbstractCustomVisitor implements From
             }
         }
 
-        append("\n").appendTab().append(")");
+        append(StringConstants.LINE_BREAK).appendTab().append(")");
         if (subjoin.getAlias() != null) {
             append(subjoin.getAlias().toString());
         }
         if (subjoin.getPivot() != null) {
-            append("\n").appendTab().append(subjoin.getPivot().toString());
+            append(StringConstants.LINE_BREAK).appendTab().append(subjoin.getPivot().toString());
         }
         if (subjoin.getUnPivot() != null) {
-            append("\n").appendTab().append(subjoin.getUnPivot().toString());
+            append(StringConstants.LINE_BREAK).appendTab().append(subjoin.getUnPivot().toString());
         }
     }
 
@@ -86,24 +87,24 @@ public class CustomFromItemVisitor extends AbstractCustomVisitor implements From
     public void visit(ValuesList valuesList) {
         appendTab().append("(VALUES ");
         for (var iter = valuesList.getMultiExpressionList().getExprList().iterator(); iter.hasNext(); ) {
-            append(PlainSelect.getStringList(iter.next().getExpressions(), true, !valuesList.isNoBrackets()));
+            append(VisitorUtil.getStringList(iter.next().getExpressions(), true, !valuesList.isNoBrackets()));
             if (iter.hasNext()) {
                 append(", ");
             }
         }
-        append("\n").appendTab().append(")");
+        append(StringConstants.LINE_BREAK).appendTab().append(")");
         if (valuesList.getAlias() != null) {
             append(valuesList.getAlias().toString());
 
             if (valuesList.getColumnNames() != null) {
-                append("\n").appendTab().append("(");
+                append(StringConstants.LINE_BREAK).appendTab().append("(");
                 for (var iter = valuesList.getColumnNames().iterator(); iter.hasNext(); ) {
                     append(iter.next());
                     if (iter.hasNext()) {
                         append(", ");
                     }
                 }
-                append("\n").appendTab().append(")");
+                append(StringConstants.LINE_BREAK).appendTab().append(")");
             }
         }
     }
@@ -121,7 +122,7 @@ public class CustomFromItemVisitor extends AbstractCustomVisitor implements From
         var customFromItemVisitor = new CustomFromItemVisitor(nextLevel());
         aThis.getFromItem().accept(customFromItemVisitor);
         append(customFromItemVisitor.toString());
-        append("\n").appendTab().append(")");
+        append(StringConstants.LINE_BREAK).appendTab().append(")");
 
         if (aThis.getAlias() != null) {
             append(aThis.getAlias().toString());

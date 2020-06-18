@@ -4,8 +4,12 @@
     <vendor email="cdgeass97@gmail.com" url="https://github.com/cdgeass/my-mybatis-plugin">cdgeass</vendor>
 
     <description><![CDATA[
+
+    <a href="https://github.com/cdgeass/my-mybatis-plugin">Github</a> | <a href="https://github.com/cdgeass/my-mybatis-plugin/issues">Issues</a><br>
+    <br>
     a plugin to help you to use mybatis in IDEA<br>
-    for now you can
+    <br>
+    <b>Features</b>
     <ul>
         <li>format the log that print by mybatis to display or copy to clipboard</li>
         <li>navigation between dao and xml</li>

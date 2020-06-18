@@ -1,5 +1,6 @@
 package io.github.cdgeass.formatter.visitor;
 
+import io.github.cdgeass.constants.StringConstants;
 import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.*;
 import net.sf.jsqlparser.statement.alter.Alter;
@@ -57,7 +58,7 @@ public class CustomStatementVisitor extends AbstractCustomVisitor implements Sta
                     .collect(joining(", ")));
         }
 
-        append("\n").appendTab().append("FROM ");
+        append(StringConstants.LINE_BREAK).appendTab().append("FROM ");
         append(delete.getTable().toString());
 
         if (delete.getJoins() != null) {
@@ -65,21 +66,21 @@ public class CustomStatementVisitor extends AbstractCustomVisitor implements Sta
                 if (join.isSimple()) {
                     append(", ").append(VisitorUtil.join(join, currentLevel()));
                 } else {
-                    append("\n").appendTab().append(VisitorUtil.join(join, nextLevel()));
+                    append(StringConstants.LINE_BREAK).appendTab().append(VisitorUtil.join(join, nextLevel()));
                 }
             }
         }
 
         if (delete.getWhere() != null) {
-            append("\n").appendTab().append("WHERE ").append(delete.getWhere().toString());
+            append(StringConstants.LINE_BREAK).appendTab().append("WHERE ").append(delete.getWhere().toString());
         }
 
         if (delete.getOrderByElements() != null) {
-            append("\n").appendTab().append(PlainSelect.orderByToString(delete.getOrderByElements()));
+            append(StringConstants.LINE_BREAK).appendTab().append(PlainSelect.orderByToString(delete.getOrderByElements()));
         }
 
         if (delete.getLimit() != null) {
-            append("\n").appendTab().append(delete.getLimit().toString());
+            append(StringConstants.LINE_BREAK).appendTab().append(delete.getLimit().toString());
         }
     }
 
@@ -92,11 +93,11 @@ public class CustomStatementVisitor extends AbstractCustomVisitor implements Sta
                 if (join.isSimple()) {
                     append(", ").append(VisitorUtil.join(join, currentLevel()));
                 } else {
-                    append("\n").appendTab().append(VisitorUtil.join(join, nextLevel()));
+                    append(StringConstants.LINE_BREAK).appendTab().append(VisitorUtil.join(join, nextLevel()));
                 }
             }
         }
-        append("\n").appendTab().append("SET ");
+        append(StringConstants.LINE_BREAK).appendTab().append("SET ");
 
         if (!update.isUseSelect()) {
             for (int i = 0; i < update.getColumns().size(); i++) {
@@ -108,7 +109,7 @@ public class CustomStatementVisitor extends AbstractCustomVisitor implements Sta
             }
         } else {
             if (update.isUseColumnsBrackets()) {
-                append("(").append("\n").appendTab();
+                append("(").append(StringConstants.LINE_BREAK).appendTab();
             }
             for (int i = 0; i < update.getColumns().size(); i++) {
                 if (i != 0) {
@@ -117,24 +118,24 @@ public class CustomStatementVisitor extends AbstractCustomVisitor implements Sta
                 append(update.getColumns().get(i).toString());
             }
             if (update.isUseColumnsBrackets()) {
-                append("\n").appendTab().append(")");
+                append(StringConstants.LINE_BREAK).appendTab().append(")");
             }
             append(" = ");
             var customStatementVisitor = new CustomStatementVisitor(nextLevel());
             update.getSelect().accept(customStatementVisitor);
-            append("(\n").append(customStatementVisitor.toString()).append("\n").appendTab().append(")");
+            append("(\n").append(customStatementVisitor.toString()).append(StringConstants.LINE_BREAK).appendTab().append(")");
         }
 
         if (update.getFromItem() != null) {
-            var customFromItemSelectVisitor = new CustomFromItemVisitor(currentLevel());
+            var customFromItemSelectVisitor = new CustomFromItemVisitor(nextLevel());
             update.getFromItem().accept(customFromItemSelectVisitor);
-            append("\n").appendTab().append("FROM ").append(customFromItemSelectVisitor.toString());
+            append(StringConstants.LINE_BREAK).appendTab().append("FROM ").append(customFromItemSelectVisitor.toString());
             if (update.getJoins() != null) {
                 for (var join : update.getJoins()) {
                     if (join.isSimple()) {
                         append(", ").append(VisitorUtil.join(join, currentLevel()));
                     } else {
-                        append("\n").appendTab().append(VisitorUtil.join(join, nextLevel()));
+                        append(StringConstants.LINE_BREAK).appendTab().append(VisitorUtil.join(join, nextLevel()));
                     }
                 }
             }
@@ -144,17 +145,16 @@ public class CustomStatementVisitor extends AbstractCustomVisitor implements Sta
             append("WHERE ").append(update.getWhere().toString());
         }
         if (update.getOrderByElements() != null) {
-            append("\n").appendTab().append(PlainSelect.orderByToString(update.getOrderByElements()));
+            append(StringConstants.LINE_BREAK).appendTab().append(PlainSelect.orderByToString(update.getOrderByElements()));
         }
         if (update.getLimit() != null) {
-            append("\n").appendTab().append(update.getLimit().toString());
+            append(StringConstants.LINE_BREAK).appendTab().append(update.getLimit().toString());
         }
 
         if (update.isReturningAllColumns()) {
-            append("\n").appendTab().append("RETURNING *");
+            append(StringConstants.LINE_BREAK).appendTab().append("RETURNING *");
         } else if (update.getReturningExpressionList() != null) {
-            append("\n").appendTab().append("RETURNING ").append(PlainSelect.
-                    getStringList(update.getReturningExpressionList(), true, false));
+            append(StringConstants.LINE_BREAK).appendTab().append("RETURNING ").append(VisitorUtil.getStringList(update.getReturningExpressionList(), true, false));
         }
     }
 
@@ -171,15 +171,15 @@ public class CustomStatementVisitor extends AbstractCustomVisitor implements Sta
         append("INTO ");
         append(insert.getTable().toString()).append(" ");
         if (insert.getColumns() != null) {
-            append(PlainSelect.getStringList(insert.getColumns(), true, true)).append(" ");
+            append(VisitorUtil.getStringList(insert.getColumns(), true, true)).append(" ");
         }
 
         if (insert.isUseValues()) {
-            append("\n").appendTab().append("VALUES ");
+            append(StringConstants.LINE_BREAK).appendTab().append("VALUES ");
         }
 
         if (insert.getItemsList() != null) {
-            append("\n").appendTab().append(insert.getItemsList().toString());
+            append(StringConstants.LINE_BREAK).appendTab().append(insert.getItemsList().toString());
         } else {
             if (insert.isUseSelectBrackets()) {
                 append("(\n");
@@ -190,12 +190,12 @@ public class CustomStatementVisitor extends AbstractCustomVisitor implements Sta
                 append(customStatementVisitor.toString());
             }
             if (insert.isUseSelectBrackets()) {
-                append("\n").appendTab().append(")");
+                append(StringConstants.LINE_BREAK).appendTab().append(")");
             }
         }
 
         if (insert.isUseSet()) {
-            append("\n").appendTab().append("SET ");
+            append(StringConstants.LINE_BREAK).appendTab().append("SET ");
             for (int i = 0; i < insert.getColumns().size(); i++) {
                 if (i != 0) {
                     append(", ");
@@ -206,7 +206,7 @@ public class CustomStatementVisitor extends AbstractCustomVisitor implements Sta
         }
 
         if (insert.isUseDuplicate()) {
-            append("\n").appendTab().append("ON DUPLICATE KEY UPDATE ");
+            append(StringConstants.LINE_BREAK).appendTab().append("ON DUPLICATE KEY UPDATE ");
             for (int i = 0; i < insert.getDuplicateUpdateColumns().size(); i++) {
                 if (i != 0) {
                     append(", ");
@@ -217,10 +217,9 @@ public class CustomStatementVisitor extends AbstractCustomVisitor implements Sta
         }
 
         if (insert.isReturningAllColumns()) {
-            append("\n").appendTab().append("RETURNING *");
+            append(StringConstants.LINE_BREAK).appendTab().append("RETURNING *");
         } else if (insert.getReturningExpressionList() != null) {
-            append("\n").appendTab().append("RETURNING ").append(PlainSelect.
-                    getStringList(insert.getReturningExpressionList(), true, false));
+            append(StringConstants.LINE_BREAK).appendTab().append("RETURNING ").append(VisitorUtil.getStringList(insert.getReturningExpressionList(), true, false));
         }
     }
 
@@ -233,22 +232,22 @@ public class CustomStatementVisitor extends AbstractCustomVisitor implements Sta
         append(replace.getTable().toString());
 
         if (replace.getExpressions() != null && replace.getColumns() != null) {
-            append("\n").appendTab().append("SET ");
+            append(StringConstants.LINE_BREAK).appendTab().append("SET ");
             for (int i = 0, s = replace.getColumns().size(); i < s; i++) {
                 append(replace.getColumns().get(i).toString()).append(" = ").append(replace.getExpressions().get(i).toString());
                 append((i < s - 1) ? ", " : "");
             }
         } else if (replace.getColumns() != null) {
-            append(" ").append(PlainSelect.getStringList(replace.getColumns(), true, true));
+            append(" ").append(VisitorUtil.getStringList(replace.getColumns(), true, true));
         }
 
         if (replace.getItemsList() != null) {
 
             if (replace.isUseValues()) {
-                append("\n").appendTab().append("VALUES");
+                append(StringConstants.LINE_BREAK).appendTab().append("VALUES");
             }
 
-            append("\n").appendTab().append(replace.getItemsList().toString());
+            append(StringConstants.LINE_BREAK).appendTab().append(replace.getItemsList().toString());
         }
     }
 
@@ -291,7 +290,7 @@ public class CustomStatementVisitor extends AbstractCustomVisitor implements Sta
     public void visit(Statements stmts) {
         for (var statement : stmts.getStatements()) {
             statement.accept(this);
-            append("\n");
+            append(StringConstants.LINE_BREAK);
         }
     }
 
@@ -320,29 +319,29 @@ public class CustomStatementVisitor extends AbstractCustomVisitor implements Sta
         } else if (merge.getUsingSelect() != null) {
             var customFromItemVisitor = new CustomFromItemVisitor(nextLevel());
             merge.getUsingSelect().accept(customFromItemVisitor);
-            append("(").append("\n").append(customFromItemVisitor.toString()).append("\n").appendTab().append(")");
+            append("(").append(StringConstants.LINE_BREAK).append(customFromItemVisitor.toString()).append(StringConstants.LINE_BREAK).appendTab().append(")");
         }
 
         if (merge.getUsingAlias() != null) {
             append(merge.getUsingAlias().toString());
         }
-        append("\n").appendTab().append("ON (");
-        append("\n").appendTab().append(merge.getOnCondition().toString());
-        append("\n").appendTab().append(")");
+        append(StringConstants.LINE_BREAK).appendTab().append("ON (");
+        append(StringConstants.LINE_BREAK).appendTab().append(merge.getOnCondition().toString());
+        append(StringConstants.LINE_BREAK).appendTab().append(")");
 
         if (merge.isInsertFirst()) {
             if (merge.getMergeInsert() != null) {
-                append("\n").appendTab().append(merge.getMergeInsert().toString());
+                append(StringConstants.LINE_BREAK).appendTab().append(merge.getMergeInsert().toString());
             }
         }
 
         if (merge.getMergeUpdate() != null) {
-            append("\n").appendTab().append(merge.getMergeUpdate().toString());
+            append(StringConstants.LINE_BREAK).appendTab().append(merge.getMergeUpdate().toString());
         }
 
         if (!merge.isInsertFirst()) {
             if (merge.getMergeInsert() != null) {
-                append("\n").appendTab().append(merge.getMergeInsert().toString());
+                append(StringConstants.LINE_BREAK).appendTab().append(merge.getMergeInsert().toString());
             }
         }
     }
@@ -370,10 +369,10 @@ public class CustomStatementVisitor extends AbstractCustomVisitor implements Sta
         appendTab().append("UPSERT INTO ");
         append(upsert.getTable().toString()).append(" ");
         if (upsert.getColumns() != null) {
-            append(PlainSelect.getStringList(upsert.getColumns(), true, true)).append(" ");
+            append(VisitorUtil.getStringList(upsert.getColumns(), true, true)).append(" ");
         }
         if (upsert.isUseValues()) {
-            append("\n").appendTab().append("VALUES ");
+            append(StringConstants.LINE_BREAK).appendTab().append("VALUES ");
         }
 
         if (upsert.getItemsList() != null) {
@@ -388,12 +387,12 @@ public class CustomStatementVisitor extends AbstractCustomVisitor implements Sta
                 append(customStatementVisitor.toString());
             }
             if (upsert.isUseSelectBrackets()) {
-                append("\n").appendTab().append(")");
+                append(StringConstants.LINE_BREAK).appendTab().append(")");
             }
         }
 
         if (upsert.isUseDuplicate()) {
-            append("\n").appendTab().append("ON DUPLICATE KEY UPDATE ");
+            append(StringConstants.LINE_BREAK).appendTab().append("ON DUPLICATE KEY UPDATE ");
             for (int i = 0; i < upsert.getDuplicateUpdateColumns().size(); i++) {
                 if (i != 0) {
                     append(", ");
@@ -416,7 +415,7 @@ public class CustomStatementVisitor extends AbstractCustomVisitor implements Sta
 
     @Override
     public void visit(ValuesStatement values) {
-        appendTab().append("VALUES ").append(PlainSelect.getStringList(values.getExpressions(), true, true));
+        appendTab().append("VALUES ").append(VisitorUtil.getStringList(values.getExpressions(), true, true));
     }
 
     @Override
@@ -429,7 +428,7 @@ public class CustomStatementVisitor extends AbstractCustomVisitor implements Sta
         appendTab().append("EXPLAIN");
         var customStatementVisitor = new CustomStatementVisitor(currentLevel());
         aThis.accept(customStatementVisitor);
-        append("\n").append(customStatementVisitor.toString());
+        append(StringConstants.LINE_BREAK).append(customStatementVisitor.toString());
     }
 
     @Override

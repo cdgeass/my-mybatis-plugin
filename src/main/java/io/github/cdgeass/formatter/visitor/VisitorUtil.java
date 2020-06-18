@@ -1,9 +1,13 @@
 package io.github.cdgeass.formatter.visitor;
 
 import io.github.cdgeass.constants.StringConstants;
-import net.sf.jsqlparser.schema.Table;
+import net.sf.jsqlparser.expression.BinaryExpression;
+import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.statement.select.Join;
+import net.sf.jsqlparser.statement.select.OrderByElement;
 import net.sf.jsqlparser.statement.select.PlainSelect;
+
+import java.util.List;
 
 /**
  * @author cdgeass
@@ -15,16 +19,50 @@ public class VisitorUtil {
 
     }
 
+    public static String getStringList(List<?> list, boolean useComma, boolean useBrackets) {
+        return getStringList(list, useComma, useBrackets, false, 0);
+    }
+
+    public static String getStringList(List<?> list, boolean useComma, boolean useBrackets, boolean useLineBreak, int level) {
+        StringBuilder ans = new StringBuilder();
+        String comma = ",";
+        String lineBreak = useLineBreak ? StringConstants.LINE_BREAK : "";
+        String tabCharacter = StringConstants.TAB_CHARACTER.repeat(Math.max(0, level));
+        if (!useComma) {
+            comma = "";
+        }
+        if (list != null) {
+            if (useBrackets) {
+                ans.append("(").append(lineBreak).append(tabCharacter);
+            }
+
+            for (int i = 0; i < list.size(); i++) {
+                if (i != 0) {
+                    ans.append(lineBreak).append(tabCharacter).append(comma);
+                }
+                ans.append(list.get(i));
+            }
+
+            if (useBrackets) {
+                ans.append(lineBreak).append(tabCharacter).append(")");
+            }
+        }
+
+        return ans.toString();
+    }
+
+    public static String orderByToString(boolean oracleSiblings, List<OrderByElement> orderByElements) {
+        var sql = getStringList(orderByElements, true, false);
+        if (sql.length() > 0) {
+            return (oracleSiblings ? "ORDER SIBLINGS BY" : "ORDER BY") +  " " + sql;
+        }
+        return sql;
+    }
+
     public static String join(Join join, int level) {
         String tabCharacter = StringConstants.TAB_CHARACTER.repeat(Math.max(0, level));
 
-        CustomFromItemVisitor customFromItemSelectVisitor;
-        if (join.getRightItem() instanceof Table) {
-            customFromItemSelectVisitor = new CustomFromItemVisitor(level);
-        } else {
-            customFromItemSelectVisitor = new CustomFromItemVisitor(level + 1);
-        }
-
+        CustomFromItemVisitor customFromItemSelectVisitor = new CustomFromItemVisitor(level + 1);
         if (join.isSimple() && join.isOuter()) {
             join.getRightItem().accept(customFromItemSelectVisitor);
             return "OUTER " + customFromItemSelectVisitor;
@@ -32,7 +70,7 @@ public class VisitorUtil {
             join.getRightItem().accept(customFromItemSelectVisitor);
             return "" + customFromItemSelectVisitor;
         } else {
-            String type = "\n" + tabCharacter;
+            String type = StringConstants.LINE_BREAK + tabCharacter;
 
             if (join.isRight()) {
                 type += "RIGHT ";
@@ -70,11 +108,30 @@ public class VisitorUtil {
             }
 
             if (join.getOnExpression() != null) {
-                type += "\n" + tabCharacter + "ON " + join.getOnExpression();
+                type += StringConstants.LINE_BREAK + tabCharacter + "ON " + join.getOnExpression();
             }
 
             type += PlainSelect.getFormatedList(join.getUsingColumns(), "USING", true, true);
             return type;
         }
+    }
+
+    public static String expression(Expression expression, int level) {
+        String tabCharacter = StringConstants.TAB_CHARACTER.repeat(Math.max(0, level));
+        if (expression instanceof BinaryExpression) {
+
+            Expression leftExpression = ((BinaryExpression) expression).getLeftExpression();
+            Expression rightExpression = ((BinaryExpression) expression).getRightExpression();
+            String stringExpression = ((BinaryExpression) expression).getStringExpression();
+
+            if (StringConstants.AND.equals(stringExpression)) {
+                stringExpression = StringConstants.LINE_BREAK + tabCharacter + stringExpression + " ";
+            }
+
+            return (leftExpression instanceof BinaryExpression ? expression(leftExpression, level) : leftExpression)
+                    + stringExpression + rightExpression;
+        }
+
+        return expression.toString();
     }
 }

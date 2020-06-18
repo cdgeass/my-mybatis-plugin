@@ -1,5 +1,7 @@
 package io.github.cdgeass.formatter.visitor;
 
+import io.github.cdgeass.constants.StringConstants;
+import net.sf.jsqlparser.expression.BinaryExpression;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.SelectVisitor;
 import net.sf.jsqlparser.statement.select.SetOperationList;
@@ -48,7 +50,7 @@ public class CustomSelectVisitor extends AbstractCustomVisitor implements Select
         if (plainSelect.getMySqlSqlCalcFoundRows()) {
             append("SQL_CALC_FOUND_ROWS").append(" ");
         }
-        append(PlainSelect.getStringList(plainSelect.getSelectItems()));
+        append(VisitorUtil.getStringList(plainSelect.getSelectItems(), true, false, true, nextLevel()));
 
         if (plainSelect.getIntoTables() != null) {
             append(" INTO ");
@@ -61,9 +63,9 @@ public class CustomSelectVisitor extends AbstractCustomVisitor implements Select
         }
 
         if (plainSelect.getFromItem() != null) {
-            var customFromItemVisitor = new CustomFromItemVisitor(currentLevel());
+            var customFromItemVisitor = new CustomFromItemVisitor(nextLevel());
             plainSelect.getFromItem().accept(customFromItemVisitor);
-            append("\n").appendTab().append("FROM ").append(customFromItemVisitor.toString());
+            append(StringConstants.LINE_BREAK).appendTab().append("FROM ").append(customFromItemVisitor.toString());
             if (plainSelect.getJoins() != null) {
                 for (var join : plainSelect.getJoins()) {
                     if (join.isSimple()) {
@@ -75,35 +77,37 @@ public class CustomSelectVisitor extends AbstractCustomVisitor implements Select
             }
 
             if (plainSelect.getKsqlWindow() != null) {
-                append("\n").appendTab().append("WINDOW ").append(plainSelect.getKsqlWindow().toString());
+                append(StringConstants.LINE_BREAK).appendTab().append("WINDOW ").append(plainSelect.getKsqlWindow().toString());
             }
             if (plainSelect.getWhere() != null) {
-                append("\n").appendTab().append("WHERE ").append(plainSelect.getWhere().toString());
+                append(StringConstants.LINE_BREAK).appendTab().append("WHERE ").append(VisitorUtil.expression(plainSelect.getWhere(), currentLevel()));
             }
             if (plainSelect.getOracleHierarchical() != null) {
                 append(plainSelect.getOracleHierarchical().toString());
             }
             if (plainSelect.getGroupBy() != null) {
-                append("\n").appendTab().append(plainSelect.getGroupBy().toString());
+                append(StringConstants.LINE_BREAK).appendTab().append(plainSelect.getGroupBy().toString());
             }
             if (plainSelect.getHaving() != null) {
-                append("\n").appendTab().append("HAVING ").append(plainSelect.getHaving().toString());
+                append(StringConstants.LINE_BREAK).appendTab().append("HAVING ").append(plainSelect.getHaving().toString());
             }
-            append(PlainSelect.orderByToString(plainSelect.isOracleSiblings(), plainSelect.getOrderByElements()));
+            if (plainSelect.getOrderByElements() != null && plainSelect.getOrderByElements().size() > 0) {
+                append(StringConstants.LINE_BREAK).appendTab().append(VisitorUtil.orderByToString(plainSelect.isOracleSiblings(), plainSelect.getOrderByElements()));
+            }
             if (plainSelect.getLimit() != null) {
-                append("\n").appendTab().append(StringUtils.trim(plainSelect.getLimit().toString()));
+                append(StringConstants.LINE_BREAK).appendTab().append(StringUtils.trim(plainSelect.getLimit().toString()));
             }
             if (plainSelect.getOffset() != null) {
                 if (plainSelect.getLimit() == null) {
-                    append("\n").appendTab();
+                    append(StringConstants.LINE_BREAK).appendTab();
                 }
                 append(StringUtils.trim(plainSelect.getOffset().toString()));
             }
             if (plainSelect.getFetch() != null) {
-                append("\n").appendTab().append(plainSelect.getFetch().toString());
+                append(StringConstants.LINE_BREAK).appendTab().append(plainSelect.getFetch().toString());
             }
             if (plainSelect.isForUpdate()) {
-                append("\n").appendTab().append("FOR UPDATE");
+                append(StringConstants.LINE_BREAK).appendTab().append("FOR UPDATE");
 
                 if (plainSelect.getForUpdateTable() != null) {
                     append(" OF ").append(plainSelect.getForUpdateTable().toString());
@@ -114,18 +118,18 @@ public class CustomSelectVisitor extends AbstractCustomVisitor implements Select
                 }
             }
             if (plainSelect.getOptimizeFor() != null) {
-                append("\n").appendTab().append(plainSelect.getOptimizeFor().toString());
+                append(StringConstants.LINE_BREAK).appendTab().append(plainSelect.getOptimizeFor().toString());
             }
         } else {
             if (plainSelect.getWhere() != null) {
-                append("\n").appendTab().append("WHERE ").append(plainSelect.getWhere().toString());
+                append(StringConstants.LINE_BREAK).appendTab().append("WHERE ").append(plainSelect.getWhere().toString());
             }
         }
         if (plainSelect.getForXmlPath() != null) {
-            append("\n").appendTab().append("FOR XML PATH(").append(plainSelect.getForXmlPath()).append(")");
+            append(StringConstants.LINE_BREAK).appendTab().append("FOR XML PATH(").append(plainSelect.getForXmlPath()).append(")");
         }
         if (plainSelect.isUseBrackets()) {
-            append("\n").appendPreTab().append(")");
+            append(StringConstants.LINE_BREAK).appendPreTab().append(")");
         }
     }
 
@@ -145,19 +149,19 @@ public class CustomSelectVisitor extends AbstractCustomVisitor implements Select
         }
 
         if (setOpList.getOrderByElements() != null) {
-            append("\n").appendTab().append(PlainSelect.orderByToString(setOpList.getOrderByElements()));
+            append(StringConstants.LINE_BREAK).appendTab().append(PlainSelect.orderByToString(setOpList.getOrderByElements()));
         }
         if (setOpList.getLimit() != null) {
-            append("\n").appendTab().append(StringUtils.trim(setOpList.getLimit().toString()));
+            append(StringConstants.LINE_BREAK).appendTab().append(StringUtils.trim(setOpList.getLimit().toString()));
         }
         if (setOpList.getOffset() != null) {
             if (setOpList.getLimit() == null) {
-                append("\n").appendTab();
+                append(StringConstants.LINE_BREAK).appendTab();
             }
             append(StringUtils.trim(setOpList.getOffset().toString()));
         }
         if (setOpList.getFetch() != null) {
-            append("\n").appendTab().append(setOpList.getFetch().toString());
+            append(StringConstants.LINE_BREAK).appendTab().append(setOpList.getFetch().toString());
         }
     }
 
@@ -170,18 +174,18 @@ public class CustomSelectVisitor extends AbstractCustomVisitor implements Select
 
         append(withItem.getName());
         if (withItem.getWithItemList() != null) {
-            append(PlainSelect.getStringList(withItem.getWithItemList(), true, true));
+            append(VisitorUtil.getStringList(withItem.getWithItemList(), true, true));
         }
 
-        append("\n").appendTab().append("AS (");
+        append(StringConstants.LINE_BREAK).appendTab().append("AS (");
         var customSelectVisitor = new CustomSelectVisitor(nextLevel());
         withItem.getSelectBody().accept(customSelectVisitor);
         append(customSelectVisitor.toString());
-        append("\n").appendTab().append(")");
+        append(StringConstants.LINE_BREAK).appendTab().append(")");
     }
 
     @Override
     public void visit(ValuesStatement aThis) {
-        appendTab().append("VALUES ").append(PlainSelect.getStringList(aThis.getExpressions(), true, true));
+        appendTab().append("VALUES ").append(VisitorUtil.getStringList(aThis.getExpressions(), true, true));
     }
 }

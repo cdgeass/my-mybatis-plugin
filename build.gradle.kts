@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "io.github.cdgeass"
-version = "1.1.4"
+version = "1.2.0"
 
 repositories {
     mavenCentral()
@@ -25,10 +25,11 @@ configure<JavaPluginConvention> {
 }
 tasks.getByName<org.jetbrains.intellij.tasks.PatchPluginXmlTask>("patchPluginXml") {
     changeNotes("""
-    1.1.4<br>
+    1.2.0<br>
     <ul>
-        <li>add xml reference</li>
-        <li>fix some issues</li>
+        <li>replace druid sql parser with jsqlparser</li>
+        <li>rewrite dialog</li>
+        <li>add tool window</li>
     </ul>
       """)
 }
