@@ -125,7 +125,7 @@ public class CustomSelectVisitor extends AbstractCustomVisitor implements Select
             append("\n").appendTab().append("FOR XML PATH(").append(plainSelect.getForXmlPath()).append(")");
         }
         if (plainSelect.isUseBrackets()) {
-            append("\n").appendTab().append(")");
+            append("\n").appendPreTab().append(")");
         }
     }
 

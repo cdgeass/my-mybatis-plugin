@@ -15,12 +15,11 @@ public class CustomFromItemVisitor extends AbstractCustomVisitor implements From
 
     @Override
     public void visit(Table tableName) {
-        appendTab().append(tableName.toString());
+        append(tableName.toString());
     }
 
     @Override
     public void visit(SubSelect subSelect) {
-        appendTab();
         if (subSelect.isUseBrackets()) {
             append("(\n");
         }
@@ -39,7 +38,7 @@ public class CustomFromItemVisitor extends AbstractCustomVisitor implements From
         subSelect.getSelectBody().accept(customSelectVisitor);
         append(customSelectVisitor.toString());
         if (subSelect.isUseBrackets()) {
-            append("\n").appendTab().append(")");
+            append("\n").appendPreTab().append(")");
         }
 
         if (subSelect.getAlias() != null) {

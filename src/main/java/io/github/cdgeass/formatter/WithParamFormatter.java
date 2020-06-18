@@ -81,7 +81,11 @@ public class WithParamFormatter extends Formatter {
         var sqlList = format(sqlMap);
         var stringBuilder = new StringBuilder();
         for (var iterator = sqlList.iterator(); iterator.hasNext(); ) {
-            stringBuilder.append(StringUtils.substringBeforeLast(iterator.next().trim(), "\n")).append(SEMICOLON).append(LINE_BREAK);
+            var sql = iterator.next().trim();
+            if (sql.endsWith("\n")) {
+                sql = StringUtils.substringBeforeLast(iterator.next().trim(), "\n");
+            }
+            stringBuilder.append(sql).append(SEMICOLON).append(LINE_BREAK);
             if (iterator.hasNext()) {
                 stringBuilder.append(SEPARATOR_LINE).append(LINE_BREAK);
             }

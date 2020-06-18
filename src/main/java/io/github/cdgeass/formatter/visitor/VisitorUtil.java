@@ -1,6 +1,7 @@
 package io.github.cdgeass.formatter.visitor;
 
 import io.github.cdgeass.constants.StringConstants;
+import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.select.Join;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 
@@ -17,16 +18,21 @@ public class VisitorUtil {
     public static String join(Join join, int level) {
         String tabCharacter = StringConstants.TAB_CHARACTER.repeat(Math.max(0, level));
 
-        var customFromItemSelectVisitor = new CustomFromItemVisitor(level);
+        CustomFromItemVisitor customFromItemSelectVisitor;
+        if (join.getRightItem() instanceof Table) {
+            customFromItemSelectVisitor = new CustomFromItemVisitor(level);
+        } else {
+            customFromItemSelectVisitor = new CustomFromItemVisitor(level + 1);
+        }
 
         if (join.isSimple() && join.isOuter()) {
             join.getRightItem().accept(customFromItemSelectVisitor);
-            return tabCharacter + "OUTER " + customFromItemSelectVisitor;
+            return "OUTER " + customFromItemSelectVisitor;
         } else if (join.isSimple()) {
             join.getRightItem().accept(customFromItemSelectVisitor);
-            return tabCharacter + customFromItemSelectVisitor;
+            return "" + customFromItemSelectVisitor;
         } else {
-            String type = tabCharacter;
+            String type = "\n" + tabCharacter;
 
             if (join.isRight()) {
                 type += "RIGHT ";
