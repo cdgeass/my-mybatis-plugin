@@ -1,8 +1,9 @@
-package io.github.cdgeass.editor.dom;
+package io.github.cdgeass.editor.dom.element;
 
 import com.intellij.util.xml.Attribute;
 import com.intellij.util.xml.Convert;
 import com.intellij.util.xml.GenericAttributeValue;
+import io.github.cdgeass.editor.dom.convert.ResultMapReferenceConvert;
 
 /**
  * @author cdgeass

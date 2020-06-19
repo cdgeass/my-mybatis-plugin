@@ -13,6 +13,8 @@ public class StringConstants {
 
     public final static String AND = "AND";
 
+    public final static String MAPPER = "mapper";
+
     private StringConstants() {
 
     }

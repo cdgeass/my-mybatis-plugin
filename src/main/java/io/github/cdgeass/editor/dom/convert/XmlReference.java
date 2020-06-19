@@ -1,6 +1,7 @@
-package io.github.cdgeass.editor.dom;
+package io.github.cdgeass.editor.dom.convert;
 
 import com.intellij.psi.*;
+import com.intellij.psi.xml.XmlTag;
 import org.apache.commons.collections.CollectionUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

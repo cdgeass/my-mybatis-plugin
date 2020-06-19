@@ -1,9 +1,10 @@
-package io.github.cdgeass.editor.dom;
+package io.github.cdgeass.editor.dom.element;
 
 import com.intellij.psi.PsiMethod;
 import com.intellij.util.xml.Convert;
 import com.intellij.util.xml.DomElement;
 import com.intellij.util.xml.GenericAttributeValue;
+import io.github.cdgeass.editor.dom.convert.PsiMethodReferenceConvert;
 
 /**
  * @author cdgeass
@@ -11,6 +12,6 @@ import com.intellij.util.xml.GenericAttributeValue;
  */
 public interface Statement extends DomElement {
 
-    @Convert(PsiJavaReferenceConvert.class)
+    @Convert(PsiMethodReferenceConvert.class)
     GenericAttributeValue<PsiMethod> getId();
 }

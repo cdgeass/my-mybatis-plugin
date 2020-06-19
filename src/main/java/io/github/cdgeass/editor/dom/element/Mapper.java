@@ -1,4 +1,4 @@
-package io.github.cdgeass.editor.dom;
+package io.github.cdgeass.editor.dom.element;
 
 import com.intellij.psi.PsiClass;
 import com.intellij.util.xml.*;

@@ -1,8 +1,10 @@
-package io.github.cdgeass.editor.dom;
+package io.github.cdgeass.editor.dom.convert;
 
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiReference;
 import com.intellij.util.xml.*;
+import io.github.cdgeass.editor.dom.element.Mapper;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -13,11 +15,11 @@ import java.util.Collections;
  * @author cdgeass
  * @since 2020-05-21
  */
-public class PsiJavaReferenceConvert extends Converter<PsiElement> implements CustomReferenceConverter<PsiElement> {
+public class PsiMethodReferenceConvert extends Converter<PsiMethod> implements CustomReferenceConverter<PsiMethod> {
 
     @Nullable
     @Override
-    public PsiElement fromString(@Nullable String s, ConvertContext context) {
+    public PsiMethod fromString(@Nullable String s, ConvertContext context) {
         var xmlFile = context.getFile();
         var domManager = DomManager.getDomManager(context.getProject());
         DomFileElement<Mapper> fileElement = domManager.getFileElement(xmlFile, Mapper.class);
@@ -44,7 +46,7 @@ public class PsiJavaReferenceConvert extends Converter<PsiElement> implements Cu
 
     @Nullable
     @Override
-    public String toString(@Nullable PsiElement element, ConvertContext context) {
+    public String toString(@Nullable PsiMethod element, ConvertContext context) {
         if (element == null) {
             return null;
         }
@@ -53,7 +55,7 @@ public class PsiJavaReferenceConvert extends Converter<PsiElement> implements Cu
 
     @NotNull
     @Override
-    public PsiReference[] createReferences(GenericDomValue<PsiElement> value, PsiElement element, ConvertContext context) {
+    public PsiReference[] createReferences(GenericDomValue<PsiMethod> value, PsiElement element, ConvertContext context) {
         var psiElement = value.getValue();
         if (psiElement == null) {
             return new PsiReference[0];

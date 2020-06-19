@@ -1,22 +1,20 @@
-package io.github.cdgeass.editor.dom;
+package io.github.cdgeass.editor.dom.convert;
 
 import com.intellij.ide.highlighter.XmlFileType;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.search.FileTypeIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.xml.XmlFile;
-import com.intellij.psi.xml.XmlTag;
-import com.intellij.util.indexing.FileBasedIndex;
 import com.intellij.util.xml.*;
+import io.github.cdgeass.editor.dom.element.Mapper;
+import io.github.cdgeass.editor.dom.element.Statement;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -24,13 +22,13 @@ import java.util.stream.Collectors;
 
 /**
  * @author cdgeass
- * @since 2020-05-25
+ * @since 2020-06-29
  */
-public class ResultMapReferenceConvert extends Converter<ResultMap> implements CustomReferenceConverter<ResultMap> {
+public class StatementReferenceConvert extends Converter<Statement> implements CustomReferenceConverter<Statement> {
 
     @Nullable
     @Override
-    public ResultMap fromString(@Nullable String s, ConvertContext context) {
+    public Statement fromString(@Nullable String s, ConvertContext context) {
         if (s == null) {
             return null;
         }
@@ -41,12 +39,16 @@ public class ResultMapReferenceConvert extends Converter<ResultMap> implements C
             return null;
         }
         var mapper = fileElement.getRootElement();
-        var resultMaps = mapper.getResultMaps();
-        for (ResultMap resultMap : resultMaps) {
-            var idAttributeValue = resultMap.getId();
+        List<Statement> statements = new ArrayList<>();
+        statements.addAll(mapper.getDeletes());
+        statements.addAll(mapper.getInserts());
+        statements.addAll(mapper.getSelects());
+        statements.addAll(mapper.getUpdates());
+        for (var statement : statements) {
+            var idAttributeValue = statement.getId();
             var id = idAttributeValue.getValue();
-            if (StringUtils.equals(id, s)) {
-                return resultMap;
+            if (id != null && StringUtils.equals(id.getName(), s)) {
+                return statement;
             }
         }
 
@@ -58,7 +60,7 @@ public class ResultMapReferenceConvert extends Converter<ResultMap> implements C
         var namespace = rootTag.getNamespace();
         var psiManager = PsiManager.getInstance(context.getProject());
         var virtualFiles = FileTypeIndex.getFiles(XmlFileType.INSTANCE, GlobalSearchScope.projectScope(context.getProject()));
-        resultMaps = virtualFiles
+        statements = virtualFiles
                 .stream()
                 .map(psiManager::findFile)
                 .filter(Objects::nonNull)
@@ -81,39 +83,51 @@ public class ResultMapReferenceConvert extends Converter<ResultMap> implements C
                     return xmlFileElement.getRootElement();
                 })
                 .filter(Objects::nonNull)
-                .flatMap(tempMapper -> tempMapper.getResultMaps().stream())
+                .flatMap(tempMapper -> {
+                    List<Statement> tempStatements = new ArrayList<>();
+                    tempStatements.addAll(mapper.getDeletes());
+                    tempStatements.addAll(mapper.getInserts());
+                    tempStatements.addAll(mapper.getSelects());
+                    tempStatements.addAll(mapper.getUpdates());
+                    return tempStatements.stream();
+                })
                 .collect(Collectors.toList());
-        for (ResultMap resultMap : resultMaps) {
-            var idAttributeValue = resultMap.getId();
+        for (var statement : statements) {
+            var idAttributeValue = statement.getId();
             var id = idAttributeValue.getValue();
-            if (StringUtils.equals(id, s)) {
-                return resultMap;
+            if (id != null && StringUtils.equals(id.getName(), s)) {
+                return statement;
             }
         }
 
         return null;
     }
 
+    @Nullable
     @Override
-    public @Nullable String toString(@Nullable ResultMap resultMap, ConvertContext context) {
-        if (resultMap == null) {
+    public String toString(@Nullable Statement statement, ConvertContext context) {
+        if (statement == null) {
             return null;
         }
-        var idAttributeValue = resultMap.getId();
+        var idAttributeValue = statement.getId();
         if (idAttributeValue == null) {
             return null;
         }
-        return idAttributeValue.getValue();
+        var psiMethod = idAttributeValue.getValue();
+        if (psiMethod == null) {
+            return null;
+        }
+        return psiMethod.getName();
     }
 
     @NotNull
     @Override
-    public PsiReference[] createReferences(GenericDomValue<ResultMap> value, PsiElement element, ConvertContext context) {
-        var resultMap = value.getValue();
-        if (resultMap == null) {
+    public PsiReference[] createReferences(GenericDomValue<Statement> value, PsiElement element, ConvertContext context) {
+        var statement = value.getValue();
+        if (statement == null) {
             return new PsiReference[0];
         }
 
-        return new PsiReference[]{new XmlReference(element, Collections.singletonList(resultMap.getXmlTag()))};
+        return new PsiReference[]{new XmlReference(element, Collections.singletonList(statement.getXmlTag()))};
     }
 }

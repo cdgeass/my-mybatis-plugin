@@ -8,8 +8,8 @@ import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.util.xml.DomManager;
-import io.github.cdgeass.editor.dom.Mapper;
-import io.github.cdgeass.editor.dom.Statement;
+import io.github.cdgeass.editor.dom.element.Mapper;
+import io.github.cdgeass.editor.dom.element.Statement;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -47,7 +47,7 @@ public class XmlLineMarkerProvider extends RelatedItemLineMarkerProvider {
         var rootIconBuilder = NavigationGutterIconBuilder.create(AllIcons.Gutter.ImplementingMethod)
                 .setTarget(psiClass)
                 .setTooltipText(psiClass.getQualifiedName());
-        result.add(rootIconBuilder.createLineMarkerInfo(mapper.getXmlTag()));
+        result.add(rootIconBuilder.createLineMarkerInfo(mapper.getXmlTag().getFirstChild()));
 
 
         Consumer<Statement> consumer = statement -> {
