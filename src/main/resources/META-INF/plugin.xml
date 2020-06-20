@@ -27,7 +27,8 @@
                                         implementationClass="io.github.cdgeass.editor.provider.DaoLineMarkerProvider"/>
         <codeInsight.lineMarkerProvider language="XML"
                                         implementationClass="io.github.cdgeass.editor.provider.XmlLineMarkerProvider"/>
-        <dom.fileDescription implementation="io.github.cdgeass.editor.dom.MapperDescription"/>
+        <dom.fileDescription implementation="io.github.cdgeass.editor.dom.element.ConfigurationDescription"/>
+        <dom.fileDescription implementation="io.github.cdgeass.editor.dom.element.MapperDescription"/>
         <toolWindow id="Format Sql" anchor="right" factoryClass="io.github.cdgeass.dialog.FormatToolWindowFactory"/>
     </extensions>
 

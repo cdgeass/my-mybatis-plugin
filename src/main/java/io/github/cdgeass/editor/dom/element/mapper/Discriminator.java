@@ -1,4 +1,4 @@
-package io.github.cdgeass.editor.dom.element;
+package io.github.cdgeass.editor.dom.element.mapper;
 
 import com.intellij.util.xml.DomElement;
 import com.intellij.util.xml.GenericAttributeValue;

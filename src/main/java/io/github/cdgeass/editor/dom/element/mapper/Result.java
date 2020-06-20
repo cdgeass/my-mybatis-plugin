@@ -1,4 +1,4 @@
-package io.github.cdgeass.editor.dom.element;
+package io.github.cdgeass.editor.dom.element.mapper;
 
 import com.intellij.util.xml.DomElement;
 import com.intellij.util.xml.GenericAttributeValue;
@@ -7,7 +7,7 @@ import com.intellij.util.xml.GenericAttributeValue;
  * @author cdgeass
  * @since  2020-06-19
  */
-public interface Id extends DomElement {
+public interface Result extends DomElement {
 
     GenericAttributeValue<String> getProperty();
 
@@ -17,5 +17,5 @@ public interface Id extends DomElement {
 
     GenericAttributeValue<String> getJdbcType();
 
-    GenericAttributeValue<String> getTypeHandler();
+    GenericAttributeValue<String> typeHandler();
 }

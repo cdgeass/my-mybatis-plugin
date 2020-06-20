@@ -1,22 +1,27 @@
-package io.github.cdgeass.editor.dom.element;
+package io.github.cdgeass.editor.dom.element.mapper;
 
+import com.intellij.psi.PsiClass;
 import com.intellij.util.xml.*;
+import io.github.cdgeass.editor.dom.convert.AliasReferenceConvert;
 import io.github.cdgeass.editor.dom.convert.ResultMapReferenceConvert;
 
 import java.util.List;
 
 /**
  * @author cdgeass
- * @since  2020-06-19
+ * @since  2020-05-22
  */
-public interface Case extends DomElement {
+public interface ResultMap extends DomElement {
 
-    GenericAttributeValue<String> getValue();
+    GenericAttributeValue<String> getId();
+
+    @Convert(AliasReferenceConvert.class)
+    GenericAttributeValue<PsiClass> getType();
 
     @Convert(ResultMapReferenceConvert.class)
-    GenericAttributeValue<ResultMap> getResultMap();
+    GenericAttributeValue<ResultMap> getExtends();
 
-    GenericAttributeValue<String> getResultType();
+    GenericAttributeValue<Boolean> getAutoMapping();
 
     @SubTag("constructor")
     Constructor getConstructor();

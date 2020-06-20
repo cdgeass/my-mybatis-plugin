@@ -13,6 +13,8 @@ public class StringConstants {
 
     public final static String AND = "AND";
 
+    public final static String MYBATIS = "mybatis";
+    public final static String CONFIGURATION = "configuration";
     public final static String MAPPER = "mapper";
 
     private StringConstants() {

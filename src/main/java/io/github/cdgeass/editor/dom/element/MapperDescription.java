@@ -1,10 +1,10 @@
-package io.github.cdgeass.editor.dom;
+package io.github.cdgeass.editor.dom.element;
 
 import com.intellij.openapi.module.Module;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.util.xml.DomFileDescription;
 import io.github.cdgeass.constants.StringConstants;
-import io.github.cdgeass.editor.dom.element.Mapper;
+import io.github.cdgeass.editor.dom.element.mapper.Mapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -15,7 +15,7 @@ import org.jetbrains.annotations.Nullable;
 public class MapperDescription extends DomFileDescription<Mapper> {
 
     public MapperDescription() {
-        super(Mapper.class, "mapper");
+        super(Mapper.class, StringConstants.MAPPER);
     }
 
     @Override
