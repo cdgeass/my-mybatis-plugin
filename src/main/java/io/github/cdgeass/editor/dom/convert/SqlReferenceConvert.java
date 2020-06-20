@@ -11,6 +11,7 @@ import com.intellij.util.xml.*;
 import io.github.cdgeass.constants.StringConstants;
 import io.github.cdgeass.editor.dom.element.mapper.Mapper;
 import io.github.cdgeass.editor.dom.element.mapper.ResultMap;
+import io.github.cdgeass.editor.dom.element.mapper.Sql;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -21,13 +22,13 @@ import java.util.stream.Collectors;
 
 /**
  * @author cdgeass
- * @since 2020-05-25
+ * @since  2020-06-20
  */
-public class ResultMapReferenceConvert extends Converter<ResultMap> implements CustomReferenceConverter<ResultMap> {
+public class SqlReferenceConvert extends Converter<Sql> implements CustomReferenceConverter<Sql> {
 
     @Nullable
     @Override
-    public ResultMap fromString(@Nullable String s, ConvertContext context) {
+    public Sql fromString(@Nullable String s, ConvertContext context) {
         if (s == null) {
             return null;
         }
@@ -38,12 +39,12 @@ public class ResultMapReferenceConvert extends Converter<ResultMap> implements C
             return null;
         }
         var mapper = fileElement.getRootElement();
-        var resultMaps = mapper.getResultMaps();
-        for (var resultMap : resultMaps) {
-            var idAttributeValue = resultMap.getId();
+        var sqls = mapper.getSqls();
+        for (var sql : sqls) {
+            var idAttributeValue = sql.getId();
             var id = idAttributeValue.getValue();
             if (StringUtils.equals(id, s)) {
-                return resultMap;
+                return sql;
             }
         }
 
@@ -55,7 +56,7 @@ public class ResultMapReferenceConvert extends Converter<ResultMap> implements C
         var namespace = rootTag.getNamespace();
         var psiManager = PsiManager.getInstance(context.getProject());
         var virtualFiles = FileTypeIndex.getFiles(XmlFileType.INSTANCE, GlobalSearchScope.projectScope(context.getProject()));
-        resultMaps = virtualFiles
+        sqls = virtualFiles
                 .stream()
                 .map(psiManager::findFile)
                 .filter(Objects::nonNull)
@@ -68,7 +69,8 @@ public class ResultMapReferenceConvert extends Converter<ResultMap> implements C
                     if (xmlRootTag == null) {
                         return false;
                     }
-                    return Objects.equals(namespace, xmlRootTag.getNamespace());
+                    return StringConstants.MAPPER.equals(xmlRootTag.getName())
+                            && StringUtils.equals(namespace, xmlRootTag.getAttributeValue(StringConstants.NAMESPACE));
                 })
                 .map(xmlFile -> {
                     var xmlFileElement = domManager.getFileElement(xmlFile, Mapper.class);
@@ -78,25 +80,26 @@ public class ResultMapReferenceConvert extends Converter<ResultMap> implements C
                     return xmlFileElement.getRootElement();
                 })
                 .filter(Objects::nonNull)
-                .flatMap(tempMapper -> tempMapper.getResultMaps().stream())
+                .flatMap(tempMapper -> tempMapper.getSqls().stream())
                 .collect(Collectors.toList());
-        for (var resultMap : resultMaps) {
-            var idAttributeValue = resultMap.getId();
+        for (var sql : sqls) {
+            var idAttributeValue = sql.getId();
             var id = idAttributeValue.getValue();
             if (StringUtils.equals(id, s)) {
-                return resultMap;
+                return sql;
             }
         }
 
         return null;
     }
 
+    @Nullable
     @Override
-    public @Nullable String toString(@Nullable ResultMap resultMap, ConvertContext context) {
-        if (resultMap == null) {
+    public String toString(@Nullable Sql sql, ConvertContext context) {
+        if (sql == null) {
             return null;
         }
-        var idAttributeValue = resultMap.getId();
+        var idAttributeValue = sql.getId();
         if (idAttributeValue == null) {
             return null;
         }
@@ -105,12 +108,12 @@ public class ResultMapReferenceConvert extends Converter<ResultMap> implements C
 
     @NotNull
     @Override
-    public PsiReference[] createReferences(GenericDomValue<ResultMap> value, PsiElement element, ConvertContext context) {
-        var resultMap = value.getValue();
-        if (resultMap == null) {
+    public PsiReference[] createReferences(GenericDomValue<Sql> value, PsiElement element, ConvertContext context) {
+        var sql = value.getValue();
+        if (sql == null) {
             return new PsiReference[0];
         }
 
-        return new PsiReference[]{new XmlReference(element, Collections.singletonList(resultMap.getXmlTag()))};
+        return new PsiReference[]{new XmlReference(element, Collections.singletonList(sql.getXmlTag()))};
     }
 }

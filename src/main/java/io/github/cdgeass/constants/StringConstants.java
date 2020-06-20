@@ -16,6 +16,7 @@ public class StringConstants {
     public final static String MYBATIS = "mybatis";
     public final static String CONFIGURATION = "configuration";
     public final static String MAPPER = "mapper";
+    public final static String NAMESPACE = "namespace";
 
     private StringConstants() {
 

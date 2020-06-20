@@ -1,37 +1,32 @@
 package io.github.cdgeass.editor.dom.element.mapper;
 
 import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiMethod;
-import com.intellij.util.xml.*;
+import com.intellij.util.xml.Convert;
+import com.intellij.util.xml.DomElement;
+import com.intellij.util.xml.GenericAttributeValue;
+import com.intellij.util.xml.SubTagList;
 import io.github.cdgeass.editor.dom.convert.AliasReferenceConvert;
-import io.github.cdgeass.editor.dom.convert.PsiMethodReferenceConvert;
 
 import java.util.List;
 
 /**
  * @author cdgeass
- * @since 2020-05-26
+ * @since 2020-06-20
  */
-public interface Statement extends DomElement {
-
-    @Convert(PsiMethodReferenceConvert.class)
-    GenericAttributeValue<PsiMethod> getId();
-
-    @Attribute("parameterMap")
-    GenericAttributeValue<ParameterMap> getParameterMap();
+public interface SelectKey extends DomElement {
 
     @Convert(AliasReferenceConvert.class)
-    GenericAttributeValue<PsiClass> getParameterType();
-
-    GenericAttributeValue<String> getTimeout();
-
-    GenericAttributeValue<Boolean> getFlushCache();
+    GenericAttributeValue<PsiClass> getResultType();
 
     GenericAttributeValue<String> getStatementType();
 
-    GenericAttributeValue<String> getDatabaseId();
+    GenericAttributeValue<String> getKeyProperty();
 
-    GenericAttributeValue<String> getLang();
+    GenericAttributeValue<String> getKeyColumn();
+
+    GenericAttributeValue<String> getOrder();
+
+    GenericAttributeValue<String> getDatabaseId();
 
     @SubTagList("include")
     List<Include> getIncludes();

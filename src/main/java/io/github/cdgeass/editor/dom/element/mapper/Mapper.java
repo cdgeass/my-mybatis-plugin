@@ -13,14 +13,30 @@ public interface Mapper extends DomElement {
 
     GenericAttributeValue<PsiClass> getNamespace();
 
-    List<SelectStatement> getSelects();
+    @SubTag("cache-ref")
+    CacheRef getCacheRef();
 
-    List<ModificationStatement> getInserts();
-
-    List<ModificationStatement> getUpdates();
-
-    List<ModificationStatement> getDeletes();
+    @SubTag("cache")
+    Cache getCache();
 
     @SubTagList("resultMap")
     List<ResultMap> getResultMaps();
+
+    @SubTagList("parameterMap")
+    List<ParameterMap> getParameterMap();
+
+    @SubTagList("sql")
+    List<Sql> getSqls();
+
+    @SubTagList("select")
+    List<SelectStatement> getSelects();
+
+    @SubTagList("insert")
+    List<ModificationStatement> getInserts();
+
+    @SubTagList("update")
+    List<ModificationStatement> getUpdates();
+
+    @SubTagList("delete")
+    List<ModificationStatement> getDeletes();
 }

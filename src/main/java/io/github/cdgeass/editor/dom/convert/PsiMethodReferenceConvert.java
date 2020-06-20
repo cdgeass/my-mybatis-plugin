@@ -22,7 +22,7 @@ public class PsiMethodReferenceConvert extends Converter<PsiMethod> implements C
     public PsiMethod fromString(@Nullable String s, ConvertContext context) {
         var xmlFile = context.getFile();
         var domManager = DomManager.getDomManager(context.getProject());
-        DomFileElement<Mapper> fileElement = domManager.getFileElement(xmlFile, Mapper.class);
+        var fileElement = domManager.getFileElement(xmlFile, Mapper.class);
         if (fileElement == null) {
             return null;
         }
