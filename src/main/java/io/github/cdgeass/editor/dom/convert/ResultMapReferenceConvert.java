@@ -52,7 +52,7 @@ public class ResultMapReferenceConvert extends Converter<ResultMap> implements C
         if (rootTag == null) {
             return null;
         }
-        var namespace = rootTag.getNamespace();
+        var namespace = rootTag.getAttributeValue("namespace");
         var psiManager = PsiManager.getInstance(context.getProject());
         var virtualFiles = FileTypeIndex.getFiles(XmlFileType.INSTANCE, GlobalSearchScope.projectScope(context.getProject()));
         resultMaps = virtualFiles
@@ -68,7 +68,7 @@ public class ResultMapReferenceConvert extends Converter<ResultMap> implements C
                     if (xmlRootTag == null) {
                         return false;
                     }
-                    return Objects.equals(namespace, xmlRootTag.getNamespace());
+                    return StringUtils.equals(namespace, xmlRootTag.getAttributeValue("namespace"));
                 })
                 .map(xmlFile -> {
                     var xmlFileElement = domManager.getFileElement(xmlFile, Mapper.class);
