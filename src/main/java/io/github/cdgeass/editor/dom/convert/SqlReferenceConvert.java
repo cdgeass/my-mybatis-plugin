@@ -53,7 +53,7 @@ public class SqlReferenceConvert extends Converter<Sql> implements CustomReferen
         if (rootTag == null) {
             return null;
         }
-        var namespace = rootTag.getNamespace();
+        var namespace = rootTag.getAttributeValue(StringConstants.NAMESPACE);
         var psiManager = PsiManager.getInstance(context.getProject());
         var virtualFiles = FileTypeIndex.getFiles(XmlFileType.INSTANCE, GlobalSearchScope.projectScope(context.getProject()));
         sqls = virtualFiles
