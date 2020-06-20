@@ -1,24 +1,18 @@
 package io.github.cdgeass.editor.dom;
 
 import com.intellij.ide.highlighter.XmlFileType;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.search.FileTypeIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.xml.XmlFile;
-import com.intellij.psi.xml.XmlTag;
-import com.intellij.util.indexing.FileBasedIndex;
 import com.intellij.util.xml.*;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -55,7 +49,7 @@ public class ResultMapReferenceConvert extends Converter<ResultMap> implements C
         if (rootTag == null) {
             return null;
         }
-        var namespace = rootTag.getNamespace();
+        var namespace = rootTag.getAttributeValue("namespace");
         var psiManager = PsiManager.getInstance(context.getProject());
         var virtualFiles = FileTypeIndex.getFiles(XmlFileType.INSTANCE, GlobalSearchScope.projectScope(context.getProject()));
         resultMaps = virtualFiles
@@ -71,7 +65,7 @@ public class ResultMapReferenceConvert extends Converter<ResultMap> implements C
                     if (xmlRootTag == null) {
                         return false;
                     }
-                    return Objects.equals(namespace, xmlRootTag.getNamespace());
+                    return StringUtils.equals(namespace, xmlRootTag.getAttributeValue("namespace"));
                 })
                 .map(xmlFile -> {
                     var xmlFileElement = domManager.getFileElement(xmlFile, Mapper.class);

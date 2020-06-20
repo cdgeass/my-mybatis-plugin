@@ -47,7 +47,7 @@ public class XmlLineMarkerProvider extends RelatedItemLineMarkerProvider {
         var rootIconBuilder = NavigationGutterIconBuilder.create(AllIcons.Gutter.ImplementingMethod)
                 .setTarget(psiClass)
                 .setTooltipText(psiClass.getQualifiedName());
-        result.add(rootIconBuilder.createLineMarkerInfo(mapper.getXmlTag()));
+        result.add(rootIconBuilder.createLineMarkerInfo(mapper.getXmlTag().getFirstChild()));
 
 
         Consumer<Statement> consumer = statement -> {
