@@ -28,7 +28,7 @@ public class ConfigurationDescription extends DomFileDescription<Configuration> 
         var rootTag = document.getRootTag();
         boolean containsConfiguration = rootTag != null && StringConstants.CONFIGURATION.equals(rootTag.getName());
         var prolog = document.getProlog();
-        if (prolog == null) {
+        if (prolog == null || prolog.getDoctype() == null || prolog.getDoctype().getDtdUri() == null) {
             return containsConfiguration;
         }
         return prolog.getDoctype().getDtdUri().contains(StringConstants.MYBATIS) && containsConfiguration;
