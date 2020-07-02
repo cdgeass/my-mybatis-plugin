@@ -29,6 +29,8 @@
                                         implementationClass="io.github.cdgeass.editor.provider.XmlLineMarkerProvider"/>
         <dom.fileDescription implementation="io.github.cdgeass.editor.dom.element.ConfigurationDescription"/>
         <dom.fileDescription implementation="io.github.cdgeass.editor.dom.element.MapperDescription"/>
+        <completion.contributor language="XML"
+                                implementationClass="io.github.cdgeass.editor.dom.contributor.MapperCompletionContributor"/>
         <toolWindow id="Format Sql" anchor="right" factoryClass="io.github.cdgeass.dialog.FormatToolWindowFactory"/>
     </extensions>
 

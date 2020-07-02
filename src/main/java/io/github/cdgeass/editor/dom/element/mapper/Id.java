@@ -1,5 +1,6 @@
 package io.github.cdgeass.editor.dom.element.mapper;
 
+import com.intellij.psi.PsiClass;
 import com.intellij.util.xml.DomElement;
 import com.intellij.util.xml.GenericAttributeValue;
 
@@ -11,7 +12,7 @@ public interface Id extends DomElement {
 
     GenericAttributeValue<String> getProperty();
 
-    GenericAttributeValue<String> getJavaType();
+    GenericAttributeValue<PsiClass> getJavaType();
 
     GenericAttributeValue<String> getColumn();
 
