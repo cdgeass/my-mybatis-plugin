@@ -43,10 +43,8 @@ public class Formatter {
             return statementVisitor.toString();
         } catch (JSQLParserException e) {
             log.error("sql parser error", e);
-            e.printStackTrace();
+            return preparing;
         }
-
-        return "";
     }
 
     private static List<String> parameters(List<String> parametersWithType) {

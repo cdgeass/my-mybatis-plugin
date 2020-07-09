@@ -107,6 +107,7 @@ public class FormatToolWindow {
             editor.setHorizontalScrollbarVisible(true);
             editor.setVerticalScrollbarVisible(true);
             editor.setCaretEnabled(false);
+            editor.setRendererMode(true);
             editor.getCaretModel().moveToOffset(0);
 
             var textAttributes1 = new TextAttributes();
