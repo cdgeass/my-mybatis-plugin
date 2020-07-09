@@ -64,6 +64,7 @@ public class FormatSelectionDialog extends DialogWrapper {
                 editor.setHorizontalScrollbarVisible(true);
                 editor.setVerticalScrollbarVisible(true);
                 editor.setOneLineMode(false);
+                editor.setRendererMode(true);
                 editor.setCaretEnabled(false);
 
                 var text = editor.getDocument().getText();
