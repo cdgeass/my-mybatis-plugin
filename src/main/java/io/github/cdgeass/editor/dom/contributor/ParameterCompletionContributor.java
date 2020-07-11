@@ -1,8 +1,10 @@
 package io.github.cdgeass.editor.dom.contributor;
 
 import com.intellij.codeInsight.completion.*;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiMethod;
+import com.intellij.codeInsight.lookup.LookupElementBuilder;
+import com.intellij.lang.jvm.annotation.JvmAnnotationAttribute;
+import com.intellij.lang.jvm.annotation.JvmAnnotationAttributeValue;
+import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlAttributeValue;
@@ -87,7 +89,18 @@ public class ParameterCompletionContributor extends CompletionContributor {
 
                         assert statement != null;
                         var psiMethod = psiMethodMap.get(statement.getAttributeValue("id"));
-
+                        var psiParameters = psiMethod.getParameterList().getParameters();
+                        for (var psiParameter : psiParameters) {
+                            var paramAnnotation = psiParameter.getAnnotation(StringConstants.PARAM_ANNOTATION);
+                            if (paramAnnotation != null) {
+                                var annotationParameterList = paramAnnotation.getParameterList();
+                                for (var attribute : annotationParameterList.getAttributes()) {
+                                    if (attribute.getLiteralValue() != null) {
+                                        result.addElement(LookupElementBuilder.create(attribute.getLiteralValue()));
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
         );

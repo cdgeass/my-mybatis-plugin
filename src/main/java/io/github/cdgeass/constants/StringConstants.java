@@ -6,6 +6,8 @@ package io.github.cdgeass.constants;
  */
 public class StringConstants {
 
+    public final static String PARAM_ANNOTATION = "org.apache.ibatis.annotations.Param";
+
     public final static String LINE_BREAK = "\n";
     public final static String TAB_CHARACTER = "    ";
     public final static String SEMICOLON = ";";
