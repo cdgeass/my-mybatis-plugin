@@ -96,7 +96,7 @@ public class ParameterCompletionContributor extends CompletionContributor {
                                 var annotationParameterList = paramAnnotation.getParameterList();
                                 for (var attribute : annotationParameterList.getAttributes()) {
                                     if (attribute.getLiteralValue() != null) {
-                                        result.addElement(LookupElementBuilder.create(attribute.getLiteralValue()));
+                                        result.addLookupAdvertisement(attribute.getLiteralValue());
                                     }
                                 }
                             }
