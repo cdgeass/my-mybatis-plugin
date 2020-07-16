@@ -30,7 +30,7 @@ public class MapperCompletionContributor extends CompletionContributor {
         extend(
                 CompletionType.BASIC,
                 psiElement(),
-                new CompletionProvider<CompletionParameters>() {
+                new CompletionProvider<>() {
                     @Override
                     protected void addCompletions(@NotNull CompletionParameters parameters,
                                                   @NotNull ProcessingContext context,
@@ -42,7 +42,7 @@ public class MapperCompletionContributor extends CompletionContributor {
                             return;
                         }
 
-                        var attributeName = ((XmlAttribute)position.getParent().getParent()).getName();
+                        var attributeName = ((XmlAttribute) position.getParent().getParent()).getName();
                         if (StringConstants.COLUMN.equals(attributeName)) {
                             addColumnKeyWords(parameters, result);
                         }
