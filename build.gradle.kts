@@ -17,6 +17,7 @@ dependencies {
 
 // See https://github.com/JetBrains/gradle-intellij-plugin/
 intellij {
+    type = "IC"
     version = "IC-2020.1"
     setPlugins("java")
 }

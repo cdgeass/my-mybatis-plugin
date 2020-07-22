@@ -10,7 +10,6 @@ import com.intellij.psi.impl.source.PsiClassReferenceType;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
-import com.intellij.util.Icons;
 import com.intellij.util.PlatformIcons;
 import com.intellij.util.ProcessingContext;
 import com.intellij.util.xml.DomManager;
@@ -50,7 +49,13 @@ public class ParameterCompletionContributor extends CompletionContributor {
                         var position = parameters.getPosition();
 
                         if (hasPrefix(position)) {
-                            addParamKeyWords(parameters, result);
+                            var text = position.getText();
+                            if (text.startsWith(PREFIX)) {
+                                text = StringUtils.removeEnd(StringUtils.removeStart(text, PREFIX), CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED);
+                                addParamKeyWords(parameters, result.withPrefixMatcher(text));
+                            } else {
+                                addParamKeyWords(parameters, result);
+                            }
                         }
                     }
                 }
@@ -94,7 +99,6 @@ public class ParameterCompletionContributor extends CompletionContributor {
                     if (attribute.getLiteralValue() != null) {
                         keyword += attribute.getLiteralValue();
                         result.addElement(LookupElementBuilder.create(keyword).withIcon(PlatformIcons.FIELD_ICON));
-                        result.addLookupAdvertisement(attribute.getLiteralValue());
                     }
 
                     if (!(psiParameter.getType() instanceof PsiPrimitiveType)) {
