@@ -33,6 +33,8 @@
                                 implementationClass="io.github.cdgeass.editor.dom.contributor.MapperCompletionContributor"/>
         <completion.contributor language="XML"
                                 implementationClass="io.github.cdgeass.editor.dom.contributor.ParameterCompletionContributor"/>
+        <completion.contributor language="XML"
+                                implementationClass="io.github.cdgeass.editor.dom.contributor.ParameterCompletionContributor"/>
         <toolWindow id="Format Sql" anchor="right" factoryClass="io.github.cdgeass.dialog.FormatToolWindowFactory"/>
     </extensions>
 

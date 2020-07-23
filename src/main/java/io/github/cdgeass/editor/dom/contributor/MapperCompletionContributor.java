@@ -24,7 +24,7 @@ import static com.intellij.patterns.PlatformPatterns.psiElement;
  */
 public class MapperCompletionContributor extends CompletionContributor {
 
-    private static final List<String> CONTAINS_TYPE = Lists.newArrayList("resultMap");
+    private static final List<String> CONTAINS_TYPE = Lists.newArrayList(StringConstants.RESULT_MAP);
 
     public MapperCompletionContributor() {
         extend(
