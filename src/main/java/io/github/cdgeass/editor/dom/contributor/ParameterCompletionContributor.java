@@ -1,8 +1,8 @@
 package io.github.cdgeass.editor.dom.contributor;
 
+import com.google.common.collect.Lists;
 import com.intellij.codeInsight.completion.*;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
-import com.intellij.psi.PsiField;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiType;
 import com.intellij.psi.impl.source.PsiClassReferenceType;
@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static com.intellij.patterns.PlatformPatterns.psiElement;
@@ -30,6 +31,7 @@ import static com.intellij.patterns.PlatformPatterns.psiElement;
  */
 public class ParameterCompletionContributor extends CompletionContributor {
 
+    private static final List<String> MAPPER_TAG_NAME = Lists.newArrayList(StringConstants.IF);
 
     public ParameterCompletionContributor() {
         extend(
@@ -46,25 +48,49 @@ public class ParameterCompletionContributor extends CompletionContributor {
         );
     }
 
+    @Override
+    public void beforeCompletion(@NotNull CompletionInitializationContext context) {
+        super.beforeCompletion(context);
+        context.setDummyIdentifier("");
+    }
+
     private void addKeyWords(CompletionParameters parameters, CompletionResultSet result) {
         var paramsMap = getParams(parameters);
         if (MapUtils.isEmpty(paramsMap)) {
             return;
         }
 
+        boolean isParamPrefix = false;
         var position = parameters.getPosition();
-        var text = position.getText();
+        var parent = PsiTreeUtil.findFirstParent(position, psiElement ->
+                psiElement instanceof XmlTag && MAPPER_TAG_NAME.contains(((XmlTag) psiElement).getName()));
+        String text;
+        if (parent == null) {
+            text = position.getText();
+        } else {
+            var prevLeaf = PsiTreeUtil.prevLeaf(position);
+            if (prevLeaf != null) {
+                isParamPrefix = true;
+                text = prevLeaf.getText();
+            } else {
+                return;
+            }
+        }
+
         if (text.endsWith(StringConstants.PARAM_SUFFIX)) {
+            isParamPrefix = true;
             text = StringUtils.removeEnd(text, StringConstants.PARAM_SUFFIX);
         }
-        text = StringUtils.removeEnd(text, CompletionUtilCore.DUMMY_IDENTIFIER);
         if (text.startsWith(StringConstants.PARAM_PREFIX)) {
             text = StringUtils.removeStart(text, StringConstants.PARAM_PREFIX);
         } else if (text.startsWith(StringConstants.PREPARED_PARAM_PREFIX)) {
             text = StringUtils.removeStart(text, StringConstants.PREPARED_PARAM_PREFIX);
         }
         if (text.contains(StringConstants.WHITESPACE)) {
-            text = text.substring(StringUtils.lastIndexOf(text, StringConstants.WHITESPACE), text.length() - 1);
+            text = text.substring(StringUtils.lastIndexOf(text, StringConstants.WHITESPACE));
+        }
+        if (text.endsWith(StringConstants.DOT)) {
+            text += StringConstants.WHITESPACE;
         }
 
         var paramNames = StringUtils.split(text, StringConstants.DOT);
@@ -72,36 +98,45 @@ public class ParameterCompletionContributor extends CompletionContributor {
             return;
         }
 
-        addKeyWord(paramNames, 0, paramsMap, result);
+        addKeyWord(paramNames, 0, isParamPrefix, paramsMap, result);
     }
 
-    private void addKeyWord(String[] paramNames, int count, Map<String, PsiType> paramsMap, CompletionResultSet result) {
+    private void addKeyWord(String[] paramNames,
+                            int count,
+                            boolean isParamPrefix,
+                            Map<String, PsiType> paramsMap,
+                            CompletionResultSet result) {
+        int tempCount;
         for (var paramNameKey : paramsMap.keySet()) {
-            var paramName = paramNames[count++];
+            tempCount = count;
+            var paramName = paramNames[tempCount++].trim();
             var paramType = paramsMap.get(paramNameKey);
 
-            if (paramNameKey.startsWith(paramName)) {
-                if (count == paramNames.length) {
-                    result.withPrefixMatcher(paramName).addElement(LookupElementBuilder.create(paramName).withIcon(PlatformIcons.PARAMETER_ICON));
-                } else if (paramNameKey.equals(paramName) && paramType instanceof PsiClassReferenceType) {
-                    var paramClass = ((PsiClassReferenceType) paramType).resolve();
-                    if (paramClass != null) {
-                        var paramFields = paramClass.getAllFields();
-                        var paramMethods = paramClass.getAllMethods();
+            if (paramNameKey.startsWith(paramName) && tempCount == paramNames.length) {
+                if ("".equals(paramName)) {
+                    result = result.withPrefixMatcher("");
+                } else if (isParamPrefix) {
+                    result = result.withPrefixMatcher(paramName);
+                }
+                result.addElement(LookupElementBuilder.create(paramNameKey).withIcon(PlatformIcons.PARAMETER_ICON));
+            } else if (paramNameKey.equals(paramName) && paramType instanceof PsiClassReferenceType) {
+                var paramClass = ((PsiClassReferenceType) paramType).resolve();
+                if (paramClass != null) {
+                    var paramFields = paramClass.getAllFields();
+                    var paramMethods = paramClass.getAllMethods();
 
-                        Map<String, PsiType> subParamsMap = new HashMap<>();
-                        for (var paramMethod : paramMethods) {
-                            if (ParamUtil.isGetter(paramMethod.getName())) {
-                                subParamsMap.put(ParamUtil.methodToProperty(paramMethod.getName()),
-                                        paramMethod.getReturnType());
-                            }
+                    Map<String, PsiType> subParamsMap = new HashMap<>();
+                    for (var paramMethod : paramMethods) {
+                        if (ParamUtil.isGetter(paramMethod.getName())) {
+                            subParamsMap.put(ParamUtil.methodToProperty(paramMethod.getName()),
+                                    paramMethod.getReturnType());
                         }
-                        for (var paramField : paramFields) {
-                            subParamsMap.put(paramField.getName(), paramField.getType());
-                        }
-
-                        addKeyWord(paramNames, count, subParamsMap, result);
                     }
+                    for (var paramField : paramFields) {
+                        subParamsMap.put(paramField.getName(), paramField.getType());
+                    }
+
+                    addKeyWord(paramNames, tempCount, isParamPrefix, subParamsMap, result);
                 }
             }
         }
