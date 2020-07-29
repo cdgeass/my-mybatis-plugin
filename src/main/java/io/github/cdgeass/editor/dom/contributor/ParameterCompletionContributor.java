@@ -48,12 +48,6 @@ public class ParameterCompletionContributor extends CompletionContributor {
         );
     }
 
-    @Override
-    public void beforeCompletion(@NotNull CompletionInitializationContext context) {
-        super.beforeCompletion(context);
-        context.setDummyIdentifier("");
-    }
-
     private void addKeyWords(CompletionParameters parameters, CompletionResultSet result) {
         var paramsMap = getParams(parameters);
         if (MapUtils.isEmpty(paramsMap)) {
@@ -64,17 +58,12 @@ public class ParameterCompletionContributor extends CompletionContributor {
         var position = parameters.getPosition();
         var parent = PsiTreeUtil.findFirstParent(position, psiElement ->
                 psiElement instanceof XmlTag && MAPPER_TAG_NAME.contains(((XmlTag) psiElement).getName()));
-        String text;
-        if (parent == null) {
-            text = position.getText();
-        } else {
-            var prevLeaf = PsiTreeUtil.prevLeaf(position);
-            if (prevLeaf != null) {
-                isParamPrefix = true;
-                text = prevLeaf.getText();
-            } else {
-                return;
-            }
+        String text = position.getText();
+        if (text.endsWith(CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED)) {
+            text = StringUtils.removeEnd(text, CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED);
+        } else if (text.endsWith(CompletionUtilCore.DUMMY_IDENTIFIER)) {
+            isParamPrefix = true;
+            text = StringUtils.removeEnd(text, CompletionUtilCore.DUMMY_IDENTIFIER);
         }
 
         if (text.endsWith(StringConstants.PARAM_SUFFIX)) {
