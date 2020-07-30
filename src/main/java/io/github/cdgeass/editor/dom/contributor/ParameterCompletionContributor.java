@@ -3,11 +3,17 @@ package io.github.cdgeass.editor.dom.contributor;
 import com.google.common.collect.Lists;
 import com.intellij.codeInsight.completion.*;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
-import com.intellij.psi.PsiMethod;
-import com.intellij.psi.PsiType;
+import com.intellij.injected.editor.VirtualFileWindow;
+import com.intellij.lang.xml.XMLLanguage;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.PlatformVirtualFileManager;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.*;
 import com.intellij.psi.impl.source.PsiClassReferenceType;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlTag;
+import com.intellij.sql.dialects.generic.GenericDialect;
+import com.intellij.sql.psi.SqlLanguage;
 import com.intellij.util.PlatformIcons;
 import com.intellij.util.ProcessingContext;
 import com.intellij.util.xml.DomManager;
@@ -54,11 +60,9 @@ public class ParameterCompletionContributor extends CompletionContributor {
             return;
         }
 
-        boolean isParamPrefix = false;
+        var isParamPrefix = false;
         var position = parameters.getPosition();
-        var parent = PsiTreeUtil.findFirstParent(position, psiElement ->
-                psiElement instanceof XmlTag && MAPPER_TAG_NAME.contains(((XmlTag) psiElement).getName()));
-        String text = position.getText();
+        var text = position.getText();
         if (text.endsWith(CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED)) {
             text = StringUtils.removeEnd(text, CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED);
         } else if (text.endsWith(CompletionUtilCore.DUMMY_IDENTIFIER)) {
@@ -91,17 +95,17 @@ public class ParameterCompletionContributor extends CompletionContributor {
     }
 
     private void addKeyWord(String[] paramNames,
-                            int count,
+                            int callCount,
                             boolean isParamPrefix,
                             Map<String, PsiType> paramsMap,
                             CompletionResultSet result) {
-        int tempCount;
+        int tempCallCount;
         for (var paramNameKey : paramsMap.keySet()) {
-            tempCount = count;
-            var paramName = paramNames[tempCount++].trim();
+            tempCallCount = callCount;
+            var paramName = paramNames[tempCallCount++].trim();
             var paramType = paramsMap.get(paramNameKey);
 
-            if (paramNameKey.startsWith(paramName) && tempCount == paramNames.length) {
+            if (paramNameKey.startsWith(paramName) && tempCallCount == paramNames.length) {
                 if ("".equals(paramName)) {
                     result = result.withPrefixMatcher("");
                 } else if (isParamPrefix) {
@@ -125,7 +129,7 @@ public class ParameterCompletionContributor extends CompletionContributor {
                         subParamsMap.put(paramField.getName(), paramField.getType());
                     }
 
-                    addKeyWord(paramNames, tempCount, isParamPrefix, subParamsMap, result);
+                    addKeyWord(paramNames, tempCallCount, isParamPrefix, subParamsMap, result);
                 }
             }
         }
@@ -133,14 +137,34 @@ public class ParameterCompletionContributor extends CompletionContributor {
 
     private Map<String, PsiType> getParams(CompletionParameters parameters) {
         var position = parameters.getPosition();
-        var statementXmlTag = (XmlTag) PsiTreeUtil.findFirstParent(position,
-                psiElement -> (psiElement instanceof XmlTag) && ((XmlTag) psiElement).getAttribute("id") != null);
-        if (statementXmlTag == null) {
+        var project = parameters.getEditor().getProject();
+        if (project == null) {
             return Collections.emptyMap();
         }
 
-        var project = parameters.getEditor().getProject();
-        if (project == null) {
+        var language = position.getLanguage();
+        if (language instanceof XMLLanguage) {
+            return getParams(position, project);
+        } else if (language instanceof GenericDialect) {
+            var virtualFile = position.getContainingFile().getVirtualFile();
+            if (!(virtualFile instanceof VirtualFileWindow)) {
+                return Collections.emptyMap();
+            }
+            virtualFile = ((VirtualFileWindow) virtualFile).getDelegate();
+            var xmlFile = PsiManager.getInstance(project).findFile(virtualFile);
+            if (xmlFile == null) {
+                return Collections.emptyMap();
+            }
+            return Collections.emptyMap();
+        } else {
+            return Collections.emptyMap();
+        }
+    }
+
+    private Map<String, PsiType> getParams(PsiElement position, Project project) {
+        var statementXmlTag = (XmlTag) PsiTreeUtil.findFirstParent(position,
+                psiElement -> (psiElement instanceof XmlTag) && ((XmlTag) psiElement).getAttribute("id") != null);
+        if (statementXmlTag == null) {
             return Collections.emptyMap();
         }
 
@@ -151,7 +175,7 @@ public class ParameterCompletionContributor extends CompletionContributor {
         }
 
         var statement = (Statement) domElement;
-        GenericAttributeValue<PsiMethod> methodGenericAttributeValue = statement.getId();
+        var methodGenericAttributeValue = statement.getId();
         if (methodGenericAttributeValue == null || methodGenericAttributeValue.getValue() == null) {
             return Collections.emptyMap();
         }

@@ -19,7 +19,9 @@
     <!-- please see https://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
          on how to target different products -->
     <depends>com.intellij.modules.platform</depends>
+    <depends>com.intellij.modules.ultimate</depends>
     <depends>com.intellij.java</depends>
+    <depends>com.intellij.database</depends>
 
     <extensions defaultExtensionNs="com.intellij">
         <!-- Add your extensions here -->
@@ -29,10 +31,12 @@
                                         implementationClass="io.github.cdgeass.editor.provider.XmlLineMarkerProvider"/>
         <dom.fileDescription implementation="io.github.cdgeass.editor.dom.element.ConfigurationDescription"/>
         <dom.fileDescription implementation="io.github.cdgeass.editor.dom.element.MapperDescription"/>
-        <completion.contributor language="XML"
-                                implementationClass="io.github.cdgeass.editor.dom.contributor.MapperCompletionContributor"/>
-        <completion.contributor language="XML"
-                                implementationClass="io.github.cdgeass.editor.dom.contributor.ParameterCompletionContributor"/>
+        <completion.contributor language="any"
+                                implementationClass="io.github.cdgeass.editor.dom.contributor.MapperCompletionContributor"
+                                order="after xml"/>
+        <completion.contributor language="any"
+                                implementationClass="io.github.cdgeass.editor.dom.contributor.ParameterCompletionContributor"
+                                order="after xml"/>
         <toolWindow id="Format Sql" anchor="right" factoryClass="io.github.cdgeass.dialog.FormatToolWindowFactory"/>
     </extensions>
 

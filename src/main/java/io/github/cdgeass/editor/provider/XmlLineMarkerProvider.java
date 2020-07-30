@@ -49,7 +49,6 @@ public class XmlLineMarkerProvider extends RelatedItemLineMarkerProvider {
                 .setTooltipText(psiClass.getQualifiedName());
         result.add(rootIconBuilder.createLineMarkerInfo(mapper.getXmlTag().getFirstChild()));
 
-
         Consumer<Statement> consumer = statement -> {
             if (statement.getXmlTag() == null) {
                 return;
