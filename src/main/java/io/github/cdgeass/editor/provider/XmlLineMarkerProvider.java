@@ -24,7 +24,7 @@ import java.util.function.Consumer;
 public class XmlLineMarkerProvider extends RelatedItemLineMarkerProvider {
 
     @Override
-    protected void collectNavigationMarkers(@NotNull PsiElement element, @NotNull Collection<? super RelatedItemLineMarkerInfo> result) {
+    protected void collectNavigationMarkers(@NotNull PsiElement element, @NotNull Collection<? super RelatedItemLineMarkerInfo<?>> result) {
         if (!(element instanceof XmlFile)) {
             return;
         }

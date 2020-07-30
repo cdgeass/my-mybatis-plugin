@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "io.github.cdgeass"
-version = "1.2.2"
+version = "1.2.3"
 
 repositories {
     mavenCentral()
@@ -18,7 +18,7 @@ dependencies {
 // See https://github.com/JetBrains/gradle-intellij-plugin/
 intellij {
     type = "IU"
-    version = "IU-2020.1"
+    version = "IU-2020.2"
     setPlugins("java", "com.intellij.database")
 }
 configure<JavaPluginConvention> {
@@ -26,12 +26,9 @@ configure<JavaPluginConvention> {
 }
 tasks.getByName<org.jetbrains.intellij.tasks.PatchPluginXmlTask>("patchPluginXml") {
     changeNotes("""
-    1.2.2<br>
+    1.2.3</br>
     <ul>
-        <li>replace druid sql parser with jsqlparser</li>
-        <li>rewrite dialog</li>
-        <li>add tool window</li>
-        <li>fix bugs</li>
+        <li>compatible with 2020.2</li>
     </ul>
       """)
 }
