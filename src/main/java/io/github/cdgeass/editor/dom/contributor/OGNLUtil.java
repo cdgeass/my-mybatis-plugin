@@ -4,11 +4,12 @@ import java.util.Locale;
 
 /**
  * @author cdgeass
- * @since  2020-07-16
+ * @since 2020-07-16
  */
-public final class ParamUtil {
+public final class OGNLUtil {
 
-    private ParamUtil() {}
+    private OGNLUtil() {
+    }
 
     public static boolean isGetter(String name) {
         return (name.startsWith("get") && name.length() > 3) || (name.startsWith("is") && name.length() > 2);

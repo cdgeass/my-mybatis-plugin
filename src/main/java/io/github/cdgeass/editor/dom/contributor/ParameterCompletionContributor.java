@@ -1,23 +1,21 @@
 package io.github.cdgeass.editor.dom.contributor;
 
-import com.google.common.collect.Lists;
 import com.intellij.codeInsight.completion.*;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.injected.editor.VirtualFileWindow;
 import com.intellij.lang.xml.XMLLanguage;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.PlatformVirtualFileManager;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiManager;
+import com.intellij.psi.PsiType;
 import com.intellij.psi.impl.source.PsiClassReferenceType;
+import com.intellij.psi.impl.source.tree.injected.InjectedCaret;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.sql.dialects.generic.GenericDialect;
-import com.intellij.sql.psi.SqlLanguage;
 import com.intellij.util.PlatformIcons;
 import com.intellij.util.ProcessingContext;
 import com.intellij.util.xml.DomManager;
-import com.intellij.util.xml.GenericAttributeValue;
 import io.github.cdgeass.constants.StringConstants;
 import io.github.cdgeass.editor.dom.element.mapper.Statement;
 import org.apache.commons.collections.MapUtils;
@@ -26,7 +24,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static com.intellij.patterns.PlatformPatterns.psiElement;
@@ -37,8 +34,6 @@ import static com.intellij.patterns.PlatformPatterns.psiElement;
  */
 public class ParameterCompletionContributor extends CompletionContributor {
 
-    private static final List<String> MAPPER_TAG_NAME = Lists.newArrayList(StringConstants.IF);
-
     public ParameterCompletionContributor() {
         extend(
                 CompletionType.BASIC,
@@ -48,21 +43,49 @@ public class ParameterCompletionContributor extends CompletionContributor {
                     protected void addCompletions(@NotNull CompletionParameters parameters,
                                                   @NotNull ProcessingContext context,
                                                   @NotNull CompletionResultSet result) {
-                        addKeyWords(parameters, result);
+                        if (isEnable(parameters)) {
+                            addKeyWords(parameters, result);
+                        }
                     }
                 }
         );
     }
 
+    private boolean isEnable(CompletionParameters parameters) {
+        var position = getPosition(parameters);
+        if (position == null) {
+            return false;
+        }
+        var text = position.getText();
+        if (text.startsWith(StringConstants.PREPARED_PARAM_PREFIX) || text.startsWith(StringConstants.PARAM_PREFIX)) {
+            return true;
+        }
+        return PsiTreeUtil.findFirstParent(position, psiElement -> psiElement instanceof XmlAttribute) != null;
+    }
+
     private void addKeyWords(CompletionParameters parameters, CompletionResultSet result) {
-        var paramsMap = getParams(parameters);
+        var position = getPosition(parameters);
+        if (position == null) {
+            return;
+        }
+        var paramsMap = getParams(position);
         if (MapUtils.isEmpty(paramsMap)) {
             return;
         }
 
         var isParamPrefix = false;
-        var position = parameters.getPosition();
         var text = position.getText();
+
+        if (text.endsWith(StringConstants.PARAM_SUFFIX)) {
+            isParamPrefix = true;
+            text = StringUtils.removeEnd(text, StringConstants.PARAM_SUFFIX);
+        }
+        if (text.startsWith(StringConstants.PARAM_PREFIX)) {
+            text = StringUtils.removeStart(text, StringConstants.PARAM_PREFIX);
+        } else if (text.startsWith(StringConstants.PREPARED_PARAM_PREFIX)) {
+            text = StringUtils.removeStart(text, StringConstants.PREPARED_PARAM_PREFIX);
+        }
+
         if (text.endsWith(CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED)) {
             text = StringUtils.removeEnd(text, CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED);
         } else if (text.endsWith(CompletionUtilCore.DUMMY_IDENTIFIER)) {
@@ -79,6 +102,7 @@ public class ParameterCompletionContributor extends CompletionContributor {
         } else if (text.startsWith(StringConstants.PREPARED_PARAM_PREFIX)) {
             text = StringUtils.removeStart(text, StringConstants.PREPARED_PARAM_PREFIX);
         }
+
         if (text.contains(StringConstants.WHITESPACE)) {
             text = text.substring(StringUtils.lastIndexOf(text, StringConstants.WHITESPACE));
         }
@@ -92,6 +116,7 @@ public class ParameterCompletionContributor extends CompletionContributor {
         }
 
         addKeyWord(paramNames, 0, isParamPrefix, paramsMap, result);
+        result.stopHere();
     }
 
     private void addKeyWord(String[] paramNames,
@@ -120,8 +145,8 @@ public class ParameterCompletionContributor extends CompletionContributor {
 
                     Map<String, PsiType> subParamsMap = new HashMap<>();
                     for (var paramMethod : paramMethods) {
-                        if (ParamUtil.isGetter(paramMethod.getName())) {
-                            subParamsMap.put(ParamUtil.methodToProperty(paramMethod.getName()),
+                        if (OGNLUtil.isGetter(paramMethod.getName())) {
+                            subParamsMap.put(OGNLUtil.methodToProperty(paramMethod.getName()),
                                     paramMethod.getReturnType());
                         }
                     }
@@ -135,40 +160,42 @@ public class ParameterCompletionContributor extends CompletionContributor {
         }
     }
 
-    private Map<String, PsiType> getParams(CompletionParameters parameters) {
+    private PsiElement getPosition(CompletionParameters parameters) {
         var position = parameters.getPosition();
-        var project = parameters.getEditor().getProject();
-        if (project == null) {
-            return Collections.emptyMap();
-        }
+        var editor = parameters.getEditor();
 
         var language = position.getLanguage();
         if (language instanceof XMLLanguage) {
-            return getParams(position, project);
+            return position;
         } else if (language instanceof GenericDialect) {
             var virtualFile = position.getContainingFile().getVirtualFile();
             if (!(virtualFile instanceof VirtualFileWindow)) {
-                return Collections.emptyMap();
+                return null;
             }
             virtualFile = ((VirtualFileWindow) virtualFile).getDelegate();
-            var xmlFile = PsiManager.getInstance(project).findFile(virtualFile);
+            var xmlFile = PsiManager.getInstance(position.getProject()).findFile(virtualFile);
             if (xmlFile == null) {
-                return Collections.emptyMap();
+                return null;
             }
-            return Collections.emptyMap();
+
+            var currentCaret = editor.getCaretModel().getCurrentCaret();
+            if (currentCaret instanceof InjectedCaret) {
+                currentCaret = ((InjectedCaret) currentCaret).getDelegate();
+            }
+            return xmlFile.findElementAt(currentCaret.getOffset());
         } else {
-            return Collections.emptyMap();
+            return null;
         }
     }
 
-    private Map<String, PsiType> getParams(PsiElement position, Project project) {
+    private Map<String, PsiType> getParams(PsiElement position) {
         var statementXmlTag = (XmlTag) PsiTreeUtil.findFirstParent(position,
                 psiElement -> (psiElement instanceof XmlTag) && ((XmlTag) psiElement).getAttribute("id") != null);
         if (statementXmlTag == null) {
             return Collections.emptyMap();
         }
 
-        var domManager = DomManager.getDomManager(project);
+        var domManager = DomManager.getDomManager(position.getProject());
         var domElement = domManager.getDomElement(statementXmlTag);
         if (!(domElement instanceof Statement)) {
             return Collections.emptyMap();

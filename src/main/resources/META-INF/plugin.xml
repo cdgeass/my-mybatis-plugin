@@ -33,10 +33,10 @@
         <dom.fileDescription implementation="io.github.cdgeass.editor.dom.element.MapperDescription"/>
         <completion.contributor language="any"
                                 implementationClass="io.github.cdgeass.editor.dom.contributor.MapperCompletionContributor"
-                                order="after xml"/>
+                                order="first"/>
         <completion.contributor language="any"
                                 implementationClass="io.github.cdgeass.editor.dom.contributor.ParameterCompletionContributor"
-                                order="after xml"/>
+                                order="first"/>
         <toolWindow id="Format Sql" anchor="right" factoryClass="io.github.cdgeass.dialog.FormatToolWindowFactory"/>
     </extensions>
 
