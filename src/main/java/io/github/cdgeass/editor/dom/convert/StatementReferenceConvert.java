@@ -8,6 +8,7 @@ import com.intellij.psi.search.FileTypeIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.util.xml.*;
+import io.github.cdgeass.editor.dom.XmlReference;
 import io.github.cdgeass.editor.dom.element.mapper.Mapper;
 import io.github.cdgeass.editor.dom.element.mapper.Statement;
 import org.apache.commons.lang.StringUtils;

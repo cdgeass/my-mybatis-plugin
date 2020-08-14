@@ -13,6 +13,8 @@ repositories {
 dependencies {
     testImplementation("junit", "junit", "4.12")
     implementation("com.github.jsqlparser:jsqlparser:3.1")
+    compileOnly("org.projectlombok:lombok:1.18.12")
+    annotationProcessor("org.projectlombok:lombok:1.18.12")
 }
 
 // See https://github.com/JetBrains/gradle-intellij-plugin/

@@ -36,6 +36,8 @@ public class StringConstants {
     public final static String PARAM_SUFFIX = "}";
     public final static String DOT = ".";
 
+    public final static String SQL = "sql";
+
     public final static String IF = "if";
     public final static String TEST = "test";
     public final static String EQUALS = "=";

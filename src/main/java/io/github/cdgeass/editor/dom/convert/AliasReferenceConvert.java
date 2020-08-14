@@ -9,6 +9,7 @@ import com.intellij.psi.search.UsageSearchContext;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.util.xml.*;
 import io.github.cdgeass.constants.StringConstants;
+import io.github.cdgeass.editor.dom.XmlReference;
 import io.github.cdgeass.editor.dom.element.configuration.Configuration;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;

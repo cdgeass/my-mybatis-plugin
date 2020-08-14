@@ -9,8 +9,8 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.util.xml.*;
 import io.github.cdgeass.constants.StringConstants;
+import io.github.cdgeass.editor.dom.XmlReference;
 import io.github.cdgeass.editor.dom.element.mapper.Mapper;
-import io.github.cdgeass.editor.dom.element.mapper.ResultMap;
 import io.github.cdgeass.editor.dom.element.mapper.Sql;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -110,7 +110,7 @@ public class SqlReferenceConvert extends Converter<Sql> implements CustomReferen
     @Override
     public PsiReference[] createReferences(GenericDomValue<Sql> value, PsiElement element, ConvertContext context) {
         var sql = value.getValue();
-        if (sql == null) {
+        if (sql == null || sql.getXmlTag() == null) {
             return new PsiReference[0];
         }
 
