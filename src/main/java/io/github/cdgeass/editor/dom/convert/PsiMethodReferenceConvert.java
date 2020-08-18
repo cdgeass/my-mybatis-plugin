@@ -3,7 +3,11 @@ package io.github.cdgeass.editor.dom.convert;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiReference;
-import com.intellij.util.xml.*;
+import com.intellij.util.xml.ConvertContext;
+import com.intellij.util.xml.Converter;
+import com.intellij.util.xml.CustomReferenceConverter;
+import com.intellij.util.xml.GenericDomValue;
+import io.github.cdgeass.editor.dom.DomUtil;
 import io.github.cdgeass.editor.dom.XmlReference;
 import io.github.cdgeass.editor.dom.element.mapper.Mapper;
 import org.apache.commons.lang3.StringUtils;
@@ -21,20 +25,19 @@ public class PsiMethodReferenceConvert extends Converter<PsiMethod> implements C
     @Nullable
     @Override
     public PsiMethod fromString(@Nullable String s, ConvertContext context) {
-        var xmlFile = context.getFile();
-        var domManager = DomManager.getDomManager(context.getProject());
-        var fileElement = domManager.getFileElement(xmlFile, Mapper.class);
-        if (fileElement == null) {
+        if (s == null) {
             return null;
         }
 
-        var mapper = fileElement.getRootElement();
+        var mapper = DomUtil.findDomElement(context.getFile(), Mapper.class);
+        if (mapper == null) {
+            return null;
+        }
         var namespaceAttributeValue = mapper.getNamespace();
         var psiClass = namespaceAttributeValue.getValue();
         if (psiClass == null) {
             return null;
         }
-
         var allMethods = psiClass.getAllMethods();
         for (var psiMethod : allMethods) {
             if (StringUtils.equals(s, psiMethod.getName())) {

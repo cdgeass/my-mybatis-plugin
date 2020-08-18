@@ -8,20 +8,17 @@ import com.intellij.icons.AllIcons;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiJavaFile;
-import com.intellij.psi.impl.cache.CacheManager;
-import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.psi.search.UsageSearchContext;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.psi.xml.XmlFile;
-import com.intellij.util.xml.DomFileElement;
-import com.intellij.util.xml.DomManager;
+import io.github.cdgeass.editor.dom.DomUtil;
 import io.github.cdgeass.editor.dom.element.mapper.Mapper;
 import io.github.cdgeass.editor.dom.element.mapper.Statement;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.ObjectUtils;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -41,22 +38,8 @@ public class DaoLineMarkerProvider extends RelatedItemLineMarkerProvider {
             return;
         }
 
-        var psiMethods = Lists.newArrayList(psiClass.getMethods());
-
-        var qualifiedName = psiClass.getQualifiedName();
-        var domManager = DomManager.getDomManager(element.getProject());
-        var cacheManager = CacheManager.SERVICE.getInstance(element.getProject());
-
-        var psiFiles = cacheManager.getFilesWithWord(qualifiedName, UsageSearchContext.ANY,
-                GlobalSearchScope.projectScope(element.getProject()), true);
-        var mappers = Arrays.stream(psiFiles)
-                .filter(psiFile -> psiFile instanceof XmlFile)
-                .map(psiFile -> domManager.getFileElement((XmlFile) psiFile, Mapper.class))
-                .filter(Objects::nonNull)
-                .map(DomFileElement::getRootElement)
-                .filter(mapper -> ObjectUtils.equals(mapper.getNamespace().getValue(), psiClass))
-                .collect(Collectors.toList());
-
+        var namespace = psiClass.getQualifiedName();
+        var mappers = DomUtil.findByNamespace(namespace, element.getProject(), Mapper.class);
         if (CollectionUtils.isEmpty(mappers)) {
             return;
         }
@@ -64,6 +47,7 @@ public class DaoLineMarkerProvider extends RelatedItemLineMarkerProvider {
                 .setTargets(mappers.stream().map(Mapper::getXmlTag).collect(Collectors.toList()));
         result.add(interfaceIconBuilder.createLineMarkerInfo(psiClass.getNameIdentifier()));
 
+        var psiMethods = Lists.newArrayList(psiClass.getMethods());
         mappers.stream()
                 .flatMap(mapper -> {
                     var selects = Optional.ofNullable(mapper.getSelects()).orElse(Collections.emptyList());

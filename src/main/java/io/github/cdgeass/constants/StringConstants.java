@@ -37,10 +37,14 @@ public class StringConstants {
     public final static String DOT = ".";
 
     public final static String SQL = "sql";
+    public final static String INCLUDE = "include";
+    public final static String TYPE_ALIASES = "typeAliases";
 
     public final static String IF = "if";
     public final static String TEST = "test";
     public final static String EQUALS = "=";
+    public final static String ID = "id";
+    public final static String REFID = "refid";
 
     private StringConstants() {
 

@@ -4,10 +4,9 @@ import com.intellij.codeInsight.daemon.RelatedItemLineMarkerInfo;
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerProvider;
 import com.intellij.codeInsight.navigation.NavigationGutterIconBuilder;
 import com.intellij.icons.AllIcons;
-import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.xml.XmlFile;
-import com.intellij.util.xml.DomManager;
+import io.github.cdgeass.editor.dom.DomUtil;
 import io.github.cdgeass.editor.dom.element.mapper.Mapper;
 import io.github.cdgeass.editor.dom.element.mapper.Statement;
 import org.jetbrains.annotations.NotNull;
@@ -29,25 +28,19 @@ public class XmlLineMarkerProvider extends RelatedItemLineMarkerProvider {
             return;
         }
 
-        var domManager = DomManager.getDomManager(element.getProject());
-        var fileElement = domManager.getFileElement((XmlFile) element, Mapper.class);
-        if (fileElement == null) {
-            return;
-        }
-
-        var mapper = fileElement.getRootElement();
-        if (mapper.getXmlTag() == null) {
+        var mapper = DomUtil.findDomElement((XmlFile) element, Mapper.class);
+        if (mapper == null || mapper.getXmlTag() == null) {
             return;
         }
         var namespaceAttributeValue = mapper.getNamespace();
-        PsiClass psiClass = namespaceAttributeValue.getValue();
+        var psiClass = namespaceAttributeValue.getValue();
         if (psiClass == null || psiClass.getQualifiedName() == null) {
             return;
         }
         var rootIconBuilder = NavigationGutterIconBuilder.create(AllIcons.Gutter.ImplementingMethod)
                 .setTarget(psiClass)
                 .setTooltipText(psiClass.getQualifiedName());
-        result.add(rootIconBuilder.createLineMarkerInfo(mapper.getXmlTag().getFirstChild()));
+        result.add(rootIconBuilder.createLineMarkerInfo(mapper.getXmlTag().getNavigationElement()));
 
         Consumer<Statement> consumer = statement -> {
             if (statement.getXmlTag() == null) {

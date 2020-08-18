@@ -7,8 +7,11 @@ import com.intellij.psi.search.FileTypeIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.UsageSearchContext;
 import com.intellij.psi.xml.XmlFile;
-import com.intellij.util.xml.*;
-import io.github.cdgeass.constants.StringConstants;
+import com.intellij.util.xml.ConvertContext;
+import com.intellij.util.xml.Converter;
+import com.intellij.util.xml.CustomReferenceConverter;
+import com.intellij.util.xml.GenericDomValue;
+import io.github.cdgeass.editor.dom.DomUtil;
 import io.github.cdgeass.editor.dom.XmlReference;
 import io.github.cdgeass.editor.dom.element.configuration.Configuration;
 import org.apache.commons.lang.StringUtils;
@@ -32,7 +35,6 @@ public class AliasReferenceConvert extends Converter<PsiClass> implements Custom
             return null;
         }
 
-        var domManager = DomManager.getDomManager(context.getProject());
         var psiManager = PsiManager.getInstance(context.getProject());
         var virtualFiles = FileTypeIndex.getFiles(XmlFileType.INSTANCE, GlobalSearchScope.projectScope(context.getProject()));
 
@@ -41,22 +43,7 @@ public class AliasReferenceConvert extends Converter<PsiClass> implements Custom
                 .map(psiManager::findFile)
                 .filter(Objects::nonNull)
                 .map(virtualFile -> (XmlFile) virtualFile)
-                .filter(xmlFile -> {
-                    var document = xmlFile.getDocument();
-                    if (document == null || document.getProlog() == null || document.getProlog().getDoctype() == null) {
-                        return false;
-                    }
-                    var doctype = document.getProlog().getDoctype();
-                    return StringConstants.CONFIGURATION.equals(doctype.getNameElement().getText())
-                            && doctype.getDtdUri().contains(StringConstants.MYBATIS);
-                })
-                .map(xmlFile -> {
-                    var fileElement = domManager.getFileElement(xmlFile, Configuration.class);
-                    if (fileElement == null) {
-                        return null;
-                    }
-                    return fileElement.getRootElement();
-                })
+                .map(xmlFile -> DomUtil.findDomElement(xmlFile, Configuration.class))
                 .filter(Objects::nonNull)
                 .map(Configuration::getTypeAliases)
                 .collect(Collectors.toList());
@@ -72,7 +59,7 @@ public class AliasReferenceConvert extends Converter<PsiClass> implements Custom
                 }
             }
 
-            var cacheManager = CacheManager.SERVICE.getInstance(context.getProject());
+            var cacheManager = CacheManager.getInstance(context.getProject());
             for (var aPackage : typeAliases.getPackages()) {
                 var nameAttributeValue = aPackage.getName();
                 if (nameAttributeValue.getValue() == null) {

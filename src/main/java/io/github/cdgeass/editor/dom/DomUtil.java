@@ -9,7 +9,6 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.xml.DomElement;
-import com.intellij.util.xml.DomFileElement;
 import com.intellij.util.xml.DomManager;
 import io.github.cdgeass.constants.StringConstants;
 import lombok.experimental.UtilityClass;
@@ -28,6 +27,15 @@ import java.util.stream.Collectors;
  */
 @UtilityClass
 public class DomUtil extends com.intellij.util.xml.DomUtil {
+
+    public <T extends DomElement> T findDomElement(XmlFile xmlFile, Class<T> domClass) {
+        var domManager = DomManager.getDomManager(xmlFile.getProject());
+        var domFileElement = domManager.getFileElement(xmlFile, domClass);
+        if (domFileElement == null) {
+            return null;
+        }
+        return domFileElement.getRootElement();
+    }
 
     public String getContainingFileNameSpace(PsiElement element) {
         var psiFile = element.getContainingFile();
@@ -61,13 +69,11 @@ public class DomUtil extends com.intellij.util.xml.DomUtil {
                 .collect(Collectors.toList());
     }
 
-    public <T extends DomElement> List<T> findByNamespace(String namespace, Project project, Class<T> beanClass) {
-        var domManager = DomManager.getDomManager(project);
+    public <T extends DomElement> List<T> findByNamespace(String namespace, Project project, Class<T> domClass) {
         return findByNamespace(namespace, project)
                 .stream()
-                .map(file -> domManager.getFileElement(file, beanClass))
+                .map(xmlFile -> findDomElement(xmlFile, domClass))
                 .filter(Objects::nonNull)
-                .map(DomFileElement::getRootElement)
                 .collect(Collectors.toList());
     }
 
