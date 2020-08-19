@@ -40,6 +40,26 @@ public class DomUtil extends com.intellij.util.xml.DomUtil {
         return domFileElement.getRootElement();
     }
 
+    @SuppressWarnings("all")
+    public <T extends DomElement> T findDomElement(PsiElement element, Class<T> domClass) {
+        if (element == null) {
+            return null;
+        }
+        var domManager = DomManager.getDomManager(element.getProject());
+        if (!(element instanceof XmlTag)) {
+            element = PsiTreeUtil.findFirstParent(element, psiElement -> psiElement instanceof XmlTag);
+        }
+        if (element == null) {
+            return null;
+        }
+        var domElement = domManager.getDomElement((XmlTag) element);
+        if (domElement == null) {
+            return null;
+        }
+
+        return domElement.getClass().getName().startsWith(domClass.getName()) ? (T) domElement : null;
+    }
+
     public String getContainingFileNameSpace(PsiElement element) {
         var psiFile = element.getContainingFile();
         if (!(psiFile instanceof XmlFile)) {
