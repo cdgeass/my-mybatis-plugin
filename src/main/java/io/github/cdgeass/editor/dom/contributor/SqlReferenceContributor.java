@@ -10,6 +10,7 @@ import io.github.cdgeass.editor.dom.DomUtil;
 import io.github.cdgeass.editor.dom.XmlReference;
 import io.github.cdgeass.editor.dom.element.mapper.Include;
 import io.github.cdgeass.editor.dom.element.mapper.Sql;
+import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
@@ -56,9 +57,8 @@ public class SqlReferenceContributor extends PsiReferenceContributor {
                             return new PsiReference[0];
                         }
 
-                        var refidAttributeValue = include.getRefid();
-                        var sql = refidAttributeValue.getValue();
-                        if (sql != null) {
+                        var refid = include.getXmlTag().getAttributeValue(StringConstants.REFID);
+                        if (StringUtils.isNotBlank(refid)) {
                             return new PsiReference[0];
                         }
 

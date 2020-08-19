@@ -29,7 +29,7 @@ public class PsiMethodReferenceConvert extends Converter<PsiMethod> implements C
             return null;
         }
 
-        var mapper = DomUtil.findDomElement(context.getFile(), Mapper.class);
+        var mapper = DomUtil.findFileElement(context.getFile(), Mapper.class);
         if (mapper == null) {
             return null;
         }

@@ -34,7 +34,13 @@ public class SqlReferenceConvert extends Converter<Sql> implements CustomReferen
         var sqlTags = DomUtil.findByNameInNamespace(DomUtil.getContainingFileNameSpace(context.getFile()),
                 context.getProject(), StringConstants.SQL);
         var sqlList = sqlTags.stream()
-                .map(xmlTag -> DomUtil.findDomElement(xmlTag, Sql.class))
+                .map(xmlTag -> {
+                    var domElement = DomUtil.getDomElement(xmlTag);
+                    if (!(domElement instanceof Sql)) {
+                        return null;
+                    }
+                    return (Sql) domElement;
+                })
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
         for (var sql : sqlList) {

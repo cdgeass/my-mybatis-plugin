@@ -28,9 +28,12 @@ import java.util.stream.Collectors;
 @UtilityClass
 public class DomUtil extends com.intellij.util.xml.DomUtil {
 
-    public <T extends DomElement> T findDomElement(XmlFile xmlFile, Class<T> domClass) {
-        var domManager = DomManager.getDomManager(xmlFile.getProject());
-        var domFileElement = domManager.getFileElement(xmlFile, domClass);
+    public <T extends DomElement> T findFileElement(PsiElement element, Class<T> domClass) {
+        if (!(element instanceof XmlFile)) {
+            return null;
+        }
+        var domManager = DomManager.getDomManager(element.getProject());
+        var domFileElement = domManager.getFileElement((XmlFile) element, domClass);
         if (domFileElement == null) {
             return null;
         }
@@ -66,13 +69,17 @@ public class DomUtil extends com.intellij.util.xml.DomUtil {
         return Arrays.stream(files)
                 .filter(file -> file instanceof XmlFile)
                 .map(file -> (XmlFile) file)
+                .filter(xmlFile -> {
+                    var rootTag = xmlFile.getRootTag();
+                    return rootTag != null && Objects.equals(namespace, rootTag.getAttributeValue(StringConstants.NAMESPACE));
+                })
                 .collect(Collectors.toList());
     }
 
     public <T extends DomElement> List<T> findByNamespace(String namespace, Project project, Class<T> domClass) {
         return findByNamespace(namespace, project)
                 .stream()
-                .map(xmlFile -> findDomElement(xmlFile, domClass))
+                .map(xmlFile -> findFileElement(xmlFile, domClass))
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }

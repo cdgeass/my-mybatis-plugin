@@ -43,7 +43,7 @@ public class AliasReferenceConvert extends Converter<PsiClass> implements Custom
                 .map(psiManager::findFile)
                 .filter(Objects::nonNull)
                 .map(virtualFile -> (XmlFile) virtualFile)
-                .map(xmlFile -> DomUtil.findDomElement(xmlFile, Configuration.class))
+                .map(xmlFile -> DomUtil.findFileElement(xmlFile, Configuration.class))
                 .filter(Objects::nonNull)
                 .map(Configuration::getTypeAliases)
                 .collect(Collectors.toList());

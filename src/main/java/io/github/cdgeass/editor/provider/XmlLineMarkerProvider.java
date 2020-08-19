@@ -28,7 +28,7 @@ public class XmlLineMarkerProvider extends RelatedItemLineMarkerProvider {
             return;
         }
 
-        var mapper = DomUtil.findDomElement((XmlFile) element, Mapper.class);
+        var mapper = DomUtil.findFileElement(element, Mapper.class);
         if (mapper == null || mapper.getXmlTag() == null) {
             return;
         }
