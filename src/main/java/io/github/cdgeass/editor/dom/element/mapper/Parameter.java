@@ -4,7 +4,7 @@ import com.intellij.util.xml.Attribute;
 import com.intellij.util.xml.Convert;
 import com.intellij.util.xml.DomElement;
 import com.intellij.util.xml.GenericAttributeValue;
-import io.github.cdgeass.editor.dom.convert.ResultMapReferenceConvert;
+import io.github.cdgeass.editor.dom.element.convert.ResultMapReferenceConvert;
 
 /**
  * @author cdgeass

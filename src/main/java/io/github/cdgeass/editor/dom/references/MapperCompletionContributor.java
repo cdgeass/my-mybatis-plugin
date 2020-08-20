@@ -1,4 +1,4 @@
-package io.github.cdgeass.editor.dom.contributor;
+package io.github.cdgeass.editor.dom.references;
 
 import com.google.common.base.CaseFormat;
 import com.google.common.collect.Lists;

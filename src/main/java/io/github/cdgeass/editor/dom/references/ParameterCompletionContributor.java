@@ -1,4 +1,4 @@
-package io.github.cdgeass.editor.dom.contributor;
+package io.github.cdgeass.editor.dom.references;
 
 import com.intellij.codeInsight.completion.*;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
@@ -17,6 +17,7 @@ import com.intellij.util.PlatformIcons;
 import com.intellij.util.ProcessingContext;
 import com.intellij.util.xml.DomManager;
 import io.github.cdgeass.constants.StringConstants;
+import io.github.cdgeass.editor.dom.OGNLUtil;
 import io.github.cdgeass.editor.dom.element.mapper.Statement;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;

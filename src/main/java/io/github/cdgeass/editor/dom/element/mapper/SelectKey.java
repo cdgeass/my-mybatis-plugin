@@ -5,7 +5,7 @@ import com.intellij.util.xml.Convert;
 import com.intellij.util.xml.DomElement;
 import com.intellij.util.xml.GenericAttributeValue;
 import com.intellij.util.xml.SubTagList;
-import io.github.cdgeass.editor.dom.convert.AliasReferenceConvert;
+import io.github.cdgeass.editor.dom.element.convert.AliasReferenceConvert;
 
 import java.util.List;
 

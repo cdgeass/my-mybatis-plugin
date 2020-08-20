@@ -1,7 +1,7 @@
 package io.github.cdgeass.editor.dom.element.mapper;
 
 import com.intellij.util.xml.*;
-import io.github.cdgeass.editor.dom.convert.SqlReferenceConvert;
+import io.github.cdgeass.editor.dom.element.convert.SqlReferenceConvert;
 
 import java.util.List;
 

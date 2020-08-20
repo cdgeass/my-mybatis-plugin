@@ -1,4 +1,4 @@
-package io.github.cdgeass.editor.dom.convert;
+package io.github.cdgeass.editor.dom.element.convert;
 
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;

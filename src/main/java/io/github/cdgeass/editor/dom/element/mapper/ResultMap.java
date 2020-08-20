@@ -2,8 +2,8 @@ package io.github.cdgeass.editor.dom.element.mapper;
 
 import com.intellij.psi.PsiClass;
 import com.intellij.util.xml.*;
-import io.github.cdgeass.editor.dom.convert.AliasReferenceConvert;
-import io.github.cdgeass.editor.dom.convert.ResultMapReferenceConvert;
+import io.github.cdgeass.editor.dom.element.convert.AliasReferenceConvert;
+import io.github.cdgeass.editor.dom.element.convert.ResultMapReferenceConvert;
 
 import java.util.List;
 

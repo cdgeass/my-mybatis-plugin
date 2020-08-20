@@ -1,8 +1,8 @@
 package io.github.cdgeass.editor.dom.element.mapper;
 
 import com.intellij.util.xml.*;
-import io.github.cdgeass.editor.dom.convert.ResultMapReferenceConvert;
-import io.github.cdgeass.editor.dom.convert.StatementReferenceConvert;
+import io.github.cdgeass.editor.dom.element.convert.ResultMapReferenceConvert;
+import io.github.cdgeass.editor.dom.element.convert.StatementReferenceConvert;
 
 import java.util.List;
 
