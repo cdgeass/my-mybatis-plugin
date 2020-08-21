@@ -9,16 +9,14 @@ import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiJavaFile;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.psi.xml.XmlTag;
 import io.github.cdgeass.editor.dom.DomUtil;
 import io.github.cdgeass.editor.dom.element.mapper.Mapper;
 import io.github.cdgeass.editor.dom.element.mapper.Statement;
 import org.apache.commons.collections.CollectionUtils;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -44,7 +42,11 @@ public class DaoLineMarkerProvider extends RelatedItemLineMarkerProvider {
             return;
         }
         NavigationGutterIconBuilder<PsiElement> interfaceIconBuilder = NavigationGutterIconBuilder.create(AllIcons.Gutter.ImplementedMethod)
-                .setTargets(mappers.stream().map(Mapper::getXmlTag).collect(Collectors.toList()));
+                .setTargets(mappers.stream()
+                        .map(Mapper::getXmlTag)
+                        .filter(Objects::nonNull)
+                        .map(XmlTag::getFirstChild)
+                        .collect(Collectors.toList()));
         result.add(interfaceIconBuilder.createLineMarkerInfo(psiClass.getNameIdentifier()));
 
         var psiMethods = Lists.newArrayList(psiClass.getMethods());
@@ -65,9 +67,10 @@ public class DaoLineMarkerProvider extends RelatedItemLineMarkerProvider {
                 .forEach(statement -> {
                     var methodAttributeValue = statement.getId();
                     var psiMethod = methodAttributeValue.getValue();
-                    if (psiMethod != null && psiMethods.contains(psiMethod) && psiMethod.getNameIdentifier() != null) {
+                    if (psiMethod != null && psiMethods.contains(psiMethod) && psiMethod.getNameIdentifier() != null
+                            && statement.getXmlTag() != null) {
                         NavigationGutterIconBuilder<PsiElement> methodIconBuilder = NavigationGutterIconBuilder.create(AllIcons.Gutter.ImplementedMethod)
-                                .setTarget(statement.getXmlTag())
+                                .setTarget(statement.getXmlTag().getNavigationElement())
                                 .setTooltipText(psiMethod.getName());
                         result.add(methodIconBuilder.createLineMarkerInfo(psiMethod.getNameIdentifier()));
                     }

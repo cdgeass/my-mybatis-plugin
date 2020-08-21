@@ -37,7 +37,7 @@
         <completion.contributor language="any"
                                 implementationClass="io.github.cdgeass.editor.dom.references.ParameterCompletionContributor"
                                 order="first"/>
-        <psi.referenceContributor implementation="io.github.cdgeass.editor.dom.references.SqlReferenceContributor"/>
+        <psi.referenceContributor implementation="io.github.cdgeass.editor.dom.references.ReferenceContributor"/>
         <toolWindow id="Format Sql" anchor="right" factoryClass="io.github.cdgeass.dialog.FormatToolWindowFactory"/>
     </extensions>
 

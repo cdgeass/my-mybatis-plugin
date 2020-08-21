@@ -27,7 +27,7 @@ public class SqlReferenceConvert extends Converter<Sql> implements CustomReferen
     @Nullable
     @Override
     public Sql fromString(@Nullable String s, ConvertContext context) {
-        if (s == null) {
+        if (StringUtils.isBlank(s)) {
             return null;
         }
 
