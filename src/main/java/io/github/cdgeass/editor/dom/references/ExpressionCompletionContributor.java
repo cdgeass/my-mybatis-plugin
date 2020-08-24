@@ -33,9 +33,9 @@ import static com.intellij.patterns.PlatformPatterns.psiElement;
  * @author cdgeass
  * @since 2020-07-09
  */
-public class ParameterCompletionContributor extends CompletionContributor {
+public class ExpressionCompletionContributor extends CompletionContributor {
 
-    public ParameterCompletionContributor() {
+    public ExpressionCompletionContributor() {
         extend(
                 CompletionType.BASIC,
                 psiElement(),
@@ -61,7 +61,8 @@ public class ParameterCompletionContributor extends CompletionContributor {
         if (text.startsWith(StringConstants.PREPARED_PARAM_PREFIX) || text.startsWith(StringConstants.PARAM_PREFIX)) {
             return true;
         }
-        return PsiTreeUtil.findFirstParent(position, psiElement -> psiElement instanceof XmlAttribute) != null;
+        return PsiTreeUtil.findFirstParent(position, psiElement ->
+                psiElement instanceof XmlAttribute && ((XmlAttribute) psiElement).getName().equals(StringConstants.TEST)) != null;
     }
 
     private void addKeyWords(CompletionParameters parameters, CompletionResultSet result) {

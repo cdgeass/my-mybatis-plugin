@@ -22,11 +22,11 @@ import static com.intellij.patterns.PlatformPatterns.psiElement;
  * @author cdgeass
  * @since 2020-07-02
  */
-public class MapperCompletionContributor extends CompletionContributor {
+public class ResultMapCompletionContributor extends CompletionContributor {
 
     private static final List<String> CONTAINS_TYPE = Lists.newArrayList(StringConstants.RESULT_MAP);
 
-    public MapperCompletionContributor() {
+    public ResultMapCompletionContributor() {
         extend(
                 CompletionType.BASIC,
                 psiElement(),
