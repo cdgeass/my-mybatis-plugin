@@ -72,9 +72,9 @@ public class SqlReferenceConvert extends Converter<Sql> implements CustomReferen
     public PsiReference[] createReferences(GenericDomValue<Sql> value, PsiElement element, ConvertContext context) {
         var sql = value.getValue();
         if (sql == null || sql.getXmlTag() == null) {
-            return new PsiReference[0];
+            return PsiReference.EMPTY_ARRAY;
         }
 
-        return new PsiReference[]{new XmlReference(element, Collections.singletonList(sql.getXmlTag().getNavigationElement()))};
+        return new PsiReference[]{new XmlReference<>(element, Collections.singletonList(sql.getXmlTag()))};
     }
 }

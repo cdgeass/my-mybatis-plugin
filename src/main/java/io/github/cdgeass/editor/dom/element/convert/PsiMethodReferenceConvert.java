@@ -62,9 +62,9 @@ public class PsiMethodReferenceConvert extends Converter<PsiMethod> implements C
     public PsiReference[] createReferences(GenericDomValue<PsiMethod> value, PsiElement element, ConvertContext context) {
         var psiElement = value.getValue();
         if (psiElement == null) {
-            return new PsiReference[0];
+            return PsiReference.EMPTY_ARRAY;
         }
 
-        return new PsiReference[]{new XmlReference(element, Collections.singletonList(psiElement))};
+        return new PsiReference[]{new XmlReference<>(element, Collections.singletonList(psiElement))};
     }
 }

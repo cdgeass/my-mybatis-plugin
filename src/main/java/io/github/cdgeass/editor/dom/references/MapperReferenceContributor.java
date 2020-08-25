@@ -12,8 +12,8 @@ import io.github.cdgeass.editor.dom.XmlReference;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collections;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import static com.intellij.patterns.XmlPatterns.*;
 
@@ -56,11 +56,11 @@ public class MapperReferenceContributor extends PsiReferenceContributor {
 
             var includeTags = DomUtil.findByNameInNamespace(DomUtil.getContainingFileNameSpace(element),
                     element.getProject(), StringConstants.INCLUDE);
-            var targets = includeTags.stream()
+            return includeTags.stream()
                     .filter(includeTag -> Objects.equals(sqlId, includeTag.getAttributeValue(StringConstants.REFID)))
                     .map(includeTag -> Objects.requireNonNull(includeTag.getAttribute(StringConstants.REFID)).getValueElement())
-                    .collect(Collectors.toList());
-            return new XmlReference[]{new XmlReference<>(element, targets)};
+                    .map(xmlAttributeValue -> new XmlReference<>(element, Collections.singletonList(xmlAttributeValue)))
+                    .toArray(XmlReference[]::new);
         }
     }
 
@@ -82,13 +82,13 @@ public class MapperReferenceContributor extends PsiReferenceContributor {
 
             var sqlTags = DomUtil.findByNameInNamespace(DomUtil.getContainingFileNameSpace(element),
                     element.getProject(), StringConstants.SQL);
-            var targets = sqlTags.stream()
+            return sqlTags.stream()
                     .map(sqlTag -> sqlTag.getAttribute(StringConstants.ID))
                     .filter(Objects::nonNull)
                     .map(XmlAttribute::getValueElement)
                     .filter(Objects::nonNull)
-                    .collect(Collectors.toList());
-            return new XmlReference[]{new XmlReference<>(element, targets)};
+                    .map(xmlAttributeValue -> new XmlReference<>(element, Collections.singletonList(xmlAttributeValue)))
+                    .toArray(XmlReference[]::new);
         }
     }
 
@@ -106,14 +106,14 @@ public class MapperReferenceContributor extends PsiReferenceContributor {
             var resultMapId = resultMapTag.getAttributeValue(StringConstants.ID);
 
             var xmlFiles = DomUtil.findByNamespace(DomUtil.getContainingFileNameSpace(element), element.getProject());
-            var targets = xmlFiles.stream()
+            return xmlFiles.stream()
                     .flatMap(xmlFile -> PsiTreeUtil.findChildrenOfType(xmlFile, XmlAttribute.class).stream())
                     .filter(xmlAttribute -> StringConstants.RESULT_MAP.equals(xmlAttribute.getName()))
                     .map(XmlAttribute::getValueElement)
                     .filter(Objects::nonNull)
                     .filter(xmlAttributeValue -> Objects.equals(resultMapId, xmlAttributeValue.getValue()))
-                    .collect(Collectors.toList());
-            return new XmlReference[]{new XmlReference<>(element, targets)};
+                    .map(xmlAttributeValue -> new XmlReference<>(element, Collections.singletonList(xmlAttributeValue)))
+                    .toArray(XmlReference[]::new);
         }
     }
 
@@ -128,13 +128,13 @@ public class MapperReferenceContributor extends PsiReferenceContributor {
 
             var resultMapTags = DomUtil.findByNameInNamespace(DomUtil.getContainingFileNameSpace(element),
                     element.getProject(), StringConstants.RESULT_MAP);
-            var targets = resultMapTags.stream()
+            return resultMapTags.stream()
                     .map(resultMapTag -> resultMapTag.getAttribute(StringConstants.ID))
                     .filter(Objects::nonNull)
                     .map(XmlAttribute::getValueElement)
                     .filter(Objects::nonNull)
-                    .collect(Collectors.toList());
-            return new XmlReference[]{new XmlReference<>(element, targets)};
+                    .map(xmlAttributeValue -> new XmlReference<>(element, Collections.singletonList(xmlAttributeValue)))
+                    .toArray(XmlReference[]::new);
         }
     }
 }

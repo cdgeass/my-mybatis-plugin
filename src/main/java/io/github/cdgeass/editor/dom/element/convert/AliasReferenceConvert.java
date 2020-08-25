@@ -98,8 +98,8 @@ public class AliasReferenceConvert extends Converter<PsiClass> implements Custom
     public PsiReference[] createReferences(GenericDomValue<PsiClass> value, PsiElement element, ConvertContext context) {
         var psiClass = value.getValue();
         if (psiClass == null) {
-            return new PsiReference[0];
+            return PsiReference.EMPTY_ARRAY;
         }
-        return new PsiReference[]{new XmlReference(element, Collections.singletonList(psiClass.getNameIdentifier()))};
+        return new PsiReference[]{new XmlReference<>(element, Collections.singletonList(psiClass.getNameIdentifier()))};
     }
 }

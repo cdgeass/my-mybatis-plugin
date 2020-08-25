@@ -65,9 +65,9 @@ public class ResultMapReferenceConvert extends Converter<ResultMap> implements C
     public PsiReference[] createReferences(GenericDomValue<ResultMap> value, PsiElement element, ConvertContext context) {
         var resultMap = value.getValue();
         if (resultMap == null) {
-            return new PsiReference[0];
+            return PsiReference.EMPTY_ARRAY;
         }
 
-        return new PsiReference[]{new XmlReference(element, Collections.singletonList(resultMap.getXmlTag()))};
+        return new PsiReference[]{new XmlReference<>(element, Collections.singletonList(resultMap.getXmlTag()))};
     }
 }

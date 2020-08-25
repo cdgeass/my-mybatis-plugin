@@ -73,9 +73,9 @@ public class StatementReferenceConvert extends Converter<Statement> implements C
     public PsiReference[] createReferences(GenericDomValue<Statement> value, PsiElement element, ConvertContext context) {
         var statement = value.getValue();
         if (statement == null) {
-            return new PsiReference[0];
+            return PsiReference.EMPTY_ARRAY;
         }
 
-        return new PsiReference[]{new XmlReference(element, Collections.singletonList(statement.getXmlTag()))};
+        return new PsiReference[]{new XmlReference<>(element, Collections.singletonList(statement.getXmlTag()))};
     }
 }

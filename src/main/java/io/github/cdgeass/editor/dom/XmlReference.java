@@ -2,6 +2,7 @@ package io.github.cdgeass.editor.dom;
 
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.icons.AllIcons;
+import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.jetbrains.annotations.NotNull;
@@ -18,7 +19,7 @@ public class XmlReference<T extends PsiElement> extends PsiReferenceBase<PsiElem
     private final List<T> targets;
 
     public XmlReference(@NotNull PsiElement element, List<T> targets) {
-        super(element);
+        super(element, new TextRange(0, element.getText().length()));
         this.targets = targets;
     }
 
@@ -47,4 +48,6 @@ public class XmlReference<T extends PsiElement> extends PsiReferenceBase<PsiElem
                         .withIcon(AllIcons.FileTypes.Xml))
                 .toArray();
     }
+
+
 }
