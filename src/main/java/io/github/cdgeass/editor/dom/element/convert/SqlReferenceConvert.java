@@ -8,13 +8,11 @@ import com.intellij.util.xml.CustomReferenceConverter;
 import com.intellij.util.xml.GenericDomValue;
 import io.github.cdgeass.constants.StringConstants;
 import io.github.cdgeass.editor.dom.DomUtil;
-import io.github.cdgeass.editor.dom.XmlReference;
 import io.github.cdgeass.editor.dom.element.mapper.Sql;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collections;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -70,11 +68,6 @@ public class SqlReferenceConvert extends Converter<Sql> implements CustomReferen
     @NotNull
     @Override
     public PsiReference[] createReferences(GenericDomValue<Sql> value, PsiElement element, ConvertContext context) {
-        var sql = value.getValue();
-        if (sql == null || sql.getXmlTag() == null) {
-            return PsiReference.EMPTY_ARRAY;
-        }
-
-        return new PsiReference[]{new XmlReference<>(element, Collections.singletonList(sql.getXmlTag()))};
+        return PsiReference.EMPTY_ARRAY;
     }
 }

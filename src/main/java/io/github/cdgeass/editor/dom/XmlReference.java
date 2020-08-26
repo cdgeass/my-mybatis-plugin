@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.function.Function;
 
 /**
  * @author cdgeass
@@ -18,9 +19,29 @@ public class XmlReference<T extends PsiElement> extends PsiReferenceBase<PsiElem
 
     private final List<T> targets;
 
+    private final List<T> variants;
+
+    private final Function<T, String> getLookupString;
+
     public XmlReference(@NotNull PsiElement element, List<T> targets) {
-        super(element, new TextRange(0, element.getText().length()));
+        super(element, new TextRange(0, element.getText().length() - 1));
         this.targets = targets;
+        this.getLookupString = PsiElement::getText;
+        this.variants = targets;
+    }
+
+    public XmlReference(@NotNull PsiElement element, List<T> targets, List<T> variants) {
+        super(element, new TextRange(0, element.getText().length() - 1));
+        this.targets = targets;
+        this.getLookupString = PsiElement::getText;
+        this.variants = variants;
+    }
+
+    public XmlReference(@NotNull PsiElement element, List<T> targets, List<T> variants, Function<T, String> getLookupString) {
+        super(element, new TextRange(0, element.getText().length() - 1));
+        this.targets = targets;
+        this.variants = variants;
+        this.getLookupString = getLookupString;
     }
 
     @NotNull
@@ -36,18 +57,18 @@ public class XmlReference<T extends PsiElement> extends PsiReferenceBase<PsiElem
     @Override
     public PsiElement resolve() {
         var resolveResults = multiResolve(false);
-        return resolveResults.length == 1 ? resolveResults[0].getElement() : null;
+        return resolveResults.length >= 1 ? resolveResults[0].getElement() : null;
     }
 
     @NotNull
     @Override
     public Object[] getVariants() {
-        return targets.stream()
+        // TODO completion position prefix """
+        return variants.stream()
                 .map(psiElement -> LookupElementBuilder
-                        .createWithSmartPointer(psiElement.getText(), psiElement)
+                        .createWithSmartPointer(getLookupString.apply(psiElement), psiElement)
                         .withIcon(AllIcons.FileTypes.Xml))
                 .toArray();
     }
-
 
 }

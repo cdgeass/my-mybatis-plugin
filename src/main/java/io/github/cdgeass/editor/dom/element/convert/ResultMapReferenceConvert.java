@@ -7,7 +7,6 @@ import com.intellij.util.xml.Converter;
 import com.intellij.util.xml.CustomReferenceConverter;
 import com.intellij.util.xml.GenericDomValue;
 import io.github.cdgeass.editor.dom.DomUtil;
-import io.github.cdgeass.editor.dom.XmlReference;
 import io.github.cdgeass.editor.dom.element.mapper.Mapper;
 import io.github.cdgeass.editor.dom.element.mapper.ResultMap;
 import org.apache.commons.lang.StringUtils;
@@ -15,7 +14,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.stream.Collectors;
 
 /**
@@ -63,11 +61,6 @@ public class ResultMapReferenceConvert extends Converter<ResultMap> implements C
     @NotNull
     @Override
     public PsiReference[] createReferences(GenericDomValue<ResultMap> value, PsiElement element, ConvertContext context) {
-        var resultMap = value.getValue();
-        if (resultMap == null) {
-            return PsiReference.EMPTY_ARRAY;
-        }
-
-        return new PsiReference[]{new XmlReference<>(element, Collections.singletonList(resultMap.getXmlTag()))};
+        return PsiReference.EMPTY_ARRAY;
     }
 }

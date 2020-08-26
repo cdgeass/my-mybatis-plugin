@@ -1,19 +1,24 @@
 package io.github.cdgeass.editor.dom.references;
 
+import com.intellij.codeInsight.completion.CompletionUtilCore;
 import com.intellij.patterns.XmlAttributeValuePattern;
 import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlAttribute;
+import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.ProcessingContext;
 import io.github.cdgeass.constants.StringConstants;
 import io.github.cdgeass.editor.dom.DomUtil;
 import io.github.cdgeass.editor.dom.XmlReference;
+import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.intellij.patterns.XmlPatterns.*;
 
@@ -56,11 +61,11 @@ public class MapperReferenceContributor extends PsiReferenceContributor {
 
             var includeTags = DomUtil.findByNameInNamespace(DomUtil.getContainingFileNameSpace(element),
                     element.getProject(), StringConstants.INCLUDE);
-            return includeTags.stream()
+            var targets = includeTags.stream()
                     .filter(includeTag -> Objects.equals(sqlId, includeTag.getAttributeValue(StringConstants.REFID)))
                     .map(includeTag -> Objects.requireNonNull(includeTag.getAttribute(StringConstants.REFID)).getValueElement())
-                    .map(xmlAttributeValue -> new XmlReference<>(element, Collections.singletonList(xmlAttributeValue)))
-                    .toArray(XmlReference[]::new);
+                    .collect(Collectors.toList());
+            return new PsiReference[]{new XmlReference<>(element, targets)};
         }
     }
 
@@ -68,27 +73,27 @@ public class MapperReferenceContributor extends PsiReferenceContributor {
 
         @Override
         public @NotNull PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
-            var includeTag = (XmlTag) PsiTreeUtil.findFirstParent(element, psiElement ->
-                    psiElement instanceof XmlTag
-                            && ((XmlTag) psiElement).getAttribute(StringConstants.REFID) != null);
-            if (includeTag == null) {
-                return PsiReference.EMPTY_ARRAY;
-            }
-
-            var refid = includeTag.getAttributeValue(StringConstants.REFID);
-            if (StringUtils.isNotBlank(refid)) {
-                return PsiReference.EMPTY_ARRAY;
-            }
+            var text = StringUtils.removeEnd(
+                    Optional.ofNullable(((XmlAttribute) element.getParent()).getValue()).orElse("").trim(),
+                    CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED);
 
             var sqlTags = DomUtil.findByNameInNamespace(DomUtil.getContainingFileNameSpace(element),
                     element.getProject(), StringConstants.SQL);
-            return sqlTags.stream()
-                    .map(sqlTag -> sqlTag.getAttribute(StringConstants.ID))
-                    .filter(Objects::nonNull)
-                    .map(XmlAttribute::getValueElement)
-                    .filter(Objects::nonNull)
-                    .map(xmlAttributeValue -> new XmlReference<>(element, Collections.singletonList(xmlAttributeValue)))
-                    .toArray(XmlReference[]::new);
+            List<XmlAttributeValue> targets = Lists.newArrayList();
+            List<XmlAttributeValue> variants = Lists.newArrayList();
+            for (var sqlTag : sqlTags) {
+                var attribute = sqlTag.getAttribute(StringConstants.ID);
+                if (attribute != null && attribute.getValue() != null) {
+                    var attributeValueString = attribute.getValue().trim();
+                    if (attributeValueString.contains(text)) {
+                        variants.add(attribute.getValueElement());
+                    }
+                    if (StringUtils.equals(attributeValueString, text)) {
+                        targets.add(attribute.getValueElement());
+                    }
+                }
+            }
+            return new PsiReference[]{new XmlReference<>(element, targets, variants, XmlAttributeValue::getValue)};
         }
     }
 
@@ -106,14 +111,14 @@ public class MapperReferenceContributor extends PsiReferenceContributor {
             var resultMapId = resultMapTag.getAttributeValue(StringConstants.ID);
 
             var xmlFiles = DomUtil.findByNamespace(DomUtil.getContainingFileNameSpace(element), element.getProject());
-            return xmlFiles.stream()
+            var targets = xmlFiles.stream()
                     .flatMap(xmlFile -> PsiTreeUtil.findChildrenOfType(xmlFile, XmlAttribute.class).stream())
                     .filter(xmlAttribute -> StringConstants.RESULT_MAP.equals(xmlAttribute.getName()))
                     .map(XmlAttribute::getValueElement)
                     .filter(Objects::nonNull)
                     .filter(xmlAttributeValue -> Objects.equals(resultMapId, xmlAttributeValue.getValue()))
-                    .map(xmlAttributeValue -> new XmlReference<>(element, Collections.singletonList(xmlAttributeValue)))
-                    .toArray(XmlReference[]::new);
+                    .collect(Collectors.toList());
+            return new PsiReference[]{new XmlReference<>(element, targets)};
         }
     }
 
@@ -121,20 +126,27 @@ public class MapperReferenceContributor extends PsiReferenceContributor {
 
         @Override
         public @NotNull PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
-            var text = element.getText();
-            if (StringUtils.isNotBlank(text)) {
-                return PsiReference.EMPTY_ARRAY;
-            }
+            var text = StringUtils.removeEnd(
+                    Optional.ofNullable(((XmlAttribute) element.getParent()).getValue()).orElse("").trim(),
+                    CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED);
 
             var resultMapTags = DomUtil.findByNameInNamespace(DomUtil.getContainingFileNameSpace(element),
                     element.getProject(), StringConstants.RESULT_MAP);
-            return resultMapTags.stream()
-                    .map(resultMapTag -> resultMapTag.getAttribute(StringConstants.ID))
-                    .filter(Objects::nonNull)
-                    .map(XmlAttribute::getValueElement)
-                    .filter(Objects::nonNull)
-                    .map(xmlAttributeValue -> new XmlReference<>(element, Collections.singletonList(xmlAttributeValue)))
-                    .toArray(XmlReference[]::new);
+            List<XmlAttributeValue> targets = Lists.newArrayList();
+            List<XmlAttributeValue> variants = Lists.newArrayList();
+            for (var resultMapTag : resultMapTags) {
+                var attribute = resultMapTag.getAttribute(StringConstants.ID);
+                if (attribute != null && attribute.getValue() != null) {
+                    var attributeValueString = attribute.getValue().trim();
+                    if (attributeValueString.contains(text)) {
+                        variants.add(attribute.getValueElement());
+                    }
+                    if (StringUtils.equals(attributeValueString, text)) {
+                        targets.add(attribute.getValueElement());
+                    }
+                }
+            }
+            return new PsiReference[]{new XmlReference<>(element, targets, variants, XmlAttributeValue::getValue)};
         }
     }
 }
