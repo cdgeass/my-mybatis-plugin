@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "io.github.cdgeass"
-version = "1.2.3"
+version = "1.2.4"
 
 repositories {
     mavenCentral()
@@ -28,9 +28,10 @@ configure<JavaPluginConvention> {
 }
 tasks.getByName<org.jetbrains.intellij.tasks.PatchPluginXmlTask>("patchPluginXml") {
     changeNotes("""
-    1.2.3</br>
+    1.2.4</br>
     <ul>
-        <li>compatible with 2020.2</li>
+        <li>Add XML completion</li>
+        <li>Add XML reference jump</li>
     </ul>
       """)
 }
