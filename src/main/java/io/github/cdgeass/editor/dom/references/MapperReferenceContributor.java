@@ -22,16 +22,20 @@ import static com.intellij.patterns.XmlPatterns.*;
  */
 public class MapperReferenceContributor extends PsiReferenceContributor {
 
-    private static final XmlAttributeValuePattern SQL_REFERENCE_PATTERN = xmlAttributeValue().withParent(xmlAttribute().withName(StringConstants.ID).withParent(xmlTag().withName(StringConstants.SQL)));
-    private static final XmlAttributeValuePattern RESULT_MAP_REFERENCE_PATTERN = xmlAttributeValue().withParent(xmlAttribute().withName(StringConstants.ID).withParent(xmlTag().withName(StringConstants.RESULT_MAP)));
+    private static final XmlAttributeValuePattern SQL_PATTERN = xmlAttributeValue().withParent(
+            xmlAttribute().withName(StringConstants.ID).withParent(
+                    xmlTag().withName(StringConstants.SQL)));
+    private static final XmlAttributeValuePattern RESULT_MAP_PATTERN = xmlAttributeValue().withParent(
+            xmlAttribute().withName(StringConstants.ID).withParent(
+                    xmlTag().withName(StringConstants.RESULT_MAP)));
 
     private static final SqlReferenceProvider SQL_REFERENCE_PROVIDER = new SqlReferenceProvider();
     private static final ResultMapReferenceProvider RESULT_MAP_REFERENCE_PROVIDER = new ResultMapReferenceProvider();
 
     @Override
     public void registerReferenceProviders(@NotNull PsiReferenceRegistrar registrar) {
-        registrar.registerReferenceProvider(SQL_REFERENCE_PATTERN, SQL_REFERENCE_PROVIDER);
-        registrar.registerReferenceProvider(RESULT_MAP_REFERENCE_PATTERN, RESULT_MAP_REFERENCE_PROVIDER);
+        registrar.registerReferenceProvider(SQL_PATTERN, SQL_REFERENCE_PROVIDER);
+        registrar.registerReferenceProvider(RESULT_MAP_PATTERN, RESULT_MAP_REFERENCE_PROVIDER);
     }
 
     public static class SqlReferenceProvider extends PsiReferenceProvider {

@@ -32,10 +32,13 @@
         <dom.fileDescription implementation="io.github.cdgeass.editor.dom.element.ConfigurationDescription"/>
         <dom.fileDescription implementation="io.github.cdgeass.editor.dom.element.MapperDescription"/>
         <completion.contributor language="any"
-                                implementationClass="io.github.cdgeass.editor.dom.references.ResultMapCompletionContributor"
+                                implementationClass="io.github.cdgeass.editor.dom.references.ResultFieldCompletionContributor"
                                 order="first"/>
         <completion.contributor language="any"
                                 implementationClass="io.github.cdgeass.editor.dom.references.ExpressionCompletionContributor"
+                                order="first"/>
+        <completion.contributor language="any"
+                                implementationClass="io.github.cdgeass.editor.dom.references.MapperCompletionContributor"
                                 order="first"/>
         <psi.referenceContributor implementation="io.github.cdgeass.editor.dom.references.MapperReferenceContributor"/>
         <toolWindow id="Format Sql" anchor="right" factoryClass="io.github.cdgeass.dialog.FormatToolWindowFactory"/>
