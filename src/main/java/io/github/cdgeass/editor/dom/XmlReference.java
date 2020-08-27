@@ -63,7 +63,6 @@ public class XmlReference<T extends PsiElement> extends PsiReferenceBase<PsiElem
     @NotNull
     @Override
     public Object[] getVariants() {
-        // TODO completion position prefix """
         return variants.stream()
                 .map(psiElement -> LookupElementBuilder
                         .createWithSmartPointer(getLookupString.apply(psiElement), psiElement)
