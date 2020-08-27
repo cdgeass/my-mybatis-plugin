@@ -45,6 +45,8 @@ public class StringConstants {
     public final static String EQUALS = "=";
     public final static String ID = "id";
     public final static String REFID = "refid";
+    public final static String COLLECTION = "collection";
+    public final static String VALUE = "value";
 
     private StringConstants() {
 

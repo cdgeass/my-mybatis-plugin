@@ -23,9 +23,7 @@ import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import static com.intellij.patterns.PlatformPatterns.psiElement;
 
@@ -34,6 +32,8 @@ import static com.intellij.patterns.PlatformPatterns.psiElement;
  * @since 2020-07-09
  */
 public class ExpressionCompletionContributor extends CompletionContributor {
+
+    private static final List<String> ENABLE_ATTRIBUTE = Arrays.asList(StringConstants.TEST, StringConstants.COLLECTION, StringConstants.VALUE);
 
     public ExpressionCompletionContributor() {
         extend(
@@ -62,7 +62,7 @@ public class ExpressionCompletionContributor extends CompletionContributor {
             return true;
         }
         return PsiTreeUtil.findFirstParent(position, psiElement ->
-                psiElement instanceof XmlAttribute && ((XmlAttribute) psiElement).getName().equals(StringConstants.TEST)) != null;
+                psiElement instanceof XmlAttribute && ENABLE_ATTRIBUTE.contains(((XmlAttribute) psiElement).getName())) != null;
     }
 
     private void addKeyWords(CompletionParameters parameters, CompletionResultSet result) {
@@ -113,7 +113,7 @@ public class ExpressionCompletionContributor extends CompletionContributor {
         }
 
         var paramNames = StringUtils.split(text, StringConstants.DOT);
-        if (paramNames == null || paramNames.length <= 0) {
+        if (paramNames == null) {
             return;
         }
 
@@ -129,10 +129,10 @@ public class ExpressionCompletionContributor extends CompletionContributor {
         int tempCallCount;
         for (var paramNameKey : paramsMap.keySet()) {
             tempCallCount = callCount;
-            var paramName = paramNames[tempCallCount++].trim();
+            var paramName = callCount >= paramNames.length ? "" : paramNames[tempCallCount++].trim();
             var paramType = paramsMap.get(paramNameKey);
 
-            if (paramNameKey.startsWith(paramName) && tempCallCount == paramNames.length) {
+            if (paramNameKey.startsWith(paramName) && tempCallCount >= paramNames.length) {
                 if ("".equals(paramName)) {
                     result = result.withPrefixMatcher("");
                 } else if (isParamPrefix) {
