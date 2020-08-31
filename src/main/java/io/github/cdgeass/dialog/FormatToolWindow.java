@@ -15,8 +15,6 @@ import org.apache.commons.lang.StringUtils;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.datatransfer.StringSelection;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.function.Consumer;
 
 /**
@@ -32,6 +30,7 @@ public class FormatToolWindow {
     private JButton copyButton;
     private EditorTextField unformattedTextField;
     private EditorTextField formattedTextField;
+    private JButton cleanButton;
 
     public FormatToolWindow(Project project) {
         this.project = project;
@@ -75,6 +74,11 @@ public class FormatToolWindow {
         copyButton.addActionListener(e -> {
             var systemClipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
             systemClipboard.setContents(new StringSelection(formattedTextField.getText()), null);
+        });
+
+        cleanButton.addActionListener(e -> {
+            unformattedTextField.setText("");
+            formattedTextField.setText("");
         });
     }
 
