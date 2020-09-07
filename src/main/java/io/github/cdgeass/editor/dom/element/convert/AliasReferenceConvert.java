@@ -1,9 +1,10 @@
 package io.github.cdgeass.editor.dom.element.convert;
 
-import com.intellij.ide.highlighter.XmlFileType;
-import com.intellij.psi.*;
+import com.intellij.psi.JavaPsiFacade;
+import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiReference;
 import com.intellij.psi.impl.cache.CacheManager;
-import com.intellij.psi.search.FileTypeIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.UsageSearchContext;
 import com.intellij.psi.xml.XmlFile;
@@ -11,13 +12,15 @@ import com.intellij.util.xml.ConvertContext;
 import com.intellij.util.xml.Converter;
 import com.intellij.util.xml.CustomReferenceConverter;
 import com.intellij.util.xml.GenericDomValue;
+import io.github.cdgeass.constants.StringConstants;
 import io.github.cdgeass.editor.dom.DomUtil;
 import io.github.cdgeass.editor.dom.XmlReference;
 import io.github.cdgeass.editor.dom.element.configuration.Configuration;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -35,14 +38,12 @@ public class AliasReferenceConvert extends Converter<PsiClass> implements Custom
             return null;
         }
 
-        var psiManager = PsiManager.getInstance(context.getProject());
-        var virtualFiles = FileTypeIndex.getFiles(XmlFileType.INSTANCE, GlobalSearchScope.projectScope(context.getProject()));
+        var cacheManager = CacheManager.getInstance(context.getProject());
+        var psiFiles = cacheManager.getFilesWithWord(StringConstants.TYPE_ALIASES, UsageSearchContext.IN_PLAIN_TEXT,
+                GlobalSearchScope.allScope(context.getProject()), true);
 
-        var typeAliasesList = virtualFiles
-                .stream()
-                .map(psiManager::findFile)
-                .filter(Objects::nonNull)
-                .map(virtualFile -> (XmlFile) virtualFile)
+        var typeAliasesList = Arrays.stream(psiFiles)
+                .filter(psiFile -> psiFile instanceof XmlFile)
                 .map(xmlFile -> DomUtil.findFileElement(xmlFile, Configuration.class))
                 .filter(Objects::nonNull)
                 .map(Configuration::getTypeAliases)
@@ -59,24 +60,16 @@ public class AliasReferenceConvert extends Converter<PsiClass> implements Custom
                 }
             }
 
-            var cacheManager = CacheManager.getInstance(context.getProject());
             for (var aPackage : typeAliases.getPackages()) {
                 var nameAttributeValue = aPackage.getName();
                 if (nameAttributeValue.getValue() == null) {
                     continue;
                 }
                 var qualifiedName = nameAttributeValue.getValue() + "." + s;
-                var psiFiles = cacheManager.getFilesWithWord(s, UsageSearchContext.ANY,
-                        GlobalSearchScope.projectScope(context.getProject()), true);
-                for (var psiFile : psiFiles) {
-                    if (psiFile instanceof PsiJavaFile) {
-                        var classes = ((PsiJavaFile) psiFile).getClasses();
-                        for (var psiClass : classes) {
-                            if (StringUtils.equals(qualifiedName, psiClass.getQualifiedName())) {
-                                return psiClass;
-                            }
-                        }
-                    }
+                var psiClass = JavaPsiFacade.getInstance(context.getProject()).findClass(qualifiedName,
+                        GlobalSearchScope.allScope(context.getProject()));
+                if (psiClass != null) {
+                    return psiClass;
                 }
             }
         }

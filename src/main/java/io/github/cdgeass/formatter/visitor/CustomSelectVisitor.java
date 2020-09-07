@@ -1,13 +1,12 @@
 package io.github.cdgeass.formatter.visitor;
 
 import io.github.cdgeass.constants.StringConstants;
-import net.sf.jsqlparser.expression.BinaryExpression;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.SelectVisitor;
 import net.sf.jsqlparser.statement.select.SetOperationList;
 import net.sf.jsqlparser.statement.select.WithItem;
 import net.sf.jsqlparser.statement.values.ValuesStatement;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * @author cdgeass

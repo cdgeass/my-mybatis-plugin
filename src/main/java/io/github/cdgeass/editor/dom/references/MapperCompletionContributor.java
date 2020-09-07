@@ -11,7 +11,7 @@ import com.intellij.psi.xml.XmlToken;
 import com.intellij.util.ProcessingContext;
 import io.github.cdgeass.constants.StringConstants;
 import io.github.cdgeass.editor.dom.DomUtil;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.stream.Collectors;

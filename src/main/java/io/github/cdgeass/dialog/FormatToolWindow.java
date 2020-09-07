@@ -10,7 +10,7 @@ import com.intellij.ui.EditorTextField;
 import com.intellij.ui.JBColor;
 import io.github.cdgeass.constants.StringConstants;
 import io.github.cdgeass.formatter.WithParamFormatter;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.swing.*;
 import java.awt.*;

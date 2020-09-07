@@ -12,7 +12,7 @@ import com.intellij.psi.impl.source.tree.injected.InjectedCaret;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlTag;
-import com.intellij.sql.dialects.generic.GenericDialect;
+import com.intellij.sql.dialects.SqlLanguageDialect;
 import com.intellij.util.PlatformIcons;
 import com.intellij.util.ProcessingContext;
 import com.intellij.util.xml.DomManager;
@@ -169,7 +169,7 @@ public class ExpressionCompletionContributor extends CompletionContributor {
         var language = position.getLanguage();
         if (language instanceof XMLLanguage) {
             return position;
-        } else if (language instanceof GenericDialect) {
+        } else if (language instanceof SqlLanguageDialect) {
             var virtualFile = position.getContainingFile().getVirtualFile();
             if (!(virtualFile instanceof VirtualFileWindow)) {
                 return null;

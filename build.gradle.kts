@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "io.github.cdgeass"
-version = "1.2.5"
+version = "1.2.6"
 
 repositories {
     mavenCentral()
@@ -28,10 +28,9 @@ configure<JavaPluginConvention> {
 }
 tasks.getByName<org.jetbrains.intellij.tasks.PatchPluginXmlTask>("patchPluginXml") {
     changeNotes("""
-    1.2.5</br>
+    1.2.6</br>
     <ul>
-        <li>ToolWindow add clean button</li>
-        <li>fix reference</li>
+        <li>fix issues</li>
     </ul>
       """)
 }

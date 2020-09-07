@@ -12,8 +12,8 @@ import com.intellij.util.xml.DomElement;
 import com.intellij.util.xml.DomManager;
 import io.github.cdgeass.constants.StringConstants;
 import lombok.experimental.UtilityClass;
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Arrays;
 import java.util.Collections;
