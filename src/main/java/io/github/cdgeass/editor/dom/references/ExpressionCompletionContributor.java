@@ -1,13 +1,14 @@
 package io.github.cdgeass.editor.dom.references;
 
+import com.google.common.collect.Maps;
 import com.intellij.codeInsight.completion.*;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.injected.editor.VirtualFileWindow;
 import com.intellij.lang.xml.XMLLanguage;
+import com.intellij.psi.PsiClassType;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.PsiType;
-import com.intellij.psi.impl.source.PsiClassReferenceType;
 import com.intellij.psi.impl.source.tree.injected.InjectedCaret;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlAttribute;
@@ -17,7 +18,8 @@ import com.intellij.util.PlatformIcons;
 import com.intellij.util.ProcessingContext;
 import com.intellij.util.xml.DomManager;
 import io.github.cdgeass.constants.StringConstants;
-import io.github.cdgeass.editor.dom.OGNLUtil;
+import io.github.cdgeass.editor.MyPsiUtil;
+import io.github.cdgeass.editor.OGNLUtil;
 import io.github.cdgeass.editor.dom.element.mapper.Statement;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -95,16 +97,6 @@ public class ExpressionCompletionContributor extends CompletionContributor {
             text = StringUtils.removeEnd(text, CompletionUtilCore.DUMMY_IDENTIFIER);
         }
 
-        if (text.endsWith(StringConstants.PARAM_SUFFIX)) {
-            isParamPrefix = true;
-            text = StringUtils.removeEnd(text, StringConstants.PARAM_SUFFIX);
-        }
-        if (text.startsWith(StringConstants.PARAM_PREFIX)) {
-            text = StringUtils.removeStart(text, StringConstants.PARAM_PREFIX);
-        } else if (text.startsWith(StringConstants.PREPARED_PARAM_PREFIX)) {
-            text = StringUtils.removeStart(text, StringConstants.PREPARED_PARAM_PREFIX);
-        }
-
         if (text.contains(StringConstants.WHITESPACE)) {
             text = text.substring(StringUtils.lastIndexOf(text, StringConstants.WHITESPACE));
         }
@@ -139,13 +131,13 @@ public class ExpressionCompletionContributor extends CompletionContributor {
                     result = result.withPrefixMatcher(paramName);
                 }
                 result.addElement(LookupElementBuilder.create(paramNameKey).withIcon(PlatformIcons.PARAMETER_ICON));
-            } else if (paramNameKey.equals(paramName) && paramType instanceof PsiClassReferenceType) {
-                var paramClass = ((PsiClassReferenceType) paramType).resolve();
+            } else if (paramNameKey.equals(paramName) && paramType instanceof PsiClassType) {
+                var paramClass = ((PsiClassType) paramType).resolve();
                 if (paramClass != null) {
                     var paramFields = paramClass.getAllFields();
                     var paramMethods = paramClass.getAllMethods();
 
-                    Map<String, PsiType> subParamsMap = new HashMap<>();
+                    Map<String, PsiType> subParamsMap = Maps.newHashMap();
                     for (var paramMethod : paramMethods) {
                         if (OGNLUtil.isGetter(paramMethod.getName())) {
                             subParamsMap.put(OGNLUtil.methodToProperty(paramMethod.getName()),
@@ -192,7 +184,8 @@ public class ExpressionCompletionContributor extends CompletionContributor {
 
     private Map<String, PsiType> getParams(PsiElement position) {
         var statementXmlTag = (XmlTag) PsiTreeUtil.findFirstParent(position,
-                psiElement -> (psiElement instanceof XmlTag) && ((XmlTag) psiElement).getAttribute("id") != null);
+                psiElement -> (psiElement instanceof XmlTag)
+                        && StringConstants.STATEMENT_NAME.contains(((XmlTag) psiElement).getName()));
         if (statementXmlTag == null) {
             return Collections.emptyMap();
         }
@@ -224,6 +217,49 @@ public class ExpressionCompletionContributor extends CompletionContributor {
             }
 
             paramsMap.put(name == null ? methodParameter.getName() : name, methodParameter.getType());
+        }
+
+        var foreachTag = PsiTreeUtil.getParentOfType(position, XmlTag.class);
+        var attribute = PsiTreeUtil.getParentOfType(position, XmlAttribute.class);
+        if (foreachTag == null || attribute != null) {
+            return paramsMap;
+        }
+
+        var collectionText = foreachTag.getAttributeValue(StringConstants.COLLECTION);
+        var itemText = foreachTag.getAttributeValue(StringConstants.ITEM);
+        if (!StringUtils.contains(collectionText, StringConstants.DOT) || StringUtils.isBlank(itemText)) {
+            return paramsMap;
+        }
+
+        var split = StringUtils.split(collectionText, StringConstants.DOT);
+        var collectionType = ((PsiClassType) paramsMap.get(split[0]));
+        for (int i = 1; i < split.length; i++) {
+            var psiClass = collectionType.resolve();
+            if (psiClass == null) {
+                break;
+            }
+
+            var methods = psiClass.getAllMethods();
+            for (var psiMethod : methods) {
+                if (OGNLUtil.isGetter(psiMethod.getName())) {
+                    var returnType = psiMethod.getReturnType();
+                    if (returnType instanceof PsiClassType) {
+                        collectionType = (PsiClassType) returnType;
+                    }
+                }
+            }
+
+            var fields = psiClass.getAllFields();
+            for (var field : fields) {
+                var fieldType = field.getType();
+                if (fieldType instanceof PsiClassType) {
+                    collectionType = (PsiClassType) fieldType;
+                }
+            }
+        }
+        var genericType = MyPsiUtil.getGenericType(collectionType);
+        if (genericType != null) {
+            paramsMap.put(itemText, genericType);
         }
 
         return paramsMap;

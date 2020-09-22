@@ -1,4 +1,4 @@
-package io.github.cdgeass.editor.dom;
+package io.github.cdgeass.editor;
 
 import lombok.experimental.UtilityClass;
 

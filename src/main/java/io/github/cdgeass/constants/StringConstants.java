@@ -1,5 +1,8 @@
 package io.github.cdgeass.constants;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * @author cdgeass
  * @since 2020-06-11
@@ -26,6 +29,9 @@ public class StringConstants {
     public final static String TYPE = "type";
     public final static String PROPERTY = "property";
     public final static String COLUMN = "column";
+    public final static String FOREACH = "foreach";
+
+    public final static List<String> STATEMENT_NAME = Arrays.asList("select", "insert", "update", "delete");
 
     // ------------- mapper ----------------------
 
@@ -46,6 +52,7 @@ public class StringConstants {
     public final static String ID = "id";
     public final static String REFID = "refid";
     public final static String COLLECTION = "collection";
+    public final static String ITEM = "item";
     public final static String VALUE = "value";
 
     private StringConstants() {
