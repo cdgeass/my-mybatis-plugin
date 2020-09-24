@@ -14,6 +14,8 @@ repositories {
 dependencies {
     testImplementation("junit", "junit", "4.12")
     implementation("com.github.jsqlparser:jsqlparser:3.1")
+    implementation("org.mybatis.generator:mybatis-generator-core:1.4.0")
+
     compileOnly("org.projectlombok:lombok:1.18.12")
     annotationProcessor("org.projectlombok:lombok:1.18.12")
 }
