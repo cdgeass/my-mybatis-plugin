@@ -1,6 +1,7 @@
 plugins {
     id("org.jetbrains.intellij") version "0.4.20"
     java
+    kotlin("jvm") version "1.4.10"
 }
 
 group = "io.github.cdgeass"
