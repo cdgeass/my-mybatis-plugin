@@ -55,9 +55,17 @@
         <action id="io.github.cdgeass.action.FormatAndCopySelectAction"
                 class="io.github.cdgeass.action.FormatAndCopySelectionAction" text="Copy Sql"
                 description="An action to format and copy sql which was selected">
-            <add-to-group group-id="EditorPopupMenu" anchor="after" relative-to-action="io.github.cdgeass.action.FormatSelectAction"/>
-            <add-to-group group-id="ConsoleEditorPopupMenu" anchor="after" relative-to-action="io.github.cdgeass.action.FormatSelectAction"/>
+            <add-to-group group-id="EditorPopupMenu" anchor="after"
+                          relative-to-action="io.github.cdgeass.action.FormatSelectAction"/>
+            <add-to-group group-id="ConsoleEditorPopupMenu" anchor="after"
+                          relative-to-action="io.github.cdgeass.action.FormatSelectAction"/>
             <keyboard-shortcut first-keystroke="control alt Y" keymap="$default"/>
+        </action>
+        <action id="io.github.cdgeass.action.MyBatisGeneratorAction"
+                class="io.github.cdgeass.action.MyBatisGeneratorAction"
+                description="An action to run Mybatis Generator" text="MyBatis Generator">
+            <add-to-group group-id="DatabaseViewPopupMenu" anchor="after"
+                          relative-to-action="DatabaseView.Sql.Scripts"/>
         </action>
     </actions>
 </idea-plugin>
