@@ -6,16 +6,16 @@ This is a plugin to help you to use mybatis in Intellij IDEA.
 - Format mybatis log
     - in the console  
     ![](gif/console_format.gif)  
-    - in the tool window
+    - in the tool window  
     ![](gif/toolwindow-format.gif)
 
 - Code jump
-    - jump between the interface and xml
+    - jump between the interface and xml  
     ![](gif/code_jump_java.gif)
-    - jump between xml tag
+    - jump between xml tag  
     ![](gif/code_jump_xml_tag.gif)
     
-- Code completion
+- Code completion  
 ![](gif/completion.gif)
 
 ## Installation
