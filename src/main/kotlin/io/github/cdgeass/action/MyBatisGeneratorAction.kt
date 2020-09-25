@@ -10,6 +10,6 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 class MyBatisGeneratorAction : AnAction() {
 
     override fun actionPerformed(e: AnActionEvent) {
-
+        TODO("Not yet implemented")
     }
 }
