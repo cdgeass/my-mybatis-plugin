@@ -24,22 +24,13 @@ class MyBatisGeneratorSettingsConfigurable : Configurable {
     }
 
     override fun isModified(): Boolean {
-        val myBatisGeneratorSettings = MyBatisGeneratorSettings.getInstance()!!
-        var modified = myBatisGeneratorSettings.sourceFolder == myBatisGeneratorSettingsComponent.getSourceFolder()
-        modified = modified || myBatisGeneratorSettings.resourceFolder == myBatisGeneratorSettingsComponent.getResourceFolder()
-        return modified
+        return false
     }
 
     override fun apply() {
-        val myBatisGeneratorSettings = MyBatisGeneratorSettings.getInstance()!!
-        myBatisGeneratorSettings.sourceFolder = myBatisGeneratorSettingsComponent.getSourceFolder()
-        myBatisGeneratorSettings.resourceFolder = myBatisGeneratorSettingsComponent.getResourceFolder()
     }
 
     override fun reset() {
-        val myBatisGeneratorSettings = MyBatisGeneratorSettings.getInstance()!!
-        myBatisGeneratorSettingsComponent.setSourceFolder(myBatisGeneratorSettings.sourceFolder)
-        myBatisGeneratorSettingsComponent.setResourceFolder(myBatisGeneratorSettings.resourceFolder)
     }
 
 }
