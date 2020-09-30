@@ -15,6 +15,12 @@ import com.intellij.util.xmlb.XmlSerializerUtil
         storages = [Storage("MyBatisGeneratorSettings.xml")]
 )
 class MyBatisGeneratorSettings(
+        val classPathEntry: String = "",
+        val useDefaultClassPathEntry: Boolean = true,
+
+        val targetRuntime: String = "MyBatis3Simple",
+        val configurationType: String = "MAPPER",
+
         val sourceDir: String = "/src/main/java",
         val resourceDir: String = "/src/main/resources"
 ) : PersistentStateComponent<MyBatisGeneratorSettings> {

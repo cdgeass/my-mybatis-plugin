@@ -40,22 +40,20 @@ class MyBatisGeneratorAction : AnAction() {
     private fun configure(project: Project, selectedTable: DbTable, configuration: Configuration) {
         val dataSource = selectedTable.dataSource.delegate as LocalDataSource
 
-        val classPathElements = dataSource.classpathElements
-        for (classPathElement in classPathElements) {
+        for (classPathElement in dataSource.classpathElements) {
             for (classesRootUrl in classPathElement.classesRootUrls) {
                 configuration.addClasspathEntry(StringUtils.replace(classesRootUrl, "file://", ""))
             }
         }
 
-        val context = Context(ModelType.FLAT)
-        context.id = dataSource.name
-        // TODO settings to set TARGET_RUNTIME
-        context.targetRuntime = "MyBatis3Simple"
-
         val settings = MyBatisGeneratorSettings.getInstance()!!
 
-        val jdbcConnectionConfiguration = JDBCConnectionConfiguration()
+        val context = Context(ModelType.FLAT)
+        context.id = dataSource.name
+        context.targetRuntime = settings.targetRuntime
+
         val connectionConfig = dataSource.connectionConfig!!
+        val jdbcConnectionConfiguration = JDBCConnectionConfiguration()
         jdbcConnectionConfiguration.connectionURL = connectionConfig.url
         jdbcConnectionConfiguration.driverClass = connectionConfig.driverClass
         jdbcConnectionConfiguration.userId = dataSource.username
@@ -79,8 +77,7 @@ class MyBatisGeneratorAction : AnAction() {
         javaClientGeneratorConfiguration.targetProject = project.basePath + settings.sourceDir
         // TODO dialog to set package
         javaClientGeneratorConfiguration.targetPackage = "io.cdgeass.github"
-        // TODO settings to set CONFIGURATION_TYPE
-        javaClientGeneratorConfiguration.configurationType = "MAPPER"
+        javaClientGeneratorConfiguration.configurationType = settings.configurationType
         context.javaClientGeneratorConfiguration = javaClientGeneratorConfiguration
 
         val tableConfiguration = TableConfiguration(context)
