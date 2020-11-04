@@ -1,12 +1,17 @@
 package io.github.cdgeass.component
 
 import com.intellij.openapi.ui.ComboBox
+import com.intellij.openapi.util.Disposer
+import com.intellij.ui.TabbedPaneWrapper
 import com.intellij.ui.TitledSeparator
 import com.intellij.ui.ToolbarDecorator
+import com.intellij.ui.components.JBCheckBox
 import com.intellij.ui.components.JBLabel
 import com.intellij.ui.table.TableView
 import com.intellij.util.ui.FormBuilder
 import org.apache.commons.lang3.tuple.MutablePair
+import javax.swing.BorderFactory
+import javax.swing.JComponent
 import javax.swing.JPanel
 
 /**
@@ -15,7 +20,7 @@ import javax.swing.JPanel
  */
 class MyBatisGeneratorSettingsComponent {
 
-    private val mainPanel: JPanel
+    private val mainPanel: JComponent
 
     private val contextDefaultModelTypeComboBox: ComboBox<String> = ComboBox(arrayOf("conditional", "flat", "hierarchical"))
     private val contextTargetRuntimeComboBox: ComboBox<String> = ComboBox(arrayOf("MyBatis3DynamicSql",
@@ -23,6 +28,9 @@ class MyBatisGeneratorSettingsComponent {
     private val contextPropertiesTableModel: PropertiesTableModel = PropertiesTableModel(arrayOf("autoDelimitKeywords",
             "beginningDelimiter", "endingDelimiter", "javaFileEncoding", "javaFormatter", "targetJava8", "kotlinFileEncoding",
             "kotlinFormatter", "xmlFormatter"))
+
+    private val javaTypeResolverForceBigDecimalsCheckBox: JBCheckBox = JBCheckBox("forceBigDecimals")
+    private val javaTypeResolverUseJSR310TypesCheckBox: JBCheckBox = JBCheckBox("useJSR310Types")
 
     init {
         val contextPropertiesTable = TableView(contextPropertiesTableModel).let {
@@ -38,21 +46,35 @@ class MyBatisGeneratorSettingsComponent {
                 }
 
         val contextPanel = FormBuilder.createFormBuilder()
-                .addComponent(TitledSeparator("Context"))
                 .addLabeledComponent(JBLabel("DefaultModelType:"), contextDefaultModelTypeComboBox)
                 .addLabeledComponent(JBLabel("TargetRuntime:"), contextTargetRuntimeComboBox)
-                .addComponent(TitledSeparator("Context properties"))
+                .addComponent(TitledSeparator("Properties"))
                 .addComponent(contextToolbarDecorator.createPanel())
                 .addComponentFillVertically(JPanel(), 0)
                 .panel
+                .let {
+                    it.border = BorderFactory.createEmptyBorder(8, 8, 8, 8)
+                    it
+                }
 
-        mainPanel = FormBuilder.createFormBuilder()
-                .addComponent(contextPanel)
+        val javaTypeResolverPanel = FormBuilder.createFormBuilder()
+                .addComponent(javaTypeResolverForceBigDecimalsCheckBox)
+                .addComponent(javaTypeResolverUseJSR310TypesCheckBox)
                 .addComponentFillVertically(JPanel(), 0)
                 .panel
+                .let {
+                    it.border = BorderFactory.createEmptyBorder(8, 8, 8, 8)
+                    it
+                }
+
+        val tabbedPaneWrapper = TabbedPaneWrapper(Disposer.newDisposable())
+        tabbedPaneWrapper.addTab("Context", contextPanel)
+        tabbedPaneWrapper.addTab("JavaTypeResolver", javaTypeResolverPanel)
+
+        mainPanel = tabbedPaneWrapper.component
     }
 
-    fun getPanel(): JPanel {
+    fun getComponent(): JComponent {
         return mainPanel
     }
 }

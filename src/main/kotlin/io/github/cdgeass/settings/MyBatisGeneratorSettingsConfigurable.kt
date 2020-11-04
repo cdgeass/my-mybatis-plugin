@@ -20,7 +20,7 @@ class MyBatisGeneratorSettingsConfigurable : Configurable {
 
     override fun createComponent(): JComponent? {
         myBatisGeneratorSettingsComponent = MyBatisGeneratorSettingsComponent()
-        return myBatisGeneratorSettingsComponent.getPanel()
+        return myBatisGeneratorSettingsComponent.getComponent()
     }
 
     override fun isModified(): Boolean {
