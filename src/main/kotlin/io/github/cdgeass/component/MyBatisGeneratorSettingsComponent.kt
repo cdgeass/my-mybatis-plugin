@@ -22,34 +22,61 @@ class MyBatisGeneratorSettingsComponent {
 
     private val mainPanel: JComponent
 
-    private val contextDefaultModelTypeComboBox: ComboBox<String> = ComboBox(arrayOf("conditional", "flat", "hierarchical"))
-    private val contextTargetRuntimeComboBox: ComboBox<String> = ComboBox(arrayOf("MyBatis3DynamicSql",
+    private val contextDefaultModelTypeComboBox = ComboBox(arrayOf("conditional", "flat", "hierarchical"))
+    private val contextTargetRuntimeComboBox = ComboBox(arrayOf("MyBatis3DynamicSql",
             "MyBatis3Kotlin", "MyBatis3", "MyBatis3Simple", "MyBatis3DynamicSqlV1"))
-    private val contextPropertiesTableModel: PropertiesTableModel = PropertiesTableModel(arrayOf("autoDelimitKeywords",
+    private val contextPropertiesTableModel = PropertiesTableModel(arrayOf("autoDelimitKeywords",
             "beginningDelimiter", "endingDelimiter", "javaFileEncoding", "javaFormatter", "targetJava8", "kotlinFileEncoding",
             "kotlinFormatter", "xmlFormatter"))
 
-    private val javaTypeResolverForceBigDecimalsCheckBox: JBCheckBox = JBCheckBox("forceBigDecimals")
-    private val javaTypeResolverUseJSR310TypesCheckBox: JBCheckBox = JBCheckBox("useJSR310Types")
+    private val javaTypeResolverForceBigDecimalsCheckBox = JBCheckBox("forceBigDecimals")
+    private val javaTypeResolverUseJSR310TypesCheckBox = JBCheckBox("useJSR310Types")
+
+    private val javaModelGeneratorPropertiesTableModel = PropertiesTableModel(arrayOf("constructorBased",
+            "enableSubPackages", "exampleTargetPackage", "exampleTargetProject", "immutable", "rootClass", "trimStrings"))
+
+    private val sqlMapGeneratorEnableSubPackagesCheckBox = JBCheckBox("enableSubPackages")
+
+    private val javaClientGeneratorTypeComboBox = ComboBox(arrayOf("ANNOTATEDMAPPER", "MIXEDMAPPER",
+            "XMLMAPPER"))
+    private val javaClientGeneratorPropertiesTableModel = PropertiesTableModel(arrayOf("enableSubPackages", "rootInterface",
+            "useLegacyBuilder"))
+
+    private val tableEnableInsertCheckBox = JBCheckBox("enableInsert")
+    private val tableEnableSelectByPrimaryKeyCheckBox = JBCheckBox("enableSelectByPrimaryKey")
+    private val tableEnableSelectByExampleCheckBox = JBCheckBox("enableSelectByExample")
+    private val tableEnableUpdateByPrimaryKeyCheckBox = JBCheckBox("enableUpdateByPrimaryKey")
+    private val tableEnableDeleteByPrimaryKeyCheckBox = JBCheckBox("enableDeleteByPrimaryKey")
+    private val tableEnableDeleteByExampleCheckBox = JBCheckBox("enableDeleteByExample")
+    private val tableEnableCountByExampleCheckBox = JBCheckBox("enableCountByExample")
+    private val tableEnableUpdateByExampleCheckBox = JBCheckBox("enableUpdateByExample")
+    private val tableSelectByPrimaryKeyQueryIdCheckBox = JBCheckBox("selectByPrimaryKeyQueryId")
+    private val tableSelectByExampleQueryIdCheckBox = JBCheckBox("selectByExampleQueryId")
+    private val tableModelTypeComboBox = ComboBox(arrayOf("conditional", "flat", "hierarchical"))
+    private val tableModelEscapeWildcardsCheckBox = JBCheckBox("escapeWildcards")
+    private val tableDelimitIdentifiersCheckBox = JBCheckBox("delimitIdentifiers")
+    private val tableDelimitAllColumnsCheckBox = JBCheckBox("delimitAllColumns")
+    private val tablePropertiesTableModel = PropertiesTableModel(arrayOf("constructorBased", "ignoreQualifiersAtRuntime",
+            "immutable", "modelOnly", "rootClass", "rootInterface", "runtimeCatalog", "runtimeSchema", "runtimeTableName",
+            "selectAllOrderByClause", "useActualColumnNames", "useColumnIndexes", "useCompoundPropertyNames"))
 
     init {
         val contextPropertiesTable = TableView(contextPropertiesTableModel).let {
             it.emptyText.text = "There has no properties"
             it
         }
-        val contextToolbarDecorator = ToolbarDecorator.createDecorator(contextPropertiesTable)
+        val contextPropertiesToolbarDecorator = ToolbarDecorator.createDecorator(contextPropertiesTable)
                 .setAddAction {
                     contextPropertiesTableModel.addRow(MutablePair("", ""))
                 }
                 .setRemoveAction {
                     contextPropertiesTableModel.removeRow(contextPropertiesTable.selectedRow)
                 }
-
         val contextPanel = FormBuilder.createFormBuilder()
                 .addLabeledComponent(JBLabel("DefaultModelType:"), contextDefaultModelTypeComboBox)
                 .addLabeledComponent(JBLabel("TargetRuntime:"), contextTargetRuntimeComboBox)
                 .addComponent(TitledSeparator("Properties"))
-                .addComponent(contextToolbarDecorator.createPanel())
+                .addComponent(contextPropertiesToolbarDecorator.createPanel())
                 .addComponentFillVertically(JPanel(), 0)
                 .panel
                 .let {
@@ -67,9 +94,96 @@ class MyBatisGeneratorSettingsComponent {
                     it
                 }
 
+        val javaModelGeneratorPropertiesTable = TableView(javaModelGeneratorPropertiesTableModel).let {
+            it.emptyText.text = "There has no properties"
+            it
+        }
+        val javaModelGeneratorPropertiesToolbarDecorator = ToolbarDecorator.createDecorator(javaModelGeneratorPropertiesTable)
+                .setAddAction {
+                    javaModelGeneratorPropertiesTableModel.addRow(MutablePair("", ""))
+                }
+                .setRemoveAction {
+                    javaModelGeneratorPropertiesTableModel.removeRow(javaModelGeneratorPropertiesTable.selectedRow)
+                }
+        val javaModelGeneratorPanel = FormBuilder.createFormBuilder()
+                .addComponent(TitledSeparator("Properties"))
+                .addComponent(javaModelGeneratorPropertiesToolbarDecorator.createPanel())
+                .addComponentFillVertically(JPanel(), 0)
+                .panel
+                .let {
+                    it.border = BorderFactory.createEmptyBorder(8, 8, 8, 8)
+                    it
+                }
+
+        val sqlMapGeneratorPanel = FormBuilder.createFormBuilder()
+                .addComponent(sqlMapGeneratorEnableSubPackagesCheckBox)
+                .addComponentFillVertically(JPanel(), 0)
+                .panel
+                .let {
+                    it.border = BorderFactory.createEmptyBorder(8, 8, 8, 8)
+                    it
+                }
+
+        val javaClientGeneratorPropertiesTable = TableView(javaClientGeneratorPropertiesTableModel)
+        val javaClientGeneratorToolbarDecorator = ToolbarDecorator.createDecorator(javaClientGeneratorPropertiesTable)
+                .setAddAction {
+                    javaClientGeneratorPropertiesTableModel.addRow(MutablePair("", ""))
+                }
+                .setRemoveAction {
+                    javaClientGeneratorPropertiesTableModel.removeRow(javaClientGeneratorPropertiesTable.selectedRow)
+                }
+        val javaClientGeneratorPanel = FormBuilder.createFormBuilder()
+                .addLabeledComponent("type", javaClientGeneratorTypeComboBox)
+                .addComponent(TitledSeparator("Properties"))
+                .addComponent(javaClientGeneratorToolbarDecorator.createPanel())
+                .addComponentFillVertically(JPanel(), 0)
+                .panel
+                .let {
+                    it.border = BorderFactory.createEmptyBorder(8, 8, 8, 8)
+                    it
+                }
+
+        val tablePropertiesTable = TableView(tablePropertiesTableModel)
+        val tablePropertiesToolbarDecorator = ToolbarDecorator.createDecorator(tablePropertiesTable)
+                .setAddAction {
+                    tablePropertiesTableModel.addRow(MutablePair("", ""))
+                }
+                .setRemoveAction {
+                    tablePropertiesTableModel.removeRow(tablePropertiesTable.selectedRow)
+                }
+        val tablePanel = FormBuilder.createFormBuilder()
+                .addComponent(tableEnableInsertCheckBox)
+                .addComponent(tableEnableSelectByPrimaryKeyCheckBox)
+                .addComponent(tableEnableSelectByExampleCheckBox)
+                .addComponent(tableEnableUpdateByPrimaryKeyCheckBox)
+                .addComponent(tableEnableDeleteByPrimaryKeyCheckBox)
+                .addComponent(tableEnableDeleteByExampleCheckBox)
+                .addComponent(tableEnableCountByExampleCheckBox)
+                .addComponent(tableEnableUpdateByExampleCheckBox)
+                .addComponent(tableSelectByPrimaryKeyQueryIdCheckBox)
+                .addComponent(tableSelectByExampleQueryIdCheckBox)
+                .addLabeledComponent("modelType", tableModelTypeComboBox)
+                .addComponent(tableModelEscapeWildcardsCheckBox)
+                .addComponent(tableDelimitIdentifiersCheckBox)
+                .addComponent(tableDelimitAllColumnsCheckBox)
+                .addComponent(TitledSeparator("Properties"))
+                .addComponent(tablePropertiesToolbarDecorator.createPanel())
+                .panel
+                .let {
+                    it.border = BorderFactory.createEmptyBorder(8, 8, 8, 8)
+                    it
+                }
+
         val tabbedPaneWrapper = TabbedPaneWrapper(Disposer.newDisposable())
-        tabbedPaneWrapper.addTab("Context", contextPanel)
-        tabbedPaneWrapper.addTab("JavaTypeResolver", javaTypeResolverPanel)
+                .let {
+                    it.addTab("Context", contextPanel)
+                    it.addTab("JavaTypeResolver", javaTypeResolverPanel)
+                    it.addTab("JavaModelGenerator", javaModelGeneratorPanel)
+                    it.addTab("SqlMapGenerator", sqlMapGeneratorPanel)
+                    it.addTab("JavaClientGenerator", javaClientGeneratorPanel)
+                    it.addTab("Table", tablePanel)
+                    it
+                }
 
         mainPanel = tabbedPaneWrapper.component
     }
