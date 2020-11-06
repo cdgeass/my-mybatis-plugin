@@ -61,29 +61,6 @@ class MyBatisGeneratorSettingsComponent {
             "selectAllOrderByClause", "useActualColumnNames", "useColumnIndexes", "useCompoundPropertyNames"))
 
     init {
-        val contextPropertiesTable = TableView(contextPropertiesTableModel).let {
-            it.emptyText.text = "There has no properties"
-            it
-        }
-        val contextPropertiesToolbarDecorator = ToolbarDecorator.createDecorator(contextPropertiesTable)
-                .setAddAction {
-                    contextPropertiesTableModel.addRow(MutablePair("", ""))
-                }
-                .setRemoveAction {
-                    contextPropertiesTableModel.removeRow(contextPropertiesTable.selectedRow)
-                }
-        val contextPanel = FormBuilder.createFormBuilder()
-                .addLabeledComponent(JBLabel("DefaultModelType:"), contextDefaultModelTypeComboBox)
-                .addLabeledComponent(JBLabel("TargetRuntime:"), contextTargetRuntimeComboBox)
-                .addComponent(TitledSeparator("Properties"))
-                .addComponent(contextPropertiesToolbarDecorator.createPanel())
-                .addComponentFillVertically(JPanel(), 0)
-                .panel
-                .let {
-                    it.border = BorderFactory.createEmptyBorder(8, 8, 8, 8)
-                    it
-                }
-
         val javaTypeResolverPanel = FormBuilder.createFormBuilder()
                 .addComponent(javaTypeResolverForceBigDecimalsCheckBox)
                 .addComponent(javaTypeResolverUseJSR310TypesCheckBox)
@@ -94,10 +71,7 @@ class MyBatisGeneratorSettingsComponent {
                     it
                 }
 
-        val javaModelGeneratorPropertiesTable = TableView(javaModelGeneratorPropertiesTableModel).let {
-            it.emptyText.text = "There has no properties"
-            it
-        }
+        val javaModelGeneratorPropertiesTable = TableView(javaModelGeneratorPropertiesTableModel)
         val javaModelGeneratorPropertiesToolbarDecorator = ToolbarDecorator.createDecorator(javaModelGeneratorPropertiesTable)
                 .setAddAction {
                     javaModelGeneratorPropertiesTableModel.addRow(MutablePair("", ""))
@@ -162,7 +136,7 @@ class MyBatisGeneratorSettingsComponent {
                 .addComponent(tableEnableUpdateByExampleCheckBox)
                 .addComponent(tableSelectByPrimaryKeyQueryIdCheckBox)
                 .addComponent(tableSelectByExampleQueryIdCheckBox)
-                .addLabeledComponent("modelType", tableModelTypeComboBox)
+                .addLabeledComponent("modelType:", tableModelTypeComboBox)
                 .addComponent(tableModelEscapeWildcardsCheckBox)
                 .addComponent(tableDelimitIdentifiersCheckBox)
                 .addComponent(tableDelimitAllColumnsCheckBox)
@@ -176,7 +150,6 @@ class MyBatisGeneratorSettingsComponent {
 
         val tabbedPaneWrapper = TabbedPaneWrapper(Disposer.newDisposable())
                 .let {
-                    it.addTab("Context", contextPanel)
                     it.addTab("JavaTypeResolver", javaTypeResolverPanel)
                     it.addTab("JavaModelGenerator", javaModelGeneratorPanel)
                     it.addTab("SqlMapGenerator", sqlMapGeneratorPanel)
@@ -185,7 +158,29 @@ class MyBatisGeneratorSettingsComponent {
                     it
                 }
 
-        mainPanel = tabbedPaneWrapper.component
+        val contextPropertiesTable = TableView(contextPropertiesTableModel)
+        val contextPropertiesToolbarDecorator = ToolbarDecorator.createDecorator(contextPropertiesTable)
+                .setAddAction {
+                    contextPropertiesTableModel.addRow(MutablePair("", ""))
+                }
+                .setRemoveAction {
+                    contextPropertiesTableModel.removeRow(contextPropertiesTable.selectedRow)
+                }
+
+        mainPanel = FormBuilder.createFormBuilder()
+                .addComponent(TitledSeparator("Context"))
+                .addLabeledComponent(JBLabel("DefaultModelType:"), contextDefaultModelTypeComboBox)
+                .addLabeledComponent(JBLabel("TargetRuntime:"), contextTargetRuntimeComboBox)
+                .addComponent(TitledSeparator("Properties"))
+                .addComponent(contextPropertiesToolbarDecorator.createPanel())
+                .addComponent(TitledSeparator("Sub Settings"))
+                .addComponent(tabbedPaneWrapper.component)
+                .addComponentFillVertically(JPanel(), 0)
+                .panel
+                .let {
+                    it.border = BorderFactory.createEmptyBorder(8, 8, 8, 8)
+                    it
+                }
     }
 
     fun getComponent(): JComponent {
