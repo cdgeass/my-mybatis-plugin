@@ -1,6 +1,7 @@
 package io.github.cdgeass.component
 
 import com.intellij.openapi.ui.ComboBox
+import com.intellij.util.containers.toArray
 import com.intellij.util.ui.ColumnInfo
 import com.intellij.util.ui.ListTableModel
 import org.apache.commons.lang3.tuple.MutablePair
@@ -11,9 +12,21 @@ import javax.swing.table.TableCellEditor
  * @author cdgeass
  * @since 2020-09-30
  */
-class PropertiesTableModel(properties: Array<String>) : ListTableModel<MutablePair<String, String>>(PropertyColumnInfo(properties), ValueColumnInfo())
+class PropertiesTableModel(
+        private val properties: List<String>,
+        private val usedProperties: MutableSet<String> = mutableSetOf()
+) : ListTableModel<MutablePair<String, String>>(PropertyColumnInfo(properties, usedProperties), ValueColumnInfo()) {
 
-class PropertyColumnInfo(private val properties: Array<String>) : ColumnInfo<MutablePair<String, String>, String>("property") {
+    override fun removeRow(idx: Int) {
+        usedProperties.remove(super.getRowValue(idx).left)
+        super.removeRow(idx)
+    }
+}
+
+class PropertyColumnInfo(
+        private val properties: List<String>,
+        private val usedProperties: MutableSet<String>
+) : ColumnInfo<MutablePair<String, String>, String>("property") {
 
     override fun valueOf(item: MutablePair<String, String>): String {
         return item.left
@@ -24,15 +37,13 @@ class PropertyColumnInfo(private val properties: Array<String>) : ColumnInfo<Mut
     }
 
     override fun setValue(item: MutablePair<String, String>, value: String) {
-        if (properties.contains(value)) {
-            item.left = value
-        } else {
-            item.left = properties[0]
-        }
+        item.left = value
+        usedProperties.add(value)
     }
 
     override fun getEditor(item: MutablePair<String, String>): TableCellEditor {
-        return DefaultCellEditor(ComboBox(properties))
+        val temp = properties.toMutableList().apply { removeAll(usedProperties) }.toArray(arrayOf())
+        return DefaultCellEditor(ComboBox(temp))
     }
 }
 
