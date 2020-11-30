@@ -219,9 +219,11 @@ public class ExpressionCompletionContributor extends CompletionContributor {
             paramsMap.put(name == null ? methodParameter.getName() : name, methodParameter.getType());
         }
 
-        var foreachTag = PsiTreeUtil.getParentOfType(position, XmlTag.class);
+        var foreachTag = (XmlTag) PsiTreeUtil.findFirstParent(position,
+                psiElement -> (psiElement instanceof XmlTag) && StringConstants.FOREACH.equals(((XmlTag) psiElement).getName()));
         var attribute = PsiTreeUtil.getParentOfType(position, XmlAttribute.class);
-        if (foreachTag == null || attribute != null) {
+        var attributeParentTag = PsiTreeUtil.getParentOfType(attribute, XmlTag.class);
+        if (foreachTag == null || foreachTag == attributeParentTag) {
             return paramsMap;
         }
 
