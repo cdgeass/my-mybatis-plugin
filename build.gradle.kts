@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "io.github.cdgeass"
-version = "1.2.7"
+version = "1.2.8"
 
 repositories {
     mavenCentral()
@@ -31,9 +31,10 @@ configure<JavaPluginConvention> {
 }
 tasks.getByName<org.jetbrains.intellij.tasks.PatchPluginXmlTask>("patchPluginXml") {
     changeNotes("""
-    1.2.7</br>
+    1.2.8</br>
     <ul>
-        <li>support param contributor in <foreach/></li>
+        <li>fix item in <foreach></li>
+        <li>fix scale tool window</li>
     </ul>
       """)
 }
