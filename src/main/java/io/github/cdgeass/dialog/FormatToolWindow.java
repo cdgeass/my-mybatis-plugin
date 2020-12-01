@@ -4,6 +4,7 @@ import com.intellij.codeInsight.highlighting.HighlightManager;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.EditorFontType;
+import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.editor.markup.TextAttributes;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.EditorTextField;
@@ -36,9 +37,10 @@ public class FormatToolWindow {
         this.project = project;
 
         Consumer<Editor> highlightConsumer = editor -> {
-            var textAttributes1 = new TextAttributes();
-            textAttributes1.setForegroundColor(JBColor.LIGHT_GRAY);
-            var textAttributes2 = new TextAttributes();
+            var separatorTextAttributesKey = TextAttributesKey.createTextAttributesKey("MY_MYBATIS::MYBATIS_LOG_SEPARATOR");
+            var textAttributeKey1 = TextAttributesKey.createTextAttributesKey("MY_MYBATIS::MYBATIS_LOG_TEXT_1");
+            var textAttributeKey2 = TextAttributesKey.createTextAttributesKey("MY_MYBATIS::MYBATIS_LOG_TEXT_2");
+
             var highlightManager = HighlightManager.getInstance(project);
 
             var text = editor.getDocument().getText();
@@ -49,16 +51,14 @@ public class FormatToolWindow {
             for (i = 1; i <= emptyLineCount; i++) {
                 var indexOf = StringUtils.ordinalIndexOf(text, StringConstants.SEPARATOR_LINE, i);
                 highlightManager.addRangeHighlight(editor, indexOf, indexOf + StringConstants.SEPARATOR_LINE.length() + 1,
-                        textAttributes1, false, null);
+                        separatorTextAttributesKey, false, null);
 
-                var textAttributes2Copy = textAttributes2.clone();
-                textAttributes2Copy.setForegroundColor(i % 2 == 0 ? JBColor.PINK : JBColor.ORANGE);
-                highlightManager.addRangeHighlight(editor, startOffset, indexOf, textAttributes2Copy, false, null);
+                highlightManager.addRangeHighlight(editor, startOffset, indexOf,
+                        i % 2 == 0 ? textAttributeKey1 : textAttributeKey2, false, null);
                 startOffset = indexOf + StringConstants.SEPARATOR_LINE.length() + 1;
             }
-            var lastTextAttributes2Copy = textAttributes2.clone();
-            lastTextAttributes2Copy.setForegroundColor((i) % 2 == 0 ? JBColor.PINK : JBColor.ORANGE);
-            highlightManager.addRangeHighlight(editor, startOffset, text.length(), lastTextAttributes2Copy, false, null);
+            highlightManager.addRangeHighlight(editor, startOffset, text.length(),
+                    i % 2 == 0 ? textAttributeKey1 : textAttributeKey2, false, null);
         };
 
         formatButton.addActionListener(e -> {
@@ -114,9 +114,10 @@ public class FormatToolWindow {
             editor.setRendererMode(true);
             editor.getCaretModel().moveToOffset(0);
 
-            var textAttributes1 = new TextAttributes();
-            textAttributes1.setForegroundColor(JBColor.LIGHT_GRAY);
-            var textAttributes2 = new TextAttributes();
+            var separatorTextAttributesKey = TextAttributesKey.createTextAttributesKey("MY_MYBATIS::MYBATIS_LOG_SEPARATOR");
+            var textAttributeKey1 = TextAttributesKey.createTextAttributesKey("MY_MYBATIS::MYBATIS_LOG_TEXT_1");
+            var textAttributeKey2 = TextAttributesKey.createTextAttributesKey("MY_MYBATIS::MYBATIS_LOG_TEXT_2");
+
             var highlightManager = HighlightManager.getInstance(project);
 
             var text = editor.getDocument().getText();
@@ -127,16 +128,14 @@ public class FormatToolWindow {
             for (i = 1; i <= emptyLineCount; i++) {
                 var indexOf = StringUtils.ordinalIndexOf(text, StringConstants.SEPARATOR_LINE, i);
                 highlightManager.addRangeHighlight(editor, indexOf, indexOf + StringConstants.SEPARATOR_LINE.length() + 1,
-                        textAttributes1, false, null);
+                        separatorTextAttributesKey, false, null);
 
-                var textAttributes2Copy = textAttributes2.clone();
-                textAttributes2Copy.setForegroundColor(i % 2 == 0 ? JBColor.PINK : JBColor.ORANGE);
-                highlightManager.addRangeHighlight(editor, startOffset, indexOf, textAttributes2Copy, false, null);
+                highlightManager.addRangeHighlight(editor, startOffset, indexOf,
+                        i % 2 == 0 ? textAttributeKey1 : textAttributeKey2, false, null);
                 startOffset = indexOf + StringConstants.SEPARATOR_LINE.length() + 1;
             }
-            var lastTextAttributes2Copy = textAttributes2.clone();
-            lastTextAttributes2Copy.setForegroundColor((i) % 2 == 0 ? JBColor.PINK : JBColor.ORANGE);
-            highlightManager.addRangeHighlight(editor, startOffset, text.length(), lastTextAttributes2Copy, false, null);
+            highlightManager.addRangeHighlight(editor, startOffset, text.length(),
+                    i % 2 == 0 ? textAttributeKey1 : textAttributeKey2, false, null);
         });
     }
 }

@@ -1,0 +1,18 @@
+<?xml version='1.0'?>
+<list>
+    <option name="MY_MYBATIS::MYBATIS_LOG_SEPARATOR">
+        <value>
+            <option name="FOREGROUND" value="D3D3D3"/>
+        </value>
+    </option>
+    <option name="MY_MYBATIS::MYBATIS_LOG_TEXT_1">
+        <value>
+            <option name="FOREGROUND" value="FFAEC6"/>
+        </value>
+    </option>
+    <option name="MY_MYBATIS::MYBATIS_LOG_TEXT_2">
+        <value>
+            <option name="FOREGROUND" value="FFD104"/>
+        </value>
+    </option>
+</list>
