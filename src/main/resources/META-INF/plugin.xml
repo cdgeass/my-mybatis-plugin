@@ -42,6 +42,7 @@
                                 order="first"/>
         <psi.referenceContributor implementation="io.github.cdgeass.editor.dom.references.MapperReferenceContributor"/>
         <toolWindow id="Format Sql" anchor="right" factoryClass="io.github.cdgeass.dialog.FormatToolWindowFactory"/>
+        <additionalTextAttributes scheme="Default" file="colorScheme/FormatDefault.xml"/>
     </extensions>
 
     <actions>
