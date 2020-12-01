@@ -5,6 +5,8 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowFactory;
 import com.intellij.ui.content.ContentFactory;
+import com.intellij.ui.content.ContentManager;
+import io.github.cdgeass.constants.MyIcons;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -15,10 +17,10 @@ public class FormatToolWindowFactory implements ToolWindowFactory, DumbAware {
 
     @Override
     public void createToolWindowContent(@NotNull Project project, @NotNull ToolWindow toolWindow) {
-        var formatToolWindow = new FormatToolWindow(project);
-        var contentFactory = ContentFactory.SERVICE.getInstance();
-        var content = contentFactory.createContent(formatToolWindow.getContent(), "", false);
-        toolWindow.getContentManager().addContent(content);
+        var contentManager = toolWindow.getContentManager();
+        var content = contentManager.getFactory().createContent(new FormatToolWindow(project).getContent(),
+                "Log Formatter", false);
+        contentManager.addContent(content);
     }
 }
 
