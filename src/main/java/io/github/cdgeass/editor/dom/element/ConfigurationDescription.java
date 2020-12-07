@@ -25,12 +25,10 @@ public class ConfigurationDescription extends DomFileDescription<Configuration> 
             return false;
         }
 
-        var rootTag = document.getRootTag();
-        boolean containsConfiguration = rootTag != null && StringConstants.CONFIGURATION.equals(rootTag.getName());
         var prolog = document.getProlog();
         if (prolog == null || prolog.getDoctype() == null || prolog.getDoctype().getDtdUri() == null) {
-            return containsConfiguration;
+            return true;
         }
-        return prolog.getDoctype().getDtdUri().contains(StringConstants.MYBATIS) && containsConfiguration;
+        return prolog.getDoctype().getDtdUri().contains(StringConstants.MYBATIS);
     }
 }
