@@ -20,7 +20,7 @@ dependencies {
 // See https://github.com/JetBrains/gradle-intellij-plugin/
 intellij {
     type = "IU"
-    version = "IU-203-EAP-SNAPSHOT"
+    version = "IU-2020.3"
     setPlugins("java", "com.intellij.database")
 }
 configure<JavaPluginConvention> {

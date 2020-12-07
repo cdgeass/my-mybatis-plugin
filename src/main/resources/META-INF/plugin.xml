@@ -29,8 +29,10 @@
                                         implementationClass="io.github.cdgeass.editor.provider.DaoLineMarkerProvider"/>
         <codeInsight.lineMarkerProvider language="XML"
                                         implementationClass="io.github.cdgeass.editor.provider.XmlLineMarkerProvider"/>
-        <dom.fileDescription implementation="io.github.cdgeass.editor.dom.element.ConfigurationDescription"/>
-        <dom.fileDescription implementation="io.github.cdgeass.editor.dom.element.MapperDescription"/>
+        <dom.fileMetaData implementation="io.github.cdgeass.editor.dom.element.ConfigurationDescription"
+                          rootTagName="configuration"/>
+        <dom.fileMetaData implementation="io.github.cdgeass.editor.dom.element.MapperDescription"
+                          rootTagName="mapper"/>
         <completion.contributor language="any"
                                 implementationClass="io.github.cdgeass.editor.dom.references.ResultFieldCompletionContributor"
                                 order="first"/>
