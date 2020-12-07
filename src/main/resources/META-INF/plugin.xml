@@ -41,7 +41,8 @@
                                 implementationClass="io.github.cdgeass.editor.dom.references.MapperCompletionContributor"
                                 order="first"/>
         <psi.referenceContributor implementation="io.github.cdgeass.editor.dom.references.MapperReferenceContributor"/>
-        <toolWindow id="My Mybatis" anchor="right" factoryClass="io.github.cdgeass.dialog.FormatToolWindowFactory"/>
+        <toolWindow id="My Mybatis" anchor="right" factoryClass="io.github.cdgeass.dialog.FormatToolWindowFactory"
+                    icon="/icons/toolWindow.png"/>
         <additionalTextAttributes scheme="Default" file="colorScheme/FormatDefault.xml"/>
     </extensions>
 
