@@ -6,7 +6,6 @@ import com.intellij.ui.ToolbarDecorator
 import com.intellij.ui.components.JBCheckBox
 import com.intellij.ui.table.TableView
 import com.intellij.util.ui.FormBuilder
-import org.apache.commons.lang.StringUtils
 import org.apache.commons.lang3.tuple.MutablePair
 import java.awt.BorderLayout
 import javax.swing.JPanel
@@ -136,7 +135,84 @@ class TablePanel : JPanel(BorderLayout()) {
         return delimitAllColumnsCheckBox.isSelected
     }
 
-    fun getProperties(): List<MutablePair<String, String>> {
-        return propertiesTableModel.items.filter { StringUtils.isNotBlank(it.left) && StringUtils.isNotBlank(it.right) }
+    fun getProperties(): Map<String, String> {
+        return propertiesTableModel.items.associateBy({ it.left }, { it.right })
+    }
+
+    fun setEnableInsert(enableInsert: Boolean): TablePanel {
+        enableInsertCheckBox.isSelected = enableInsert
+        return this
+    }
+
+    fun setEnableSelectByPrimaryKey(enableSelectByPrimaryKey: Boolean): TablePanel {
+        enableSelectByPrimaryKeyCheckBox.isSelected = enableSelectByPrimaryKey
+        return this
+    }
+
+    fun setEnableSelectByExample(enableSelectByExample: Boolean): TablePanel {
+        enableSelectByExampleCheckBox.isSelected = enableSelectByExample
+        return this
+    }
+
+    fun setEnableUpdateByPrimaryKey(enableUpdateByPrimaryKey: Boolean): TablePanel {
+        enableUpdateByPrimaryKeyCheckBox.isSelected = enableUpdateByPrimaryKey
+        return this
+    }
+
+    fun setDeleteByPrimaryKey(enableDeleteByPrimaryKey: Boolean): TablePanel {
+        enableDeleteByPrimaryKeyCheckBox.isSelected = enableDeleteByPrimaryKey
+        return this
+    }
+
+    fun setDeleteByExample(enableDeleteByExample: Boolean): TablePanel {
+        enableDeleteByExampleCheckBox.isSelected = enableDeleteByExample
+        return this
+    }
+
+    fun setCountByExample(enableCountByExample: Boolean): TablePanel {
+        enableCountByExampleCheckBox.isSelected = enableCountByExample
+        return this
+    }
+
+    fun setUpdateByExample(enableUpdateByExample: Boolean): TablePanel {
+        enableUpdateByExampleCheckBox.isSelected = enableUpdateByExample
+        return this
+    }
+
+    fun setSelectByPrimaryKeyQueryId(selectByPrimaryKeyQueryId: Boolean): TablePanel {
+        selectByPrimaryKeyQueryIdCheckBox.isSelected = selectByPrimaryKeyQueryId
+        return this
+    }
+
+    fun setSelectByExampleQueryId(selectByExampleQueryId: Boolean): TablePanel {
+        selectByExampleQueryIdCheckBox.isSelected = selectByExampleQueryId
+        return this
+    }
+
+    fun setModelType(modelType: String): TablePanel {
+        modelTypeComboBox.item = modelType
+        return this
+    }
+
+    fun setModelEscapeWildCards(modelEscapeWildCards: Boolean): TablePanel {
+        modelEscapeWildcardsCheckBox.isSelected = modelEscapeWildCards
+        return this
+    }
+
+    fun setDelimitIdentifiers(delimitIdentifiers: Boolean): TablePanel {
+        delimitIdentifiersCheckBox.isSelected = delimitIdentifiers
+        return this
+    }
+
+    fun setDelimitAllColumns(delimitAllColumns: Boolean): TablePanel {
+        delimitAllColumnsCheckBox.isSelected = delimitAllColumns
+        return this
+    }
+
+    fun setProperties(properties: Map<String, String>): TablePanel {
+        if (properties.isNotEmpty()) {
+            propertiesTableModel.addRows(properties.map { (property, value) -> MutablePair.of(property, value) })
+        }
+        return this
     }
 }

@@ -1,7 +1,10 @@
 package io.github.cdgeass.component
 
-import com.intellij.ui.components.JBCheckBox
+import com.intellij.ui.TitledSeparator
+import com.intellij.ui.ToolbarDecorator
+import com.intellij.ui.table.TableView
 import com.intellij.util.ui.FormBuilder
+import org.apache.commons.lang3.tuple.MutablePair
 import java.awt.BorderLayout
 import javax.swing.JPanel
 
@@ -11,25 +14,34 @@ import javax.swing.JPanel
  */
 class JavaTypeResolverPanel : JPanel(BorderLayout()) {
 
-    private val forceBigDecimalsCheckBox = JBCheckBox("ForceBigDecimals")
-
-    private val useJSR310TypesCheckBox = JBCheckBox("UseJSR310Types")
+    private val propertiesTableModel = PropertiesTableModel(mutableListOf("ForceBigDecimals", "UseJSR310Types"))
 
     init {
+        val propertiesTable = TableView(propertiesTableModel)
+        val propertiesToolbarDecorator = ToolbarDecorator.createDecorator(propertiesTable)
+            .setAddAction {
+                propertiesTableModel.addRow(MutablePair("", ""))
+            }
+            .setRemoveAction {
+                propertiesTableModel.removeRow(propertiesTable.selectedRow)
+            }
         this.add(
-                FormBuilder.createFormBuilder()
-                        .addComponent(forceBigDecimalsCheckBox)
-                        .addComponent(useJSR310TypesCheckBox)
-                        .addComponentFillVertically(JPanel(), 0)
-                        .panel
+            FormBuilder.createFormBuilder()
+                .addComponent(TitledSeparator("Properties"))
+                .addComponent(propertiesToolbarDecorator.createPanel())
+                .addComponentFillVertically(JPanel(), 0)
+                .panel
         )
     }
 
-    fun isForceBigDecimals(): Boolean {
-        return forceBigDecimalsCheckBox.isSelected
+    fun getProperties(): Map<String, String> {
+        return propertiesTableModel.items.associateBy({ it.left }, { it.right })
     }
 
-    fun isUseJSR310Types(): Boolean {
-        return useJSR310TypesCheckBox.isSelected
+    fun setProperties(properties: Map<String, String>): JavaTypeResolverPanel {
+        if (properties.isNotEmpty()) {
+            propertiesTableModel.addRows(properties.map { (property, value) -> MutablePair.of(property, value) })
+        }
+        return this
     }
 }

@@ -1,18 +1,6 @@
 package io.github.cdgeass.component
 
-import com.intellij.openapi.ui.ComboBox
-import com.intellij.openapi.util.Disposer
-import com.intellij.ui.TabbedPaneWrapper
-import com.intellij.ui.TitledSeparator
-import com.intellij.ui.ToolbarDecorator
-import com.intellij.ui.components.JBCheckBox
-import com.intellij.ui.components.JBLabel
-import com.intellij.ui.table.TableView
-import com.intellij.util.ui.FormBuilder
-import org.apache.commons.lang3.tuple.MutablePair
-import javax.swing.BorderFactory
 import javax.swing.JComponent
-import javax.swing.JPanel
 
 /**
  * @author cdgeass
@@ -20,9 +8,34 @@ import javax.swing.JPanel
  */
 class MyBatisGeneratorSettingsComponent {
 
-    private val mainPanel: JComponent = ContextPanel()
+    private val contextPanel: ContextPanel = ContextPanel()
 
     fun getComponent(): JComponent {
-        return mainPanel
+        return contextPanel
     }
+
+    fun getContext(): ContextPanel {
+        return contextPanel
+    }
+
+    fun getJavaTypeResolver(): JavaTypeResolverPanel {
+        return contextPanel.getJavaTypeResolver()
+    }
+
+    fun getJavaModelGenerator(): JavaModelGeneratorPanel {
+        return contextPanel.getJavaModelGenerator()
+    }
+
+    fun getSqlMapGenerator(): SqlMapGeneratorPanel {
+        return contextPanel.getSqlMapGenerator()
+    }
+
+    fun getJavaClientGenerator(): JavaClientGeneratorPanel {
+        return contextPanel.getJavaClientGenerator()
+    }
+
+    fun getTable(): TablePanel {
+        return contextPanel.getTable()
+    }
+
 }

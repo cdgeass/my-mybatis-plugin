@@ -15,18 +15,47 @@ import com.intellij.util.xmlb.XmlSerializerUtil
         storages = [Storage("MyBatisGeneratorSettings.xml")]
 )
 class MyBatisGeneratorSettings(
-        val classPathEntry: String = "",
-        val useDefaultClassPathEntry: Boolean = true,
+    // Context
+    var defaultModelType: String = "",
+    var targetRuntime: String = "",
+    var contextProperties: Map<String, String> = emptyMap(),
 
-        val targetRuntime: String = "MyBatis3Simple",
-        val configurationType: String = "MAPPER",
+    // JavaTypeResolver
+    var javaTypeResolverProperties: Map<String, String> = emptyMap(),
 
-        val sourceDir: String = "/src/main/java",
-        val resourceDir: String = "/src/main/resources"
+    // JavaModelGenerator
+    var javaModelGeneratorProperties: Map<String, String> = emptyMap(),
+
+    // SqlMapGenerator
+    var sqlMapGeneratorProperties: Map<String, String> = emptyMap(),
+
+    // JavaClientGenerator
+    var javaClientType: String = "",
+    var javaClientProperties: Map<String, String> = emptyMap(),
+
+    // Table
+    var enableInsert: Boolean = true,
+    var enableSelectByPrimaryKey: Boolean = true,
+    var enableSelectByExample: Boolean = true,
+    var enableUpdateByPrimaryKey: Boolean = true,
+    var enableDeleteByPrimaryKey: Boolean = true,
+    var enableDeleteByExample: Boolean = true,
+    var enableCountByExample: Boolean = true,
+    var enableUpdateByExample: Boolean = true,
+    var selectByPrimaryKeyQueryId: Boolean = true,
+    var selectByExampleQueryId: Boolean = true,
+    var modelType: String = "",
+    var modelEscapeWildCards: Boolean = true,
+    var delimitIdentifiers: Boolean = true,
+    var delimitAllColumns: Boolean = true,
+    var tableProperties: Map<String, String> = emptyMap(),
+
+    var sourceDir: String = "/src/main/java",
+    var resourceDir: String = "/src/main/resources"
 ) : PersistentStateComponent<MyBatisGeneratorSettings> {
 
     companion object Factory {
-        fun getInstance(): MyBatisGeneratorSettings? {
+        fun getInstance(): MyBatisGeneratorSettings {
             return ServiceManager.getService(MyBatisGeneratorSettings::class.java)
         }
     }
