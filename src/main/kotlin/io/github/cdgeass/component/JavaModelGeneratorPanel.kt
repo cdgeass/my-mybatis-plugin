@@ -14,18 +14,30 @@ import javax.swing.JPanel
  */
 class JavaModelGeneratorPanel : JPanel(BorderLayout()) {
 
-    private val propertiesTableModel = PropertiesTableModel(mutableListOf("ConstructorBased",
-            "EnableSubPackages", "ExampleTargetPackage", "ExampleTargetProject", "Immutable", "RootClass", "TrimStrings"))
+    private val propertiesTableModel = PropertiesTableModel(
+        mutableListOf(
+            "constructorBased",
+            "enableSubPackages",
+            "exampleTargetPackage",
+            "exampleTargetProject",
+            "immutable",
+            "rootClass",
+            "trimStrings"
+        )
+    )
 
     init {
         val propertiesTable = TableView(propertiesTableModel)
         val propertiesToolbarDecorator = ToolbarDecorator.createDecorator(propertiesTable)
-                .setAddAction {
-                    propertiesTableModel.addRow(MutablePair("", ""))
+            .setAddAction {
+                propertiesTableModel.addRow()
+            }
+            .setRemoveAction {
+                val selectedRows = propertiesTable.selectedRows
+                if (selectedRows.isNotEmpty()) {
+                    propertiesTableModel.removeRow(selectedRows[selectedRows.size - 1])
                 }
-                .setRemoveAction {
-                    propertiesTableModel.removeRow(propertiesTable.selectedRow)
-                }
+            }
         this.add(
             FormBuilder.createFormBuilder()
                 .addComponent(TitledSeparator("Properties"))

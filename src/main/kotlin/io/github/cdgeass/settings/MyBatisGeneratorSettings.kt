@@ -50,6 +50,9 @@ class MyBatisGeneratorSettings(
     var delimitAllColumns: Boolean = true,
     var tableProperties: Map<String, String> = emptyMap(),
 
+    // comment generator
+    var commentGeneratorProperties: Map<String, String> = emptyMap(),
+
     var sourceDir: String = "/src/main/java",
     var resourceDir: String = "/src/main/resources"
 ) : PersistentStateComponent<MyBatisGeneratorSettings> {

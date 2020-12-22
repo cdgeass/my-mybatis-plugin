@@ -44,19 +44,36 @@ class TablePanel : JPanel(BorderLayout()) {
 
     private val delimitAllColumnsCheckBox = JBCheckBox("DelimitAllColumns")
 
-    private val propertiesTableModel = PropertiesTableModel(mutableListOf("ConstructorBased", "IgnoreQualifiersAtRuntime",
-            "Immutable", "ModelOnly", "RootClass", "RootInterface", "RuntimeCatalog", "RuntimeSchema", "RuntimeTableName",
-            "SelectAllOrderByClause", "UseActualColumnNames", "UseColumnIndexes", "UseCompoundPropertyNames"))
+    private val propertiesTableModel = PropertiesTableModel(
+        mutableListOf(
+            "constructorBased",
+            "ignoreQualifiersAtRuntime",
+            "immutable",
+            "modelOnly",
+            "rootClass",
+            "rootInterface",
+            "runtimeCatalog",
+            "runtimeSchema",
+            "runtimeTableName",
+            "selectAllOrderByClause",
+            "useActualColumnNames",
+            "useColumnIndexes",
+            "useCompoundPropertyNames"
+        )
+    )
 
     init {
         val propertiesTable = TableView(propertiesTableModel)
         val propertiesToolbarDecorator = ToolbarDecorator.createDecorator(propertiesTable)
-                .setAddAction {
-                    propertiesTableModel.addRow(MutablePair("", ""))
+            .setAddAction {
+                propertiesTableModel.addRow()
+            }
+            .setRemoveAction {
+                val selectedRows = propertiesTable.selectedRows
+                if (selectedRows.isNotEmpty()) {
+                    propertiesTableModel.removeRow(selectedRows[selectedRows.size - 1])
                 }
-                .setRemoveAction {
-                    propertiesTableModel.removeRow(propertiesTable.selectedRow)
-                }
+            }
         this.add(
                 FormBuilder.createFormBuilder()
                         .addLabeledComponent("ModelType:", modelTypeComboBox)

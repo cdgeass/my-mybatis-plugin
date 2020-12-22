@@ -1,7 +1,6 @@
 package io.github.cdgeass.component
 
 import com.intellij.openapi.ui.ComboBox
-import com.intellij.util.containers.toArray
 import com.intellij.util.ui.ColumnInfo
 import com.intellij.util.ui.ListTableModel
 import org.apache.commons.lang3.tuple.MutablePair
@@ -21,6 +20,21 @@ class PropertiesTableModel(
         usedProperties.remove(super.getRowValue(idx).left)
         super.removeRow(idx)
     }
+
+    override fun addRow() {
+        addRow(MutablePair.of("", ""))
+    }
+
+    override fun addRow(item: MutablePair<String, String>) {
+        if (item.left.isBlank()) {
+            val tempProperties = properties.filter { !usedProperties.contains(it) }
+            if (tempProperties.isNotEmpty()) {
+                item.left = tempProperties[0]
+                usedProperties.add(item.left)
+                super.addRow(item)
+            }
+        }
+    }
 }
 
 class PropertyColumnInfo(
@@ -37,13 +51,18 @@ class PropertyColumnInfo(
     }
 
     override fun setValue(item: MutablePair<String, String>, value: String) {
-        item.left = value
-        usedProperties.add(value)
+        if (value.isNotBlank()) {
+            usedProperties.remove(item.left)
+            item.left = value
+            usedProperties.add(value)
+        }
     }
 
     override fun getEditor(item: MutablePair<String, String>): TableCellEditor {
-        val temp = properties.toMutableList().apply { removeAll(usedProperties) }.toArray(arrayOf())
-        return DefaultCellEditor(ComboBox(temp))
+        val tempProperties = properties.filter { !usedProperties.contains(it) }
+            .toMutableList().apply { add(0, item.left) }
+            .toTypedArray()
+        return DefaultCellEditor(ComboBox(tempProperties))
     }
 }
 

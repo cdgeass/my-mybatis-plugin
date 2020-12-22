@@ -15,21 +15,30 @@ import javax.swing.JPanel
  */
 class JavaClientGeneratorPanel : JPanel(BorderLayout()) {
 
-    private val typeComboBox = ComboBox(arrayOf("ANNOTATEDMAPPER", "MIXEDMAPPER",
-            "XMLMAPPER"))
+    private val typeComboBox = ComboBox(
+        arrayOf(
+            "ANNOTATEDMAPPER", "MIXEDMAPPER", "XMLMAPPER"
+        )
+    )
 
-    private val propertiesTableModel = PropertiesTableModel(mutableListOf("EnableSubPackages", "RootInterface",
-            "UseLegacyBuilder"))
+    private val propertiesTableModel = PropertiesTableModel(
+        mutableListOf(
+            "enableSubPackages", "rootInterface", "useLegacyBuilder"
+        )
+    )
 
     init {
         val propertiesTable = TableView(propertiesTableModel)
         val propertiesToolbarDecorator = ToolbarDecorator.createDecorator(propertiesTable)
-                .setAddAction {
-                    propertiesTableModel.addRow(MutablePair("", ""))
+            .setAddAction {
+                propertiesTableModel.addRow()
+            }
+            .setRemoveAction {
+                val selectedRows = propertiesTable.selectedRows
+                if (selectedRows.isNotEmpty()) {
+                    propertiesTableModel.removeRow(selectedRows[selectedRows.size - 1])
                 }
-                .setRemoveAction {
-                    propertiesTableModel.removeRow(propertiesTable.selectedRow)
-                }
+            }
         this.add(
                 FormBuilder.createFormBuilder()
                     .addLabeledComponent("Type", typeComboBox)

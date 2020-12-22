@@ -14,16 +14,19 @@ import javax.swing.JPanel
  */
 class SqlMapGeneratorPanel : JPanel(BorderLayout()) {
 
-    private val propertiesTableModel = PropertiesTableModel(mutableListOf("EnableSubPackages"))
+    private val propertiesTableModel = PropertiesTableModel(mutableListOf("enableSubPackages"))
 
     init {
         val propertiesTable = TableView(propertiesTableModel)
         val propertiesToolbarDecorator = ToolbarDecorator.createDecorator(propertiesTable)
             .setAddAction {
-                propertiesTableModel.addRow(MutablePair("", ""))
+                propertiesTableModel.addRow()
             }
             .setRemoveAction {
-                propertiesTableModel.removeRow(propertiesTable.selectedRow)
+                val selectedRows = propertiesTable.selectedRows
+                if (selectedRows.isNotEmpty()) {
+                    propertiesTableModel.removeRow(selectedRows[selectedRows.size - 1])
+                }
             }
         this.add(
             FormBuilder.createFormBuilder()

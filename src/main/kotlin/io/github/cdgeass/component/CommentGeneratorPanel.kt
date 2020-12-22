@@ -8,13 +8,13 @@ import org.apache.commons.lang3.tuple.MutablePair
 import java.awt.BorderLayout
 import javax.swing.JPanel
 
-/**
- * @author cdgeass
- * @since  2020-11-06
- */
-class JavaTypeResolverPanel : JPanel(BorderLayout()) {
+class CommentGeneratorPanel : JPanel(BorderLayout()) {
 
-    private val propertiesTableModel = PropertiesTableModel(mutableListOf("forceBigDecimals", "useJSR310Types"))
+    private val propertiesTableModel = PropertiesTableModel(
+        mutableListOf(
+            "suppressAllComments", "suppressDate", "addRemarkComments", "dateFormat"
+        )
+    )
 
     init {
         val propertiesTable = TableView(propertiesTableModel)
@@ -41,10 +41,11 @@ class JavaTypeResolverPanel : JPanel(BorderLayout()) {
         return propertiesTableModel.items.associateBy({ it.left }, { it.right })
     }
 
-    fun setProperties(properties: Map<String, String>): JavaTypeResolverPanel {
+    fun setProperties(properties: Map<String, String>): CommentGeneratorPanel {
         if (properties.isNotEmpty()) {
             propertiesTableModel.addRows(properties.map { (property, value) -> MutablePair.of(property, value) })
         }
         return this
     }
+
 }

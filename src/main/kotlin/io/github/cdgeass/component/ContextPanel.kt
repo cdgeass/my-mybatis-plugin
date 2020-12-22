@@ -32,6 +32,7 @@ class ContextPanel : JPanel(BorderLayout()) {
     private val sqlMapGeneratorPanel = SqlMapGeneratorPanel()
     private val javaClientGeneratorPanel = JavaClientGeneratorPanel()
     private val tablePanel = TablePanel()
+    private val commentGeneratorPanel = CommentGeneratorPanel()
 
     init {
         val propertiesTable = TableView(propertiesTableModel)
@@ -42,10 +43,13 @@ class ContextPanel : JPanel(BorderLayout()) {
                 .addComponent(
                         ToolbarDecorator.createDecorator(propertiesTable)
                                 .setAddAction {
-                                    propertiesTableModel.addRow(MutablePair.of("", ""))
+                                    propertiesTableModel.addRow()
                                 }
                                 .setRemoveAction {
-                                    propertiesTableModel.removeRow(propertiesTable.selectedColumn)
+                                    val selectedRows = propertiesTable.selectedRows
+                                    if (selectedRows.isNotEmpty()) {
+                                        propertiesTableModel.removeRow(selectedRows[selectedRows.size - 1])
+                                    }
                                 }
                                 .createPanel()
                 )
@@ -57,6 +61,7 @@ class ContextPanel : JPanel(BorderLayout()) {
                                     this.addTab("SqlMapGenerator", sqlMapGeneratorPanel)
                                     this.addTab("JavaClientGenerator", javaClientGeneratorPanel)
                                     this.addTab("Table", tablePanel)
+                                    this.addTab("CommentGenerator", commentGeneratorPanel)
                                 }
                                 .component
                 )
@@ -94,6 +99,10 @@ class ContextPanel : JPanel(BorderLayout()) {
 
     fun getTable(): TablePanel {
         return tablePanel
+    }
+
+    fun getCommentGenerator(): CommentGeneratorPanel {
+        return commentGeneratorPanel
     }
 
     fun setDefaultModelType(defaultModelType: String): ContextPanel {

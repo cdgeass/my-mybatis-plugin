@@ -128,6 +128,14 @@ class MyBatisGeneratorAction : AnAction() {
         settings.tableProperties.forEach { (property, value) -> tableConfiguration.addProperty(property, value) }
         context.addTableConfiguration(tableConfiguration)
 
+        val commentGeneratorConfiguration = CommentGeneratorConfiguration()
+        settings.commentGeneratorProperties.forEach { (property, value) ->
+            commentGeneratorConfiguration.addProperty(
+                property, value
+            )
+        }
+        context.commentGeneratorConfiguration = commentGeneratorConfiguration
+
         configuration.addContext(context)
 
         val warnings = mutableListOf<String>()

@@ -64,6 +64,9 @@ class MyBatisGeneratorSettingsConfigurable : Configurable {
         settings.delimitIdentifiers = table.isDelimitIdentifiers()
         settings.delimitAllColumns = table.isDelimitAllColumns()
         settings.tableProperties = table.getProperties()
+
+        val commentGenerator = context.getCommentGenerator()
+        settings.commentGeneratorProperties = commentGenerator.getProperties()
     }
 
     override fun reset() {
@@ -101,6 +104,9 @@ class MyBatisGeneratorSettingsConfigurable : Configurable {
         table.setDelimitIdentifiers(settings.delimitIdentifiers)
         table.setDelimitAllColumns(settings.delimitAllColumns)
         table.setProperties(settings.tableProperties)
+
+        val commentGenerator = context.getCommentGenerator()
+        commentGenerator.setProperties(settings.commentGeneratorProperties)
     }
 
 }
