@@ -31,9 +31,9 @@ class MyBatisGeneratorAction : AnAction() {
         val selectedTables = DatabaseView.getSelectedElements(e.dataContext, DbTable::class.java)
 
         val progressManager = ProgressManager.getInstance()
-        progressManager.executeNonCancelableSection {
+        val isDone = progressManager.runProcessWithProgressSynchronously({
             generateTable(e.project!!, selectedTables, selectedPackage)
-        }
+        }, "MyBatis Generator", false, e.project)
     }
 
     private fun generateTable(project: Project, selectedTables: Set<DbTable>, selectedPackage: PsiPackage) {

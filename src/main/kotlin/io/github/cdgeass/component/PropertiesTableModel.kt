@@ -35,6 +35,13 @@ class PropertiesTableModel(
             }
         }
     }
+
+    override fun addRows(items: Collection<MutablePair<String, String>>) {
+        super.addRows(items)
+        if (items.isNotEmpty()) {
+            usedProperties.addAll(items.map { it.left })
+        }
+    }
 }
 
 class PropertyColumnInfo(
