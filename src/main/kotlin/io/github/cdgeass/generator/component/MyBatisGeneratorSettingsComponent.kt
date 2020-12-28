@@ -1,4 +1,4 @@
-package io.github.cdgeass.component
+package io.github.cdgeass.generator.component
 
 import javax.swing.JComponent
 

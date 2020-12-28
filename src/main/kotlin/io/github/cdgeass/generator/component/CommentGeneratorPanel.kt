@@ -1,4 +1,4 @@
-package io.github.cdgeass.component
+package io.github.cdgeass.generator.component
 
 import com.intellij.ui.TitledSeparator
 import com.intellij.ui.ToolbarDecorator
@@ -8,13 +8,20 @@ import org.apache.commons.lang3.tuple.MutablePair
 import java.awt.BorderLayout
 import javax.swing.JPanel
 
+/**
+ * @author cdgeass
+ * @since  2020-12-22
+ */
 class CommentGeneratorPanel : JPanel(BorderLayout()) {
 
-    private val propertiesTableModel = PropertiesTableModel(
-        mutableListOf(
-            "suppressAllComments", "suppressDate", "addRemarkComments", "dateFormat"
-        )
+    private val properties = linkedMapOf(
+        Pair("suppressAllComments", Boolean::class.java),
+        Pair("suppressDate", Boolean::class.java),
+        Pair("addRemarkComments", Boolean::class.java),
+        Pair("dateFormat", String::class.java)
     )
+
+    private val propertiesTableModel = PropertiesTableModel(properties)
 
     init {
         val propertiesTable = TableView(propertiesTableModel)

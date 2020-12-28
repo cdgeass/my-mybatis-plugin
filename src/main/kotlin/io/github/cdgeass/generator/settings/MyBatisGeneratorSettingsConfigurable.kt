@@ -1,7 +1,7 @@
-package io.github.cdgeass.settings
+package io.github.cdgeass.generator.settings
 
 import com.intellij.openapi.options.Configurable
-import io.github.cdgeass.component.MyBatisGeneratorSettingsComponent
+import io.github.cdgeass.generator.component.MyBatisGeneratorSettingsComponent
 import org.jetbrains.annotations.Nls
 import javax.swing.JComponent
 

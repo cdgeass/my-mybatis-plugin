@@ -1,4 +1,4 @@
-package io.github.cdgeass.component
+package io.github.cdgeass.generator.component
 
 import com.intellij.ui.TitledSeparator
 import com.intellij.ui.ToolbarDecorator
@@ -14,7 +14,12 @@ import javax.swing.JPanel
  */
 class JavaTypeResolverPanel : JPanel(BorderLayout()) {
 
-    private val propertiesTableModel = PropertiesTableModel(mutableListOf("forceBigDecimals", "useJSR310Types"))
+    private val properties = linkedMapOf(
+        Pair("forceBigDecimals", Boolean::class.java),
+        Pair("useJSR310Types", Boolean::class.java)
+    )
+
+    private val propertiesTableModel = PropertiesTableModel(properties)
 
     init {
         val propertiesTable = TableView(propertiesTableModel)

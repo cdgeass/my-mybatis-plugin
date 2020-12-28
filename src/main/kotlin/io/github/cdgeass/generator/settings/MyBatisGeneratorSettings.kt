@@ -1,4 +1,4 @@
-package io.github.cdgeass.settings
+package io.github.cdgeass.generator.settings
 
 import com.intellij.openapi.components.PersistentStateComponent
 import com.intellij.openapi.components.ServiceManager
@@ -54,7 +54,9 @@ class MyBatisGeneratorSettings(
     var commentGeneratorProperties: Map<String, String> = emptyMap(),
 
     var sourceDir: String = "/src/main/java",
-    var resourceDir: String = "/src/main/resources"
+    var resourceDir: String = "/src/main/resources",
+    var schemaModelPackages: MutableMap<String, String> = mutableMapOf(),
+    var schemaClientPackages: MutableMap<String, String> = mutableMapOf()
 ) : PersistentStateComponent<MyBatisGeneratorSettings> {
 
     companion object Factory {
@@ -63,7 +65,7 @@ class MyBatisGeneratorSettings(
         }
     }
 
-    override fun getState(): MyBatisGeneratorSettings? {
+    override fun getState(): MyBatisGeneratorSettings {
         return this
     }
 

@@ -25,9 +25,9 @@
 
     <extensions defaultExtensionNs="com.intellij">
         <!-- Add your extensions here -->
-        <applicationService serviceImplementation="io.github.cdgeass.settings.MyBatisGeneratorSettings"/>
-        <applicationConfigurable instance="io.github.cdgeass.settings.MyBatisGeneratorSettingsConfigurable"
-                                 id="io.github.cdgeass.settings.MyBatisGeneratorSettingsConfigurable"
+        <applicationService serviceImplementation="io.github.cdgeass.generator.settings.MyBatisGeneratorSettings"/>
+        <applicationConfigurable instance="io.github.cdgeass.generator.settings.MyBatisGeneratorSettingsConfigurable"
+                                 id="io.github.cdgeass.generator.settings.MyBatisGeneratorSettingsConfigurable"
                                  displayName="MyBatis Generator"/>
         <codeInsight.lineMarkerProvider language="JAVA"
                                         implementationClass="io.github.cdgeass.editor.provider.DaoLineMarkerProvider"/>
@@ -69,8 +69,8 @@
                           relative-to-action="io.github.cdgeass.action.FormatSelectAction"/>
             <keyboard-shortcut first-keystroke="control alt Y" keymap="$default"/>
         </action>
-        <action id="io.github.cdgeass.action.MyBatisGeneratorAction"
-                class="io.github.cdgeass.action.MyBatisGeneratorAction"
+        <action id="io.github.cdgeass.generator.action.MyBatisGeneratorAction"
+                class="io.github.cdgeass.generator.action.MyBatisGeneratorAction"
                 description="An action to run Mybatis Generator" text="MyBatis Generator">
             <add-to-group group-id="DatabaseViewPopupMenu" anchor="after"
                           relative-to-action="DatabaseView.Sql.Scripts"/>

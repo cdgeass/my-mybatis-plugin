@@ -1,4 +1,4 @@
-package io.github.cdgeass.component
+package io.github.cdgeass.generator.component
 
 import com.intellij.openapi.ui.ComboBox
 import com.intellij.openapi.util.Disposer
@@ -19,11 +19,24 @@ class ContextPanel : JPanel(BorderLayout()) {
 
     private val defaultModelTypeComboBox = ComboBox(arrayOf("conditional", "flat", "hierarchical"))
 
-    private val targetRuntimeComboBox = ComboBox(arrayOf("MyBatis3DynamicSql",
-            "MyBatis3Kotlin", "MyBatis3", "MyBatis3Simple", "MyBatis3DynamicSqlV1"))
+    private val targetRuntimeComboBox = ComboBox(
+        arrayOf(
+            "MyBatis3DynamicSql",
+            "MyBatis3Kotlin", "MyBatis3", "MyBatis3Simple", "MyBatis3DynamicSqlV1"
+        )
+    )
 
-    private val properties = mutableListOf("autoDelimitKeywords", "beginningDelimiter", "endingDelimiter", "javaFileEncoding",
-            "javaFormatter", "targetJava8", "kotlinFileEncoding", "kotlinFormatter", "xmlFormatter")
+    private val properties = linkedMapOf(
+        Pair("autoDelimitKeywords", Boolean::class.java),
+        Pair("beginningDelimiter", String::class.java),
+        Pair("endingDelimiter", String::class.java),
+        Pair("javaFileEncoding", String::class.java),
+//        Pair("javaFormatter", String::class.java),
+        Pair("targetJava8", Boolean::class.java),
+        Pair("kotlinFileEncoding", String::class.java)
+//        Pair("kotlinFormatter", String::class.java),
+//        Pair("xmlFormatter", String::class.java)
+    )
 
     private val propertiesTableModel = PropertiesTableModel(properties)
 
@@ -36,22 +49,23 @@ class ContextPanel : JPanel(BorderLayout()) {
 
     init {
         val propertiesTable = TableView(propertiesTableModel)
-        this.add(FormBuilder.createFormBuilder()
+        this.add(
+            FormBuilder.createFormBuilder()
                 .addComponent(TitledSeparator("Context"))
                 .addLabeledComponent("DefaultModelType:", defaultModelTypeComboBox)
                 .addLabeledComponent("TargetRuntime:", targetRuntimeComboBox)
                 .addComponent(
-                        ToolbarDecorator.createDecorator(propertiesTable)
-                                .setAddAction {
-                                    propertiesTableModel.addRow()
-                                }
-                                .setRemoveAction {
-                                    val selectedRows = propertiesTable.selectedRows
-                                    if (selectedRows.isNotEmpty()) {
-                                        propertiesTableModel.removeRow(selectedRows[selectedRows.size - 1])
-                                    }
-                                }
-                                .createPanel()
+                    ToolbarDecorator.createDecorator(propertiesTable)
+                        .setAddAction {
+                            propertiesTableModel.addRow()
+                        }
+                        .setRemoveAction {
+                            val selectedRows = propertiesTable.selectedRows
+                            if (selectedRows.isNotEmpty()) {
+                                propertiesTableModel.removeRow(selectedRows[selectedRows.size - 1])
+                            }
+                        }
+                        .createPanel()
                 )
                 .addComponent(
                         TabbedPaneWrapper(Disposer.newDisposable())

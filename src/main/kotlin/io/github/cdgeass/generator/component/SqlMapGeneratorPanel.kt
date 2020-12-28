@@ -1,4 +1,4 @@
-package io.github.cdgeass.component
+package io.github.cdgeass.generator.component
 
 import com.intellij.ui.TitledSeparator
 import com.intellij.ui.ToolbarDecorator
@@ -14,7 +14,11 @@ import javax.swing.JPanel
  */
 class SqlMapGeneratorPanel : JPanel(BorderLayout()) {
 
-    private val propertiesTableModel = PropertiesTableModel(mutableListOf("enableSubPackages"))
+    private val properties = linkedMapOf(
+        Pair("enableSubPackages", Boolean::class.java)
+    )
+
+    private val propertiesTableModel = PropertiesTableModel(properties)
 
     init {
         val propertiesTable = TableView(propertiesTableModel)

@@ -1,4 +1,4 @@
-package io.github.cdgeass.component
+package io.github.cdgeass.generator.component
 
 import com.intellij.openapi.ui.ComboBox
 import com.intellij.ui.TitledSeparator
@@ -8,6 +8,7 @@ import com.intellij.ui.table.TableView
 import com.intellij.util.ui.FormBuilder
 import org.apache.commons.lang3.tuple.MutablePair
 import java.awt.BorderLayout
+import java.awt.GridLayout
 import javax.swing.JPanel
 
 /**
@@ -17,50 +18,38 @@ import javax.swing.JPanel
 class TablePanel : JPanel(BorderLayout()) {
 
     private val enableInsertCheckBox = JBCheckBox("EnableInsert")
-
     private val enableSelectByPrimaryKeyCheckBox = JBCheckBox("EnableSelectByPrimaryKey")
-
     private val enableSelectByExampleCheckBox = JBCheckBox("EnableSelectByExample")
-
     private val enableUpdateByPrimaryKeyCheckBox = JBCheckBox("EnableUpdateByPrimaryKey")
-
     private val enableDeleteByPrimaryKeyCheckBox = JBCheckBox("EnableDeleteByPrimaryKey")
-
     private val enableDeleteByExampleCheckBox = JBCheckBox("EnableDeleteByExample")
-
     private val enableCountByExampleCheckBox = JBCheckBox("EnableCountByExample")
-
     private val enableUpdateByExampleCheckBox = JBCheckBox("EnableUpdateByExample")
-
     private val selectByPrimaryKeyQueryIdCheckBox = JBCheckBox("SelectByPrimaryKeyQueryId")
-
     private val selectByExampleQueryIdCheckBox = JBCheckBox("SelectByExampleQueryId")
-
     private val modelTypeComboBox = ComboBox(arrayOf("Conditional", "Flat", "Hierarchical"))
-
     private val modelEscapeWildcardsCheckBox = JBCheckBox("EscapeWildcards")
-
     private val delimitIdentifiersCheckBox = JBCheckBox("DelimitIdentifiers")
-
     private val delimitAllColumnsCheckBox = JBCheckBox("DelimitAllColumns")
 
-    private val propertiesTableModel = PropertiesTableModel(
-        mutableListOf(
-            "constructorBased",
-            "ignoreQualifiersAtRuntime",
-            "immutable",
-            "modelOnly",
-            "rootClass",
-            "rootInterface",
-            "runtimeCatalog",
-            "runtimeSchema",
-            "runtimeTableName",
-            "selectAllOrderByClause",
-            "useActualColumnNames",
-            "useColumnIndexes",
-            "useCompoundPropertyNames"
-        )
+    private val properties = linkedMapOf(
+        Pair("constructorBased", Boolean::class.java),
+        Pair("ignoreQualifiersAtRuntime", Boolean::class.java),
+        Pair("immutable", Boolean::class.java),
+        Pair("modelOnly", Boolean::class.java),
+        Pair("rootClass", String::class.java),
+        Pair("rootInterface", String::class.java),
+        Pair("runtimeCatalog", String::class.java),
+        Pair("runtimeSchema", String::class.java),
+        Pair("runtimeTableName", String::class.java),
+        Pair("selectAllOrderByClause", String::class.java),
+        Pair("trimStrings", Boolean::class.java),
+        Pair("useActualColumnNames", Boolean::class.java),
+        Pair("useColumnIndexes", Boolean::class.java),
+        Pair("useCompoundPropertyNames", Boolean::class.java)
     )
+
+    private val propertiesTableModel = PropertiesTableModel(properties)
 
     init {
         val propertiesTable = TableView(propertiesTableModel)
@@ -75,24 +64,26 @@ class TablePanel : JPanel(BorderLayout()) {
                 }
             }
         this.add(
-                FormBuilder.createFormBuilder()
-                        .addLabeledComponent("ModelType:", modelTypeComboBox)
-                        .addComponent(enableInsertCheckBox)
-                        .addComponent(enableSelectByPrimaryKeyCheckBox)
-                        .addComponent(enableSelectByExampleCheckBox)
-                        .addComponent(enableUpdateByPrimaryKeyCheckBox)
-                        .addComponent(enableDeleteByPrimaryKeyCheckBox)
-                        .addComponent(enableDeleteByExampleCheckBox)
-                        .addComponent(enableCountByExampleCheckBox)
-                        .addComponent(enableUpdateByExampleCheckBox)
-                        .addComponent(selectByPrimaryKeyQueryIdCheckBox)
-                        .addComponent(selectByExampleQueryIdCheckBox)
-                        .addComponent(modelEscapeWildcardsCheckBox)
-                        .addComponent(delimitIdentifiersCheckBox)
-                        .addComponent(delimitAllColumnsCheckBox)
-                        .addComponent(TitledSeparator("Properties"))
-                        .addComponent(propertiesToolbarDecorator.createPanel())
-                        .panel
+            FormBuilder.createFormBuilder()
+                .addLabeledComponent("ModelType:", modelTypeComboBox)
+                .addComponent(JPanel(GridLayout(7, 2)).apply {
+                    add(enableSelectByPrimaryKeyCheckBox)
+                    add(enableSelectByExampleCheckBox)
+                    add(enableDeleteByPrimaryKeyCheckBox)
+                    add(enableDeleteByExampleCheckBox)
+                    add(enableUpdateByPrimaryKeyCheckBox)
+                    add(enableUpdateByExampleCheckBox)
+                    add(selectByPrimaryKeyQueryIdCheckBox)
+                    add(selectByExampleQueryIdCheckBox)
+                    add(delimitIdentifiersCheckBox)
+                    add(delimitAllColumnsCheckBox)
+                    add(enableInsertCheckBox)
+                    add(enableCountByExampleCheckBox)
+                    add(modelEscapeWildcardsCheckBox)
+                })
+                .addComponent(TitledSeparator("Properties"))
+                .addComponent(propertiesToolbarDecorator.createPanel())
+                .panel
         )
     }
 

@@ -1,5 +1,6 @@
-package io.github.cdgeass.component
+package io.github.cdgeass.generator.component
 
+import com.intellij.openapi.ui.ComboBox
 import com.intellij.ui.TitledSeparator
 import com.intellij.ui.ToolbarDecorator
 import com.intellij.ui.table.TableView
@@ -10,21 +11,23 @@ import javax.swing.JPanel
 
 /**
  * @author cdgeass
- * @since  2020-11-06
+ * @since 2020-11-06
  */
-class JavaModelGeneratorPanel : JPanel(BorderLayout()) {
+class JavaClientGeneratorPanel : JPanel(BorderLayout()) {
 
-    private val propertiesTableModel = PropertiesTableModel(
-        mutableListOf(
-            "constructorBased",
-            "enableSubPackages",
-            "exampleTargetPackage",
-            "exampleTargetProject",
-            "immutable",
-            "rootClass",
-            "trimStrings"
+    private val typeComboBox = ComboBox(
+        arrayOf(
+            "ANNOTATEDMAPPER", "MIXEDMAPPER", "XMLMAPPER"
         )
     )
+
+    private val properties = linkedMapOf(
+        Pair("enableSubPackages", Boolean::class.java),
+        Pair("rootInterface", String::class.java),
+        Pair("useLegacyBuilder", Boolean::class.java)
+    )
+
+    private val propertiesTableModel = PropertiesTableModel(properties)
 
     init {
         val propertiesTable = TableView(propertiesTableModel)
@@ -39,23 +42,32 @@ class JavaModelGeneratorPanel : JPanel(BorderLayout()) {
                 }
             }
         this.add(
-            FormBuilder.createFormBuilder()
-                .addComponent(TitledSeparator("Properties"))
-                .addComponent(propertiesToolbarDecorator.createPanel())
-                .addComponentFillVertically(JPanel(), 0)
-                .panel
+                FormBuilder.createFormBuilder()
+                    .addLabeledComponent("Type", typeComboBox)
+                    .addComponent(TitledSeparator("Properties"))
+                    .addComponent(propertiesToolbarDecorator.createPanel())
+                    .addComponentFillVertically(JPanel(), 0)
+                    .panel
         )
+    }
+
+    fun getType(): String {
+        return typeComboBox.item
     }
 
     fun getProperties(): Map<String, String> {
         return propertiesTableModel.items.associateBy({ it.left }, { it.right })
     }
 
-    fun setProperties(properties: Map<String, String>): JavaModelGeneratorPanel {
+    fun setType(type: String): JavaClientGeneratorPanel {
+        typeComboBox.item = type
+        return this
+    }
+
+    fun setProperties(properties: Map<String, String>): JavaClientGeneratorPanel {
         if (properties.isNotEmpty()) {
             propertiesTableModel.addRows(properties.map { (property, value) -> MutablePair.of(property, value) })
         }
         return this
     }
-
 }
