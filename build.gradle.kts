@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "io.github.cdgeass"
-version = "1.2.8"
+version = "1.2.9"
 
 repositories {
     mavenCentral()
@@ -31,10 +31,10 @@ configure<JavaPluginConvention> {
 }
 tasks.getByName<org.jetbrains.intellij.tasks.PatchPluginXmlTask>("patchPluginXml") {
     changeNotes("""
-    1.2.8</br>
+    1.2.9</br>
     <ul>
-        <li>fix item in <foreach></li>
-        <li>fix scale tool window</li>
+        <li>fix issues(<a href="https://github.com/cdgeass/my-mybatis-plugin/issues/6">#6</a>)</li>
+        <li>fix item in foreach</li>
     </ul>
       """)
 }
