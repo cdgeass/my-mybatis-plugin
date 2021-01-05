@@ -23,7 +23,7 @@ public class Formatter {
     private static final Logger log = Logger.getInstance(Formatter.class);
 
     private static final String NULL = "null";
-    private static final Pattern GET_PARAM_TYPE_PATTERN = Pattern.compile("(\\b.*)?\\((\\S+)\\)");
+    private static final Pattern GET_PARAM_TYPE_PATTERN = Pattern.compile("(.*)\\((\\S+)\\)");
 
     protected static String format(String preparing, List<String> parametersWithType) {
         if (StringUtils.isBlank(preparing) && CollectionUtils.isEmpty(parametersWithType)) {
