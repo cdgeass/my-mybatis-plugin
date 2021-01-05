@@ -229,11 +229,13 @@ public class ExpressionCompletionContributor extends CompletionContributor {
 
         var collectionText = foreachTag.getAttributeValue(StringConstants.COLLECTION);
         var itemText = foreachTag.getAttributeValue(StringConstants.ITEM);
-        if (!StringUtils.contains(collectionText, StringConstants.DOT) || StringUtils.isBlank(itemText)) {
+        var isValidCollectionText = StringUtils.contains(collectionText, StringConstants.DOT) || paramsMap.containsKey(collectionText);
+        if (!isValidCollectionText || StringUtils.isBlank(itemText)) {
             return paramsMap;
         }
 
-        var split = StringUtils.split(collectionText, StringConstants.DOT);
+        var split = StringUtils.contains(collectionText, StringConstants.DOT) ?
+                StringUtils.split(collectionText, StringConstants.DOT) : new String[]{collectionText};
         var collectionType = ((PsiClassType) paramsMap.get(split[0]));
         for (int i = 1; i < split.length; i++) {
             var psiClass = collectionType.resolve();
