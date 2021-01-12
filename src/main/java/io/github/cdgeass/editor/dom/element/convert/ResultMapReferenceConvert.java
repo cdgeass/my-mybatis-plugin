@@ -50,7 +50,8 @@ public class ResultMapReferenceConvert extends Converter<ResultMap> implements C
     }
 
     @Override
-    public @Nullable String toString(@Nullable ResultMap resultMap, ConvertContext context) {
+    public @Nullable
+    String toString(@Nullable ResultMap resultMap, ConvertContext context) {
         if (resultMap == null) {
             return null;
         }

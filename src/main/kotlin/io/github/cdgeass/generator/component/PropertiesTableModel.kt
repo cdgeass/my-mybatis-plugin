@@ -14,11 +14,11 @@ import javax.swing.table.TableCellEditor
  * @since 2020-09-30
  */
 class PropertiesTableModel(
-    private val properties: LinkedHashMap<String, out Any>,
-    private val usedProperties: MutableSet<String> = mutableSetOf()
+        private val properties: LinkedHashMap<String, out Any>,
+        private val usedProperties: MutableSet<String> = mutableSetOf()
 ) : ListTableModel<MutablePair<String, String>>(
-    PropertyColumnInfo(properties, usedProperties),
-    ValueColumnInfo(properties)
+        PropertyColumnInfo(properties, usedProperties),
+        ValueColumnInfo(properties)
 ) {
 
     override fun removeRow(idx: Int) {
@@ -50,8 +50,8 @@ class PropertiesTableModel(
 }
 
 class PropertyColumnInfo(
-    private val properties: LinkedHashMap<String, out Any>,
-    private val usedProperties: MutableSet<String>
+        private val properties: LinkedHashMap<String, out Any>,
+        private val usedProperties: MutableSet<String>
 ) : ColumnInfo<MutablePair<String, String>, String>("property") {
 
     override fun valueOf(item: MutablePair<String, String>): String {
@@ -72,14 +72,14 @@ class PropertyColumnInfo(
 
     override fun getEditor(item: MutablePair<String, String>): TableCellEditor {
         val tempProperties = properties.keys.filter { !usedProperties.contains(it) }
-            .toMutableList().apply { add(0, item.left) }
-            .toTypedArray()
+                .toMutableList().apply { add(0, item.left) }
+                .toTypedArray()
         return DefaultCellEditor(ComboBox(tempProperties))
     }
 }
 
 class ValueColumnInfo(
-    private val properties: LinkedHashMap<String, out Any>
+        private val properties: LinkedHashMap<String, out Any>
 ) : ColumnInfo<MutablePair<String, String>, Any>("value") {
 
     override fun valueOf(item: MutablePair<String, String>): String {

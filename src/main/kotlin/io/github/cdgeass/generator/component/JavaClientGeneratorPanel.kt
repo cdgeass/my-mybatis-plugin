@@ -16,15 +16,15 @@ import javax.swing.JPanel
 class JavaClientGeneratorPanel : JPanel(BorderLayout()) {
 
     private val typeComboBox = ComboBox(
-        arrayOf(
-            "ANNOTATEDMAPPER", "MIXEDMAPPER", "XMLMAPPER"
-        )
+            arrayOf(
+                    "ANNOTATEDMAPPER", "MIXEDMAPPER", "XMLMAPPER"
+            )
     )
 
     private val properties = linkedMapOf(
-        Pair("enableSubPackages", Boolean::class.java),
-        Pair("rootInterface", String::class.java),
-        Pair("useLegacyBuilder", Boolean::class.java)
+            Pair("enableSubPackages", Boolean::class.java),
+            Pair("rootInterface", String::class.java),
+            Pair("useLegacyBuilder", Boolean::class.java)
     )
 
     private val propertiesTableModel = PropertiesTableModel(properties)
@@ -32,22 +32,22 @@ class JavaClientGeneratorPanel : JPanel(BorderLayout()) {
     init {
         val propertiesTable = TableView(propertiesTableModel)
         val propertiesToolbarDecorator = ToolbarDecorator.createDecorator(propertiesTable)
-            .setAddAction {
-                propertiesTableModel.addRow()
-            }
-            .setRemoveAction {
-                val selectedRows = propertiesTable.selectedRows
-                if (selectedRows.isNotEmpty()) {
-                    propertiesTableModel.removeRow(selectedRows[selectedRows.size - 1])
+                .setAddAction {
+                    propertiesTableModel.addRow()
                 }
-            }
+                .setRemoveAction {
+                    val selectedRows = propertiesTable.selectedRows
+                    if (selectedRows.isNotEmpty()) {
+                        propertiesTableModel.removeRow(selectedRows[selectedRows.size - 1])
+                    }
+                }
         this.add(
                 FormBuilder.createFormBuilder()
-                    .addLabeledComponent("Type", typeComboBox)
-                    .addComponent(TitledSeparator("Properties"))
-                    .addComponent(propertiesToolbarDecorator.createPanel())
-                    .addComponentFillVertically(JPanel(), 0)
-                    .panel
+                        .addLabeledComponent("Type", typeComboBox)
+                        .addComponent(TitledSeparator("Properties"))
+                        .addComponent(propertiesToolbarDecorator.createPanel())
+                        .addComponentFillVertically(JPanel(), 0)
+                        .panel
         )
     }
 

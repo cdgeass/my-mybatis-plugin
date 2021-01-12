@@ -8,7 +8,7 @@ import io.github.cdgeass.editor.dom.element.convert.ResultMapReferenceConvert;
 
 /**
  * @author cdgeass
- * @since  2020-06-20
+ * @since 2020-06-20
  */
 public interface Parameter extends DomElement {
 

@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 
 /**
  * @author cdgeass
- * @since  2020-06-20
+ * @since 2020-06-20
  */
 public class SqlReferenceConvert extends Converter<Sql> implements CustomReferenceConverter<Sql> {
 

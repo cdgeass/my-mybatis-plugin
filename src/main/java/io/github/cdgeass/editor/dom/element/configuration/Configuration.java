@@ -5,7 +5,7 @@ import com.intellij.util.xml.SubTag;
 
 /**
  * @author cdgeass
- * @since  2020-06-20
+ * @since 2020-06-20
  */
 public interface Configuration extends DomElement {
 

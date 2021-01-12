@@ -9,7 +9,7 @@ import java.util.List;
 
 /**
  * @author cdgeass
- * @since  2020-05-22
+ * @since 2020-05-22
  */
 public interface ResultMap extends DomElement {
 

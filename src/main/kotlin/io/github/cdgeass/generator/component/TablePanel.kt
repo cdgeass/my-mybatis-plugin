@@ -33,20 +33,20 @@ class TablePanel : JPanel(BorderLayout()) {
     private val delimitAllColumnsCheckBox = JBCheckBox("DelimitAllColumns")
 
     private val properties = linkedMapOf(
-        Pair("constructorBased", Boolean::class.java),
-        Pair("ignoreQualifiersAtRuntime", Boolean::class.java),
-        Pair("immutable", Boolean::class.java),
-        Pair("modelOnly", Boolean::class.java),
-        Pair("rootClass", String::class.java),
-        Pair("rootInterface", String::class.java),
-        Pair("runtimeCatalog", String::class.java),
-        Pair("runtimeSchema", String::class.java),
-        Pair("runtimeTableName", String::class.java),
-        Pair("selectAllOrderByClause", String::class.java),
-        Pair("trimStrings", Boolean::class.java),
-        Pair("useActualColumnNames", Boolean::class.java),
-        Pair("useColumnIndexes", Boolean::class.java),
-        Pair("useCompoundPropertyNames", Boolean::class.java)
+            Pair("constructorBased", Boolean::class.java),
+            Pair("ignoreQualifiersAtRuntime", Boolean::class.java),
+            Pair("immutable", Boolean::class.java),
+            Pair("modelOnly", Boolean::class.java),
+            Pair("rootClass", String::class.java),
+            Pair("rootInterface", String::class.java),
+            Pair("runtimeCatalog", String::class.java),
+            Pair("runtimeSchema", String::class.java),
+            Pair("runtimeTableName", String::class.java),
+            Pair("selectAllOrderByClause", String::class.java),
+            Pair("trimStrings", Boolean::class.java),
+            Pair("useActualColumnNames", Boolean::class.java),
+            Pair("useColumnIndexes", Boolean::class.java),
+            Pair("useCompoundPropertyNames", Boolean::class.java)
     )
 
     private val propertiesTableModel = PropertiesTableModel(properties)
@@ -54,36 +54,36 @@ class TablePanel : JPanel(BorderLayout()) {
     init {
         val propertiesTable = TableView(propertiesTableModel)
         val propertiesToolbarDecorator = ToolbarDecorator.createDecorator(propertiesTable)
-            .setAddAction {
-                propertiesTableModel.addRow()
-            }
-            .setRemoveAction {
-                val selectedRows = propertiesTable.selectedRows
-                if (selectedRows.isNotEmpty()) {
-                    propertiesTableModel.removeRow(selectedRows[selectedRows.size - 1])
+                .setAddAction {
+                    propertiesTableModel.addRow()
                 }
-            }
+                .setRemoveAction {
+                    val selectedRows = propertiesTable.selectedRows
+                    if (selectedRows.isNotEmpty()) {
+                        propertiesTableModel.removeRow(selectedRows[selectedRows.size - 1])
+                    }
+                }
         this.add(
-            FormBuilder.createFormBuilder()
-                .addLabeledComponent("ModelType:", modelTypeComboBox)
-                .addComponent(JPanel(GridLayout(7, 2)).apply {
-                    add(enableSelectByPrimaryKeyCheckBox)
-                    add(enableSelectByExampleCheckBox)
-                    add(enableDeleteByPrimaryKeyCheckBox)
-                    add(enableDeleteByExampleCheckBox)
-                    add(enableUpdateByPrimaryKeyCheckBox)
-                    add(enableUpdateByExampleCheckBox)
-                    add(selectByPrimaryKeyQueryIdCheckBox)
-                    add(selectByExampleQueryIdCheckBox)
-                    add(delimitIdentifiersCheckBox)
-                    add(delimitAllColumnsCheckBox)
-                    add(enableInsertCheckBox)
-                    add(enableCountByExampleCheckBox)
-                    add(modelEscapeWildcardsCheckBox)
-                })
-                .addComponent(TitledSeparator("Properties"))
-                .addComponent(propertiesToolbarDecorator.createPanel())
-                .panel
+                FormBuilder.createFormBuilder()
+                        .addLabeledComponent("ModelType:", modelTypeComboBox)
+                        .addComponent(JPanel(GridLayout(7, 2)).apply {
+                            add(enableSelectByPrimaryKeyCheckBox)
+                            add(enableSelectByExampleCheckBox)
+                            add(enableDeleteByPrimaryKeyCheckBox)
+                            add(enableDeleteByExampleCheckBox)
+                            add(enableUpdateByPrimaryKeyCheckBox)
+                            add(enableUpdateByExampleCheckBox)
+                            add(selectByPrimaryKeyQueryIdCheckBox)
+                            add(selectByExampleQueryIdCheckBox)
+                            add(delimitIdentifiersCheckBox)
+                            add(delimitAllColumnsCheckBox)
+                            add(enableInsertCheckBox)
+                            add(enableCountByExampleCheckBox)
+                            add(modelEscapeWildcardsCheckBox)
+                        })
+                        .addComponent(TitledSeparator("Properties"))
+                        .addComponent(propertiesToolbarDecorator.createPanel())
+                        .panel
         )
     }
 

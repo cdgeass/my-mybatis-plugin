@@ -54,7 +54,7 @@ public class VisitorUtil {
     public static String orderByToString(boolean oracleSiblings, List<OrderByElement> orderByElements) {
         var sql = getStringList(orderByElements, true, false);
         if (sql.length() > 0) {
-            return (oracleSiblings ? "ORDER SIBLINGS BY" : "ORDER BY") +  " " + sql;
+            return (oracleSiblings ? "ORDER SIBLINGS BY" : "ORDER BY") + " " + sql;
         }
         return sql;
     }

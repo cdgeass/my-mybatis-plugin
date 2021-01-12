@@ -8,7 +8,7 @@ import io.github.cdgeass.editor.dom.element.convert.StatementReferenceConvert;
 
 /**
  * @author cdgeass
- * @since  2020-06-19
+ * @since 2020-06-19
  */
 public interface Arg extends DomElement {
 

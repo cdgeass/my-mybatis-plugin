@@ -18,7 +18,8 @@ class RootInterfaceGenericPlugin : PluginAdapter() {
 
     override fun clientGenerated(interfaze: Interface, introspectedTable: IntrospectedTable): Boolean {
         val superInterface =
-            interfaze.superInterfaceTypes.firstOrNull() ?: return super.clientGenerated(interfaze, introspectedTable)
+                interfaze.superInterfaceTypes.firstOrNull()
+                        ?: return super.clientGenerated(interfaze, introspectedTable)
         if (superInterface.typeArguments.contains(FullyQualifiedJavaType("T"))) {
             superInterface.typeArguments.clear()
         }

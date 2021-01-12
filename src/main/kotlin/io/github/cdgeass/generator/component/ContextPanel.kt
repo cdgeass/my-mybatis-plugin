@@ -20,20 +20,20 @@ class ContextPanel : JPanel(BorderLayout()) {
     private val defaultModelTypeComboBox = ComboBox(arrayOf("conditional", "flat", "hierarchical"))
 
     private val targetRuntimeComboBox = ComboBox(
-        arrayOf(
-            "MyBatis3DynamicSql",
-            "MyBatis3Kotlin", "MyBatis3", "MyBatis3Simple", "MyBatis3DynamicSqlV1"
-        )
+            arrayOf(
+                    "MyBatis3DynamicSql",
+                    "MyBatis3Kotlin", "MyBatis3", "MyBatis3Simple", "MyBatis3DynamicSqlV1"
+            )
     )
 
     private val properties = linkedMapOf(
-        Pair("autoDelimitKeywords", Boolean::class.java),
-        Pair("beginningDelimiter", String::class.java),
-        Pair("endingDelimiter", String::class.java),
-        Pair("javaFileEncoding", String::class.java),
+            Pair("autoDelimitKeywords", Boolean::class.java),
+            Pair("beginningDelimiter", String::class.java),
+            Pair("endingDelimiter", String::class.java),
+            Pair("javaFileEncoding", String::class.java),
 //        Pair("javaFormatter", String::class.java),
-        Pair("targetJava8", Boolean::class.java),
-        Pair("kotlinFileEncoding", String::class.java)
+            Pair("targetJava8", Boolean::class.java),
+            Pair("kotlinFileEncoding", String::class.java)
 //        Pair("kotlinFormatter", String::class.java),
 //        Pair("xmlFormatter", String::class.java)
     )
@@ -50,37 +50,37 @@ class ContextPanel : JPanel(BorderLayout()) {
     init {
         val propertiesTable = TableView(propertiesTableModel)
         this.add(
-            FormBuilder.createFormBuilder()
-                .addComponent(TitledSeparator("Context"))
-                .addLabeledComponent("DefaultModelType:", defaultModelTypeComboBox)
-                .addLabeledComponent("TargetRuntime:", targetRuntimeComboBox)
-                .addComponent(
-                    ToolbarDecorator.createDecorator(propertiesTable)
-                        .setAddAction {
-                            propertiesTableModel.addRow()
-                        }
-                        .setRemoveAction {
-                            val selectedRows = propertiesTable.selectedRows
-                            if (selectedRows.isNotEmpty()) {
-                                propertiesTableModel.removeRow(selectedRows[selectedRows.size - 1])
-                            }
-                        }
-                        .createPanel()
-                )
-                .addComponent(
-                        TabbedPaneWrapper(Disposer.newDisposable())
-                                .apply {
-                                    this.addTab("JavaTypeResolver", javaTypeResolverPanel)
-                                    this.addTab("JavaModelGenerator", javaModelGeneratorPanel)
-                                    this.addTab("SqlMapGenerator", sqlMapGeneratorPanel)
-                                    this.addTab("JavaClientGenerator", javaClientGeneratorPanel)
-                                    this.addTab("Table", tablePanel)
-                                    this.addTab("CommentGenerator", commentGeneratorPanel)
-                                }
-                                .component
-                )
-                .addComponentFillVertically(JPanel(), 0)
-                .panel, BorderLayout.CENTER)
+                FormBuilder.createFormBuilder()
+                        .addComponent(TitledSeparator("Context"))
+                        .addLabeledComponent("DefaultModelType:", defaultModelTypeComboBox)
+                        .addLabeledComponent("TargetRuntime:", targetRuntimeComboBox)
+                        .addComponent(
+                                ToolbarDecorator.createDecorator(propertiesTable)
+                                        .setAddAction {
+                                            propertiesTableModel.addRow()
+                                        }
+                                        .setRemoveAction {
+                                            val selectedRows = propertiesTable.selectedRows
+                                            if (selectedRows.isNotEmpty()) {
+                                                propertiesTableModel.removeRow(selectedRows[selectedRows.size - 1])
+                                            }
+                                        }
+                                        .createPanel()
+                        )
+                        .addComponent(
+                                TabbedPaneWrapper(Disposer.newDisposable())
+                                        .apply {
+                                            this.addTab("JavaTypeResolver", javaTypeResolverPanel)
+                                            this.addTab("JavaModelGenerator", javaModelGeneratorPanel)
+                                            this.addTab("SqlMapGenerator", sqlMapGeneratorPanel)
+                                            this.addTab("JavaClientGenerator", javaClientGeneratorPanel)
+                                            this.addTab("Table", tablePanel)
+                                            this.addTab("CommentGenerator", commentGeneratorPanel)
+                                        }
+                                        .component
+                        )
+                        .addComponentFillVertically(JPanel(), 0)
+                        .panel, BorderLayout.CENTER)
     }
 
     fun getDefaultModelType(): String {

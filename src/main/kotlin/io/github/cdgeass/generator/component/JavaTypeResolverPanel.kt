@@ -15,8 +15,8 @@ import javax.swing.JPanel
 class JavaTypeResolverPanel : JPanel(BorderLayout()) {
 
     private val properties = linkedMapOf(
-        Pair("forceBigDecimals", Boolean::class.java),
-        Pair("useJSR310Types", Boolean::class.java)
+            Pair("forceBigDecimals", Boolean::class.java),
+            Pair("useJSR310Types", Boolean::class.java)
     )
 
     private val propertiesTableModel = PropertiesTableModel(properties)
@@ -24,21 +24,21 @@ class JavaTypeResolverPanel : JPanel(BorderLayout()) {
     init {
         val propertiesTable = TableView(propertiesTableModel)
         val propertiesToolbarDecorator = ToolbarDecorator.createDecorator(propertiesTable)
-            .setAddAction {
-                propertiesTableModel.addRow()
-            }
-            .setRemoveAction {
-                val selectedRows = propertiesTable.selectedRows
-                if (selectedRows.isNotEmpty()) {
-                    propertiesTableModel.removeRow(selectedRows[selectedRows.size - 1])
+                .setAddAction {
+                    propertiesTableModel.addRow()
                 }
-            }
+                .setRemoveAction {
+                    val selectedRows = propertiesTable.selectedRows
+                    if (selectedRows.isNotEmpty()) {
+                        propertiesTableModel.removeRow(selectedRows[selectedRows.size - 1])
+                    }
+                }
         this.add(
-            FormBuilder.createFormBuilder()
-                .addComponent(TitledSeparator("Properties"))
-                .addComponent(propertiesToolbarDecorator.createPanel())
-                .addComponentFillVertically(JPanel(), 0)
-                .panel
+                FormBuilder.createFormBuilder()
+                        .addComponent(TitledSeparator("Properties"))
+                        .addComponent(propertiesToolbarDecorator.createPanel())
+                        .addComponentFillVertically(JPanel(), 0)
+                        .panel
         )
     }
 

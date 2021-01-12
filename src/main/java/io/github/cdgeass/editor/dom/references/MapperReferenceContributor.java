@@ -41,7 +41,8 @@ public class MapperReferenceContributor extends PsiReferenceContributor {
     public static class SqlReferenceProvider extends PsiReferenceProvider {
 
         @Override
-        public @NotNull PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
+        public @NotNull
+        PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
             var sqlId = ((XmlAttributeValue) element).getValue();
 
             var includeTags = DomUtil.findByNameInNamespace(DomUtil.getContainingFileNameSpace(element),
@@ -57,7 +58,8 @@ public class MapperReferenceContributor extends PsiReferenceContributor {
     public static class ResultMapReferenceProvider extends PsiReferenceProvider {
 
         @Override
-        public @NotNull PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
+        public @NotNull
+        PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
             var resultMapId = ((XmlAttributeValue) element).getValue();
 
             var xmlFiles = DomUtil.findByNamespace(DomUtil.getContainingFileNameSpace(element), element.getProject());
