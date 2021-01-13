@@ -16,49 +16,49 @@ import com.intellij.util.xmlb.XmlSerializerUtil
         storages = [Storage("MyBatisGeneratorSettings.xml")]
 )
 class MyBatisGeneratorSettings(
-        // Context
-        var defaultModelType: String = "",
-        var targetRuntime: String = "",
-        var contextProperties: Map<String, String> = emptyMap(),
+    // Context
+    var defaultModelType: String = "conditional",
+    var targetRuntime: String = "MyBatis3Simple",
+    var contextProperties: Map<String, String> = emptyMap(),
 
-        // JavaTypeResolver
-        var javaTypeResolverProperties: Map<String, String> = emptyMap(),
+    // JavaTypeResolver
+    var javaTypeResolverProperties: Map<String, String> = emptyMap(),
 
-        // JavaModelGenerator
-        var javaModelGeneratorProperties: Map<String, String> = emptyMap(),
+    // JavaModelGenerator
+    var javaModelGeneratorProperties: Map<String, String> = emptyMap(),
 
-        // SqlMapGenerator
-        var sqlMapGeneratorProperties: Map<String, String> = emptyMap(),
+    // SqlMapGenerator
+    var sqlMapGeneratorProperties: Map<String, String> = emptyMap(),
 
-        // JavaClientGenerator
-        var javaClientType: String = "",
-        var javaClientProperties: Map<String, String> = emptyMap(),
+    // JavaClientGenerator
+    var javaClientType: String = "",
+    var javaClientProperties: Map<String, String> = emptyMap(),
 
-        // Table
-        var enableInsert: Boolean = true,
-        var enableSelectByPrimaryKey: Boolean = true,
-        var enableSelectByExample: Boolean = true,
-        var enableUpdateByPrimaryKey: Boolean = true,
-        var enableDeleteByPrimaryKey: Boolean = true,
-        var enableDeleteByExample: Boolean = true,
-        var enableCountByExample: Boolean = true,
-        var enableUpdateByExample: Boolean = true,
-        var selectByPrimaryKeyQueryId: Boolean = true,
-        var selectByExampleQueryId: Boolean = true,
-        var modelType: String = "",
-        var modelEscapeWildCards: Boolean = true,
-        var delimitIdentifiers: Boolean = true,
-        var delimitAllColumns: Boolean = true,
-        var tableProperties: Map<String, String> = emptyMap(),
+    // Table
+    var enableInsert: Boolean = true,
+    var enableSelectByPrimaryKey: Boolean = true,
+    var enableSelectByExample: Boolean = false,
+    var enableUpdateByPrimaryKey: Boolean = true,
+    var enableDeleteByPrimaryKey: Boolean = false,
+    var enableDeleteByExample: Boolean = false,
+    var enableCountByExample: Boolean = false,
+    var enableUpdateByExample: Boolean = false,
+    var selectByPrimaryKeyQueryId: Boolean = false,
+    var selectByExampleQueryId: Boolean = false,
+    var modelType: String = "conditional",
+    var modelEscapeWildCards: Boolean = false,
+    var delimitIdentifiers: Boolean = false,
+    var delimitAllColumns: Boolean = false,
+    var tableProperties: Map<String, String> = emptyMap(),
 
-        // comment generator
-        var commentGeneratorProperties: Map<String, String> = emptyMap(),
+    // comment generator
+    var commentGeneratorProperties: Map<String, String> = emptyMap(),
 
-        var sourceDir: String = "/src/main/java",
-        var resourceDir: String = "/src/main/resources",
+    var sourceDir: String = "/src/main/java",
+    var resourceDir: String = "/src/main/resources",
 
-        var schemaModule: MutableMap<String, String?> = mutableMapOf(),
-        var schemaModelPackages: MutableMap<String, String> = mutableMapOf(),
+    var schemaModule: MutableMap<String, String?> = mutableMapOf(),
+    var schemaModelPackages: MutableMap<String, String> = mutableMapOf(),
         var schemaClientPackages: MutableMap<String, String> = mutableMapOf()
 ) : PersistentStateComponent<MyBatisGeneratorSettings> {
 
