@@ -21,8 +21,6 @@ import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.ui.SelectFromListDialog
 import io.github.cdgeass.generator.settings.MyBatisGeneratorSettings
 import org.codehaus.plexus.util.StringUtils
-import org.intellij.lang.annotations.JdkConstants
-import org.jdesktop.swingx.calendar.DateSelectionModel
 import org.mybatis.generator.api.MyBatisGenerator
 import org.mybatis.generator.config.*
 import org.mybatis.generator.internal.DefaultShellCallback
@@ -40,7 +38,7 @@ class MyBatisGeneratorAction : AnAction() {
     }
 
     private fun generateTable(project: Project, selectedTables: Set<DbTable>) {
-        val settings = MyBatisGeneratorSettings.getInstance()
+        val settings = MyBatisGeneratorSettings.getInstance(project)
         computeModuleAndPackage(project, settings, selectedTables)
 
         for (selectedTable in selectedTables) {

@@ -4,6 +4,7 @@ import com.intellij.openapi.components.PersistentStateComponent
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
+import com.intellij.openapi.project.Project
 import com.intellij.util.xmlb.XmlSerializerUtil
 
 /**
@@ -62,8 +63,8 @@ class MyBatisGeneratorSettings(
 ) : PersistentStateComponent<MyBatisGeneratorSettings> {
 
     companion object Factory {
-        fun getInstance(): MyBatisGeneratorSettings {
-            return ServiceManager.getService(MyBatisGeneratorSettings::class.java)
+        fun getInstance(project: Project): MyBatisGeneratorSettings {
+            return ServiceManager.getService(project, MyBatisGeneratorSettings::class.java)
         }
     }
 

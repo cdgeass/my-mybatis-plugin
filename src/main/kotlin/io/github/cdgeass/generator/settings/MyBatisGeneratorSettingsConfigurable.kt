@@ -1,6 +1,7 @@
 package io.github.cdgeass.generator.settings
 
 import com.intellij.openapi.options.Configurable
+import com.intellij.openapi.project.Project
 import io.github.cdgeass.generator.component.MyBatisGeneratorSettingsComponent
 import org.jetbrains.annotations.Nls
 import javax.swing.JComponent
@@ -9,7 +10,7 @@ import javax.swing.JComponent
  * @author cdgeass
  * @since  2020-09-25
  */
-class MyBatisGeneratorSettingsConfigurable : Configurable {
+class MyBatisGeneratorSettingsConfigurable(private val project: Project) : Configurable {
 
     private lateinit var settingsComponent: MyBatisGeneratorSettingsComponent
 
@@ -28,7 +29,7 @@ class MyBatisGeneratorSettingsConfigurable : Configurable {
     }
 
     override fun apply() {
-        val settings = MyBatisGeneratorSettings.getInstance()
+        val settings = MyBatisGeneratorSettings.getInstance(project)
 
         val context = settingsComponent.getContext()
         settings.defaultModelType = context.getDefaultModelType()
@@ -70,7 +71,7 @@ class MyBatisGeneratorSettingsConfigurable : Configurable {
     }
 
     override fun reset() {
-        val settings = MyBatisGeneratorSettings.getInstance()
+        val settings = MyBatisGeneratorSettings.getInstance(project)
 
         val context = settingsComponent.getContext()
         context.setDefaultModelType(settings.defaultModelType)

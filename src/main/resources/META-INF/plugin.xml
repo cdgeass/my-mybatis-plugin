@@ -25,10 +25,10 @@
 
     <extensions defaultExtensionNs="com.intellij">
         <!-- Add your extensions here -->
-        <applicationService serviceImplementation="io.github.cdgeass.generator.settings.MyBatisGeneratorSettings"/>
-        <applicationConfigurable instance="io.github.cdgeass.generator.settings.MyBatisGeneratorSettingsConfigurable"
-                                 id="io.github.cdgeass.generator.settings.MyBatisGeneratorSettingsConfigurable"
-                                 displayName="MyBatis Generator"/>
+        <projectService serviceImplementation="io.github.cdgeass.generator.settings.MyBatisGeneratorSettings"/>
+        <projectConfigurable instance="io.github.cdgeass.generator.settings.MyBatisGeneratorSettingsConfigurable"
+                             id="io.github.cdgeass.generator.settings.MyBatisGeneratorSettingsConfigurable"
+                             displayName="MyBatis Generator"/>
         <codeInsight.lineMarkerProvider language="JAVA"
                                         implementationClass="io.github.cdgeass.editor.provider.DaoLineMarkerProvider"/>
         <codeInsight.lineMarkerProvider language="XML"
