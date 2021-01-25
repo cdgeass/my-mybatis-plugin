@@ -11,6 +11,7 @@ import com.intellij.database.view.DatabaseView
 import com.intellij.icons.AllIcons
 import com.intellij.ide.passwordSafe.PasswordSafe
 import com.intellij.ide.util.PackageChooserDialog
+import com.intellij.ide.util.PropertiesComponent
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.module.Module
@@ -19,9 +20,12 @@ import com.intellij.openapi.module.ModuleUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.ui.SelectFromListDialog
+import com.intellij.openapi.vfs.VirtualFileManager
 import io.github.cdgeass.generator.settings.MyBatisGeneratorSettings
+import org.apache.commons.lang3.tuple.MutablePair
 import org.codehaus.plexus.util.StringUtils
 import org.mybatis.generator.api.MyBatisGenerator
+import org.mybatis.generator.api.ProgressCallback
 import org.mybatis.generator.config.*
 import org.mybatis.generator.internal.DefaultShellCallback
 import javax.swing.ListSelectionModel
@@ -38,12 +42,24 @@ class MyBatisGeneratorAction : AnAction() {
     }
 
     private fun generateTable(project: Project, selectedTables: Set<DbTable>) {
-        val settings = MyBatisGeneratorSettings.getInstance(project)
-        computeModuleAndPackage(project, settings, selectedTables)
+        computeModuleAndPackage(project, selectedTables)
 
+        val settings = MyBatisGeneratorSettings.getInstance(project)
         for (selectedTable in selectedTables) {
             generateTable(project, settings, selectedTable)
         }
+    }
+
+    companion object {
+        private const val CLIENT_MODULE_PREFIX = "MYBATIS_GENERATOR_CLIENT_MODULE_"
+        private const val CLIENT_PACKAGE_PREFIX = "MYBATIS_GENERATOR_CLIENT_PACKAGE_"
+        private const val MODEL_MODULE_PREFIX = "MYBATIS_GENERATOR_MODEL_MODULE_"
+        private const val MODEL_PACKAGE_PREFIX = "MYBATIS_GENERATOR_MODEL_PACKAGE_"
+
+        private const val SOURCE_DIR = "MYBATIS_GENERATOR_SOURCE_DIR"
+        private const val SOURCE_DIR_DEFAULT_VALUE = "/src/main/java"
+        private const val RESOURCES_DIR = "MYBATIS_GENERATOR_RESOURCES_DIR"
+        private const val RESOURCES_DIR_DEFAULT_VALUE = "/src/main/resources"
     }
 
     /**
@@ -52,52 +68,77 @@ class MyBatisGeneratorAction : AnAction() {
      */
     private fun computeModuleAndPackage(
         project: Project,
-        settings: MyBatisGeneratorSettings,
         selectedTables: Set<DbTable>
     ) {
         val moduleManager = ModuleManager.getInstance(project)
         val modules = moduleManager.modules
 
-        for (selectedTable in selectedTables) {
-            val schema = DasUtil.getSchema(selectedTable)
-            val module: Module
-            if (settings.schemaModule[schema] == null) {
+        val computeModule = { modulePair: MutablePair<String?, Module?>,
+                              target: String ->
+            if (modulePair.left == null) {
                 if (modules.size == 1) {
-                    module = modules[0]
+                    modulePair.right = modules[0]
                 } else {
                     val selectFromListDialog = SelectFromListDialog(
                         project,
                         modules,
                         { (it as Module).name },
-                        "Select Module To Generate",
+                        "Select Module To Generate $target",
                         ListSelectionModel.SINGLE_SELECTION
                     )
                     selectFromListDialog.show()
                     val selectedModules = selectFromListDialog.selection
                     if (selectedModules.isEmpty()) {
                         Messages.showErrorDialog("Please select a module to generate", "MyBatis Generator")
-                        throw RuntimeException("Please select a module to generate")
+                        throw RuntimeException("Please Select A Module To Generate $target")
                     }
-                    module = (selectedModules[0] as Module)
+                    modulePair.right = (selectedModules[0] as Module)
                 }
-                settings.schemaModule[schema] = module.name
+                modulePair.left = modulePair.right!!.name
             } else {
-                module = moduleManager.findModuleByName(settings.schemaModule[schema]!!)!!
+                modulePair.right = moduleManager.findModuleByName(modulePair.left!!)!!
             }
+        }
 
-            settings.schemaModelPackages.computeIfAbsent(schema) {
-                PackageChooserDialog("Select A Package To Generate Model", module)
-                    .apply { show() }
-                    .selectedPackage
-                    .qualifiedName
-            }
+        val propertiesComponent = PropertiesComponent.getInstance(project)
+        for (selectedTable in selectedTables) {
+            val schema = DasUtil.getSchema(selectedTable)
 
-            settings.schemaClientPackages.computeIfAbsent(schema) {
-                PackageChooserDialog("Select A Package To Generate Client", module)
-                    .apply { show() }
-                    .selectedPackage
-                    .qualifiedName
+            // 选择client的生成路径
+            val clientModulePair: MutablePair<String?, Module?> =
+                MutablePair(propertiesComponent.getValue(CLIENT_MODULE_PREFIX + schema), null)
+            computeModule(clientModulePair, "Client")
+            if (propertiesComponent.getValue(CLIENT_PACKAGE_PREFIX + schema)?.isNotBlank() != true) {
+                val selectedPackage =
+                    PackageChooserDialog("Select A Package To Generate Client", clientModulePair.right!!)
+                        .apply { show() }
+                        .selectedPackage
+                        .qualifiedName
+                if (selectedPackage.isBlank()) {
+                    Messages.showErrorDialog("Please select a package to generate client", "MyBatis Generator")
+                    throw RuntimeException("Please Select A Module To Generate Client")
+                }
+                propertiesComponent.setValue(CLIENT_PACKAGE_PREFIX + schema, selectedPackage)
             }
+            propertiesComponent.setValue(CLIENT_MODULE_PREFIX + schema, clientModulePair.left!!)
+
+            // 选择model的生成路径
+            val modelModulePair: MutablePair<String?, Module?> =
+                MutablePair(propertiesComponent.getValue(MODEL_MODULE_PREFIX + schema), null)
+            computeModule(modelModulePair, "Model")
+            if (propertiesComponent.getValue(MODEL_PACKAGE_PREFIX + schema)?.isNotBlank() != true) {
+                val selectedPackage =
+                    PackageChooserDialog("Select A Package To Generate Model", modelModulePair.right!!)
+                        .apply { show() }
+                        .selectedPackage
+                        .qualifiedName
+                if (selectedPackage.isBlank()) {
+                    Messages.showErrorDialog("Please select a package to generate", "MyBatis Generator")
+                    throw RuntimeException("Please Select A Module To Generate Model")
+                }
+                propertiesComponent.setValue(MODEL_PACKAGE_PREFIX + schema, selectedPackage)
+            }
+            propertiesComponent.setValue(MODEL_MODULE_PREFIX + schema, modelModulePair.left!!)
         }
     }
 
@@ -135,7 +176,27 @@ class MyBatisGeneratorAction : AnAction() {
 
         val warnings = mutableListOf<String>()
         val myBatisGenerator = MyBatisGenerator(configuration, DefaultShellCallback(true), warnings)
-        myBatisGenerator.generate(null)
+        myBatisGenerator.generate(object : ProgressCallback {
+            override fun introspectionStarted(totalTasks: Int) {
+            }
+
+            override fun generationStarted(totalTasks: Int) {
+            }
+
+            override fun saveStarted(totalTasks: Int) {
+            }
+
+            override fun startTask(taskName: String?) {
+            }
+
+            override fun done() {
+                VirtualFileManager.getInstance().syncRefresh()
+                Messages.showInfoMessage("Generate success!", "MyBatis Generator")
+            }
+
+            override fun checkCancel() {
+            }
+        })
     }
 
     private fun buildContext(settings: MyBatisGeneratorSettings, dataSource: LocalDataSource): Context {
@@ -187,17 +248,25 @@ class MyBatisGeneratorAction : AnAction() {
         project: Project,
         schema: String
     ): JavaModelGeneratorConfiguration {
-        val module = ModuleManager.getInstance(project).findModuleByName(settings.schemaModule[schema]!!)!!
+        val propertiesComponent = PropertiesComponent.getInstance(project)
+        val module = ModuleManager.getInstance(project).findModuleByName(
+            propertiesComponent.getValue(
+                MODEL_MODULE_PREFIX + schema
+            )!!
+        )!!
         return JavaModelGeneratorConfiguration()
             .apply {
-                targetProject = ModuleUtil.getModuleDirPath(module) + settings.sourceDir
-                targetPackage = settings.schemaModelPackages[schema]
-                    settings.javaModelGeneratorProperties.forEach { (property, value) ->
-                        addProperty(
-                            property,
-                            value
-                        )
-                    }
+                targetProject = ModuleUtil.getModuleDirPath(module) + propertiesComponent.getValue(
+                    SOURCE_DIR,
+                    SOURCE_DIR_DEFAULT_VALUE
+                )
+                targetPackage = propertiesComponent.getValue(MODEL_PACKAGE_PREFIX + schema)!!
+                settings.javaModelGeneratorProperties.forEach { (property, value) ->
+                    addProperty(
+                        property,
+                        value
+                    )
+                }
             }
     }
 
@@ -206,11 +275,19 @@ class MyBatisGeneratorAction : AnAction() {
         project: Project,
         schema: String
     ): SqlMapGeneratorConfiguration {
-        val module = ModuleManager.getInstance(project).findModuleByName(settings.schemaModule[schema]!!)!!
+        val propertiesComponent = PropertiesComponent.getInstance(project)
+        val module = ModuleManager.getInstance(project).findModuleByName(
+            propertiesComponent.getValue(
+                CLIENT_MODULE_PREFIX + schema
+            )!!
+        )!!
         return SqlMapGeneratorConfiguration()
             .apply {
-                targetProject = ModuleUtil.getModuleDirPath(module) + settings.resourceDir
-                targetPackage = settings.schemaClientPackages[schema]
+                targetProject = ModuleUtil.getModuleDirPath(module) + propertiesComponent.getValue(
+                    RESOURCES_DIR,
+                    RESOURCES_DIR_DEFAULT_VALUE
+                )
+                targetPackage = propertiesComponent.getValue(CLIENT_PACKAGE_PREFIX + schema)
                 settings.sqlMapGeneratorProperties.forEach { (property, value) ->
                     addProperty(
                         property,
@@ -225,11 +302,19 @@ class MyBatisGeneratorAction : AnAction() {
         project: Project,
         schema: String
     ): JavaClientGeneratorConfiguration {
-        val module = ModuleManager.getInstance(project).findModuleByName(settings.schemaModule[schema]!!)!!
+        val propertiesComponent = PropertiesComponent.getInstance(project)
+        val module = ModuleManager.getInstance(project).findModuleByName(
+            propertiesComponent.getValue(
+                CLIENT_MODULE_PREFIX + schema
+            )!!
+        )!!
         return JavaClientGeneratorConfiguration()
             .apply {
-                targetProject = ModuleUtil.getModuleDirPath(module) + settings.sourceDir
-                targetPackage = settings.schemaClientPackages[schema]
+                targetProject = ModuleUtil.getModuleDirPath(module) + propertiesComponent.getValue(
+                    SOURCE_DIR,
+                    SOURCE_DIR_DEFAULT_VALUE
+                )
+                targetPackage = propertiesComponent.getValue(CLIENT_PACKAGE_PREFIX + schema)
                 configurationType = settings.javaClientType
                 settings.javaClientProperties.forEach { (property, value) ->
                     addProperty(
@@ -280,10 +365,10 @@ class MyBatisGeneratorAction : AnAction() {
         return listOf(
             PluginConfiguration().apply {
                 configurationType = "io.github.cdgeass.generator.plugin.LombokDataAnnotationPlugin"
-            },
-            PluginConfiguration().apply {
-                configurationType = "io.github.cdgeass.generator.plugin.RootInterfaceGenericPlugin"
             }
+//            PluginConfiguration().apply {
+//                configurationType = "io.github.cdgeass.generator.plugin.RootInterfaceGenericPlugin"
+//            }
         )
     }
 }

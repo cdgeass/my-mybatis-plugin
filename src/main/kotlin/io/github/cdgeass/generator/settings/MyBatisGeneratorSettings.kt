@@ -53,13 +53,6 @@ class MyBatisGeneratorSettings(
 
     // comment generator
     var commentGeneratorProperties: Map<String, String> = emptyMap(),
-
-    var sourceDir: String = "/src/main/java",
-    var resourceDir: String = "/src/main/resources",
-
-    var schemaModule: MutableMap<String, String?> = mutableMapOf(),
-    var schemaModelPackages: MutableMap<String, String> = mutableMapOf(),
-        var schemaClientPackages: MutableMap<String, String> = mutableMapOf()
 ) : PersistentStateComponent<MyBatisGeneratorSettings> {
 
     companion object Factory {
