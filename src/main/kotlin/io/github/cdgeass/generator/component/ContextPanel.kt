@@ -31,11 +31,8 @@ class ContextPanel : JPanel(BorderLayout()) {
             Pair("beginningDelimiter", String::class.java),
             Pair("endingDelimiter", String::class.java),
             Pair("javaFileEncoding", String::class.java),
-//        Pair("javaFormatter", String::class.java),
             Pair("targetJava8", Boolean::class.java),
             Pair("kotlinFileEncoding", String::class.java)
-//        Pair("kotlinFormatter", String::class.java),
-//        Pair("xmlFormatter", String::class.java)
     )
 
     private val propertiesTableModel = PropertiesTableModel(properties)

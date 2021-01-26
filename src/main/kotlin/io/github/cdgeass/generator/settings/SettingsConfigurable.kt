@@ -10,7 +10,7 @@ import javax.swing.JComponent
  * @author cdgeass
  * @since  2020-09-25
  */
-class MyBatisGeneratorSettingsConfigurable(private val project: Project) : Configurable {
+class SettingsConfigurable(private val project: Project) : Configurable {
 
     private lateinit var settingsComponent: MyBatisGeneratorSettingsComponent
 
@@ -29,7 +29,7 @@ class MyBatisGeneratorSettingsConfigurable(private val project: Project) : Confi
     }
 
     override fun apply() {
-        val settings = MyBatisGeneratorSettings.getInstance(project)
+        val settings = Settings.getInstance(project)
 
         val context = settingsComponent.getContext()
         settings.defaultModelType = context.getDefaultModelType()
@@ -71,7 +71,7 @@ class MyBatisGeneratorSettingsConfigurable(private val project: Project) : Confi
     }
 
     override fun reset() {
-        val settings = MyBatisGeneratorSettings.getInstance(project)
+        val settings = Settings.getInstance(project)
 
         val context = settingsComponent.getContext()
         context.setDefaultModelType(settings.defaultModelType)

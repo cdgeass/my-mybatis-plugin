@@ -12,10 +12,10 @@ import com.intellij.util.xmlb.XmlSerializerUtil
  * @since  2020-09-25
  */
 @State(
-        name = "io.github.cdgeass.settings.MyBatisGeneratorSettings",
-        storages = [Storage("MyBatisGeneratorSettings.xml")]
+    name = "io.github.cdgeass.settings.MyBatisGeneratorSettings",
+    storages = [Storage("MyBatisGeneratorSettings.xml")]
 )
-class MyBatisGeneratorSettings(
+class Settings(
     // Context
     var defaultModelType: String = "conditional",
     var targetRuntime: String = "MyBatis3Simple",
@@ -53,19 +53,19 @@ class MyBatisGeneratorSettings(
 
     // comment generator
     var commentGeneratorProperties: Map<String, String> = emptyMap(),
-) : PersistentStateComponent<MyBatisGeneratorSettings> {
+) : PersistentStateComponent<Settings> {
 
     companion object Factory {
-        fun getInstance(project: Project): MyBatisGeneratorSettings {
-            return ServiceManager.getService(project, MyBatisGeneratorSettings::class.java)
+        fun getInstance(project: Project): Settings {
+            return ServiceManager.getService(project, Settings::class.java)
         }
     }
 
-    override fun getState(): MyBatisGeneratorSettings {
+    override fun getState(): Settings {
         return this
     }
 
-    override fun loadState(state: MyBatisGeneratorSettings) {
+    override fun loadState(state: Settings) {
         XmlSerializerUtil.copyBean(state, this)
     }
 

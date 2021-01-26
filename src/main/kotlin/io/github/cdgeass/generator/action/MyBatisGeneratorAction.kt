@@ -21,7 +21,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.ui.SelectFromListDialog
 import com.intellij.openapi.vfs.VirtualFileManager
-import io.github.cdgeass.generator.settings.MyBatisGeneratorSettings
+import io.github.cdgeass.generator.settings.Settings
 import org.apache.commons.lang3.tuple.MutablePair
 import org.codehaus.plexus.util.StringUtils
 import org.mybatis.generator.api.MyBatisGenerator
@@ -44,7 +44,7 @@ class MyBatisGeneratorAction : AnAction() {
     private fun generateTable(project: Project, selectedTables: Set<DbTable>) {
         computeModuleAndPackage(project, selectedTables)
 
-        val settings = MyBatisGeneratorSettings.getInstance(project)
+        val settings = Settings.getInstance(project)
         for (selectedTable in selectedTables) {
             generateTable(project, settings, selectedTable)
         }
@@ -144,7 +144,7 @@ class MyBatisGeneratorAction : AnAction() {
 
     private fun generateTable(
         project: Project,
-        settings: MyBatisGeneratorSettings,
+        settings: Settings,
         selectedTable: DbTable
     ) {
         val schema = DasUtil.getSchema(selectedTable)
@@ -199,7 +199,7 @@ class MyBatisGeneratorAction : AnAction() {
         })
     }
 
-    private fun buildContext(settings: MyBatisGeneratorSettings, dataSource: LocalDataSource): Context {
+    private fun buildContext(settings: Settings, dataSource: LocalDataSource): Context {
         return Context(ModelType.getModelType(settings.defaultModelType))
             .apply {
                 id = dataSource.name
@@ -231,7 +231,7 @@ class MyBatisGeneratorAction : AnAction() {
             }
     }
 
-    private fun buildJavaTypeResolverConfiguration(settings: MyBatisGeneratorSettings): JavaTypeResolverConfiguration {
+    private fun buildJavaTypeResolverConfiguration(settings: Settings): JavaTypeResolverConfiguration {
         return JavaTypeResolverConfiguration()
             .apply {
                 settings.javaTypeResolverProperties.forEach { (property, value) ->
@@ -244,7 +244,7 @@ class MyBatisGeneratorAction : AnAction() {
     }
 
     private fun buildJavaModelGeneratorConfiguration(
-        settings: MyBatisGeneratorSettings,
+        settings: Settings,
         project: Project,
         schema: String
     ): JavaModelGeneratorConfiguration {
@@ -271,7 +271,7 @@ class MyBatisGeneratorAction : AnAction() {
     }
 
     private fun buildSqlMapGeneratorConfiguration(
-        settings: MyBatisGeneratorSettings,
+        settings: Settings,
         project: Project,
         schema: String
     ): SqlMapGeneratorConfiguration {
@@ -298,7 +298,7 @@ class MyBatisGeneratorAction : AnAction() {
     }
 
     private fun buildJavaClientGeneratorConfiguration(
-        settings: MyBatisGeneratorSettings,
+        settings: Settings,
         project: Project,
         schema: String
     ): JavaClientGeneratorConfiguration {
@@ -326,7 +326,7 @@ class MyBatisGeneratorAction : AnAction() {
     }
 
     private fun buildTableConfiguration(
-        settings: MyBatisGeneratorSettings,
+        settings: Settings,
         context: Context,
         selectedTable: DbTable
     ): TableConfiguration {
@@ -350,7 +350,7 @@ class MyBatisGeneratorAction : AnAction() {
             }
     }
 
-    private fun buildCommentGeneratorConfiguration(settings: MyBatisGeneratorSettings): CommentGeneratorConfiguration {
+    private fun buildCommentGeneratorConfiguration(settings: Settings): CommentGeneratorConfiguration {
         return CommentGeneratorConfiguration()
             .apply {
                 settings.commentGeneratorProperties.forEach { (property, value) ->
