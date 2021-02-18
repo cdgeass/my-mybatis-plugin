@@ -1,28 +1,39 @@
 package io.github.cdgeass.generator.settings
 
-import com.intellij.openapi.options.Configurable
+import com.intellij.openapi.options.BoundConfigurable
 import com.intellij.openapi.project.Project
-import javax.swing.JComponent
+import com.intellij.openapi.ui.DialogPanel
+import com.intellij.ui.ToolbarDecorator
+import com.intellij.ui.layout.panel
+import com.intellij.ui.table.TableView
+import io.github.cdgeass.generator.ui.PropertiesTable
+import io.github.cdgeass.generator.ui.PropertiesTableModel
 
 /**
  * @author cdgeass
  * @since  2021-01-26
  */
-class JavaTypeResolverConfigurable(private val project: Project) : Configurable {
+class JavaTypeResolverConfigurable(project: Project) : BoundConfigurable("JavaTypeResolver") {
 
-    override fun createComponent(): JComponent? {
-        TODO("Not yet implemented")
+    companion object {
+        val PROPERTIES = linkedMapOf(
+            Pair("forceBigDecimals", Boolean::class.java),
+            Pair("useJSR310Types", Boolean::class.java)
+        )
     }
 
-    override fun isModified(): Boolean {
-        TODO("Not yet implemented")
+    private val javaTypeResolver = JavaTypeResolver.getInstance(project)
+
+    override fun createPanel(): DialogPanel {
+        return panel {
+            row {
+                panel(
+                    "Properties:",
+                    PropertiesTable(PROPERTIES, javaTypeResolver::properties).withToolbarDecorator(),
+                    false
+                )
+            }
+        }
     }
 
-    override fun apply() {
-        TODO("Not yet implemented")
-    }
-
-    override fun getDisplayName(): String {
-        TODO("Not yet implemented")
-    }
 }

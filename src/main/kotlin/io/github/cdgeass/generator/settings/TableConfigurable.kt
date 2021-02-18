@@ -1,26 +1,53 @@
 package io.github.cdgeass.generator.settings
 
-import com.intellij.openapi.options.Configurable
-import javax.swing.JComponent
+import com.intellij.openapi.options.BoundConfigurable
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.ui.DialogPanel
+import com.intellij.ui.layout.panel
+import io.github.cdgeass.generator.ui.PropertiesTable
 
 /**
  * @author cdgeass
  * @since  2021-01-26
  */
-class TableConfigurable : Configurable {
-    override fun createComponent(): JComponent? {
-        TODO("Not yet implemented")
+class TableConfigurable(project: Project) : BoundConfigurable("Table") {
+
+    companion object {
+        val PROPERTIES = linkedMapOf(
+            Pair("constructorBased", Boolean::class.java),
+            Pair("ignoreQualifiersAtRuntime", Boolean::class.java),
+            Pair("immutable", Boolean::class.java),
+            Pair("modelOnly", Boolean::class.java),
+            Pair("rootClass", String::class.java),
+            Pair("rootInterface", String::class.java),
+            Pair("runtimeCatalog", String::class.java),
+            Pair("runtimeSchema", String::class.java),
+            Pair("runtimeTableName", String::class.java),
+            Pair("selectAllOrderByClause", String::class.java),
+            Pair("trimStrings", Boolean::class.java),
+            Pair("useActualColumnNames", Boolean::class.java),
+            Pair("useColumnIndexes", Boolean::class.java),
+            Pair("useCompoundPropertyNames", Boolean::class.java)
+        )
     }
 
-    override fun isModified(): Boolean {
-        TODO("Not yet implemented")
-    }
+    private var table = Table.getInstance(project)
 
-    override fun apply() {
-        TODO("Not yet implemented")
-    }
+    override fun createPanel(): DialogPanel {
+        return panel {
+            row {
 
-    override fun getDisplayName(): String {
-        TODO("Not yet implemented")
+            }
+            row {
+
+            }
+            row {
+                panel(
+                    "Properties:",
+                    PropertiesTable(PROPERTIES, table::properties).withToolbarDecorator(),
+                    false
+                )
+            }
+        }
     }
 }

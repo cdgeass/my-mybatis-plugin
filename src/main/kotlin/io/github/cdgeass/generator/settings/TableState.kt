@@ -4,15 +4,10 @@ import com.intellij.openapi.components.BaseState
 
 /**
  * @author cdgeass
- * @since  2021-01-26
+ * @since 2021-02-18
  */
-class ContextState : BaseState() {
-
-    var defaultModelType by string("")
-
-    var targetRuntime by string("")
+class TableState : BaseState() {
 
     var properties by map<String, String>()
 
 }
-

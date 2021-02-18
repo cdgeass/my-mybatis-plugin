@@ -10,7 +10,7 @@ import com.intellij.openapi.project.Project
  * @author cdgeass
  * @since  2021-01-26
  */
-@State(name = "MybatisGeneratorContext", storages = [(Storage("io.github.cdgeass.my-mybatis.MyBatisGenerator"))])
+@State(name = "Context", storages = [(Storage("io.github.cdgeass.my-mybatis.MyBatisGenerator"))])
 class Context : PersistentStateComponent<ContextState> {
 
     private var state = ContextState()
@@ -31,6 +31,12 @@ class Context : PersistentStateComponent<ContextState> {
         get() = state.targetRuntime!!
         set(value) {
             state.targetRuntime = value
+        }
+
+    var properties: MutableMap<String, String>
+        get() = state.properties
+        set(value) {
+            state.properties = value
         }
 
     companion object {

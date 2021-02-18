@@ -27,6 +27,12 @@
         <!-- Add your extensions here -->
         <projectService serviceImplementation="io.github.cdgeass.generator.settings.Settings"/>
         <projectService serviceImplementation="io.github.cdgeass.generator.settings.Context"/>
+        <projectService serviceImplementation="io.github.cdgeass.generator.settings.JavaTypeResolver"/>
+        <projectService serviceImplementation="io.github.cdgeass.generator.settings.JavaModelGenerator"/>
+        <projectService serviceImplementation="io.github.cdgeass.generator.settings.SqlMapGenerator"/>
+        <projectService serviceImplementation="io.github.cdgeass.generator.settings.JavaClient"/>
+        <projectService serviceImplementation="io.github.cdgeass.generator.settings.Table"/>
+        <projectService serviceImplementation="io.github.cdgeass.generator.settings.CommentGenerator"/>
         <projectConfigurable instance="io.github.cdgeass.generator.settings.SettingsConfigurable"
                              id="io.github.cdgeass.generator.settings.SettingsConfigurable"
                              displayName="MyBatis Generator" parentId="tools" nonDefaultProject="false">
