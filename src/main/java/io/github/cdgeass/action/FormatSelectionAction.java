@@ -16,7 +16,6 @@ public class FormatSelectionAction extends AnAction {
     private static final Logger log = Logger.getInstance(FormatSelectionAction.class);
 
     public FormatSelectionAction() {
-
     }
 
     @Override

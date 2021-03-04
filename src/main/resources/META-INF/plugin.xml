@@ -25,6 +25,47 @@
 
     <extensions defaultExtensionNs="com.intellij">
         <!-- Add your extensions here -->
+        <projectService serviceImplementation="io.github.cdgeass.generator.settings.Settings"/>
+        <projectService serviceImplementation="io.github.cdgeass.generator.settings.Context"/>
+        <projectService serviceImplementation="io.github.cdgeass.generator.settings.JavaTypeResolver"/>
+        <projectService serviceImplementation="io.github.cdgeass.generator.settings.JavaModelGenerator"/>
+        <projectService serviceImplementation="io.github.cdgeass.generator.settings.SqlMapGenerator"/>
+        <projectService serviceImplementation="io.github.cdgeass.generator.settings.JavaClientGenerator"/>
+        <projectService serviceImplementation="io.github.cdgeass.generator.settings.Table"/>
+        <projectService serviceImplementation="io.github.cdgeass.generator.settings.CommentGenerator"/>
+        <projectConfigurable instance="io.github.cdgeass.generator.settings.SettingsConfigurable"
+                             id="io.github.cdgeass.generator.settings.SettingsConfigurable"
+                             displayName="MyBatis Generator" nonDefaultProject="false">
+            <configurable instance="io.github.cdgeass.generator.settings.ContextConfigurable"
+                          id="io.github.cdgeass.generator.settings.ContextConfigurable"
+                          displayName="Context"
+                          nonDefaultProject="false"/>
+            <configurable instance="io.github.cdgeass.generator.settings.JavaTypeResolverConfigurable"
+                          id="io.github.cdgeass.generator.settings.JavaTypeResolverConfigurable"
+                          displayName="JavaTypeResolver"
+                          nonDefaultProject="false"/>
+            <configurable instance="io.github.cdgeass.generator.settings.JavaModelGeneratorConfigurable"
+                          id="io.github.cdgeass.generator.settings.JavaModelGeneratorConfigurable"
+                          displayName="JavaModelGenerator"
+                          nonDefaultProject="false"/>
+            <configurable instance="io.github.cdgeass.generator.settings.SqlMapGeneratorConfigurable"
+                          id="io.github.cdgeass.generator.settings.SqlMapGeneratorConfigurable"
+                          displayName="SqlMapGenerator"
+                          nonDefaultProject="false"/>
+            <configurable instance="io.github.cdgeass.generator.settings.JavaClientGeneratorConfigurable"
+                          id="io.github.cdgeass.generator.settings.JavaClientGeneratorConfigurable"
+                          displayName="JavaClientGenerator"
+                          nonDefaultProject="false"/>
+            <configurable instance="io.github.cdgeass.generator.settings.TableConfigurable"
+                          id="io.github.cdgeass.generator.settings.TableConfigurable"
+                          displayName="Table"
+                          nonDefaultProject="false"/>
+            <configurable instance="io.github.cdgeass.generator.settings.CommentGeneratorConfigurable"
+                          id="io.github.cdgeass.generator.settings.CommentGeneratorConfigurable"
+                          displayName="CommentGenerator"
+                          nonDefaultProject="false"/>
+        </projectConfigurable>
+
         <codeInsight.lineMarkerProvider language="JAVA"
                                         implementationClass="io.github.cdgeass.editor.provider.DaoLineMarkerProvider"/>
         <codeInsight.lineMarkerProvider language="XML"
@@ -59,9 +100,17 @@
         <action id="io.github.cdgeass.action.FormatAndCopySelectAction"
                 class="io.github.cdgeass.action.FormatAndCopySelectionAction" text="Copy Sql"
                 description="An action to format and copy sql which was selected">
-            <add-to-group group-id="EditorPopupMenu" anchor="after" relative-to-action="io.github.cdgeass.action.FormatSelectAction"/>
-            <add-to-group group-id="ConsoleEditorPopupMenu" anchor="after" relative-to-action="io.github.cdgeass.action.FormatSelectAction"/>
+            <add-to-group group-id="EditorPopupMenu" anchor="after"
+                          relative-to-action="io.github.cdgeass.action.FormatSelectAction"/>
+            <add-to-group group-id="ConsoleEditorPopupMenu" anchor="after"
+                          relative-to-action="io.github.cdgeass.action.FormatSelectAction"/>
             <keyboard-shortcut first-keystroke="control alt Y" keymap="$default"/>
+        </action>
+        <action id="io.github.cdgeass.generator.action.MyBatisGeneratorAction"
+                class="io.github.cdgeass.generator.action.MyBatisGeneratorAction"
+                description="An action to run Mybatis Generator" text="MyBatis Generator">
+            <add-to-group group-id="DatabaseViewPopupMenu" anchor="after"
+                          relative-to-action="DatabaseView.Sql.Scripts"/>
         </action>
     </actions>
 </idea-plugin>

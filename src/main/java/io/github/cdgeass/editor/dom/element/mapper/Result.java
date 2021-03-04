@@ -5,7 +5,7 @@ import com.intellij.util.xml.GenericAttributeValue;
 
 /**
  * @author cdgeass
- * @since  2020-06-19
+ * @since 2020-06-19
  */
 public interface Result extends DomElement {
 

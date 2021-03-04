@@ -10,7 +10,7 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * @author cdgeass
- * @since  2020-06-20
+ * @since 2020-06-20
  */
 public class ConfigurationDescription extends DomFileDescription<Configuration> {
 

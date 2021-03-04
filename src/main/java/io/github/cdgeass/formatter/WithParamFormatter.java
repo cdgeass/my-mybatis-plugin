@@ -38,7 +38,8 @@ public class WithParamFormatter extends Formatter {
         var lines = selectedText.split(LINE_BREAK);
 
         LinkedHashMap<String, Pair<String, String>> sqlMap = Maps.newLinkedHashMap();
-        var j = 0; var k = 0;
+        var j = 0;
+        var k = 0;
         for (var line : lines) {
             if (line.contains(PREPARING_LABEL) && !line.contains(PARAMETERS_LABEL)) {
                 String preparingTag;

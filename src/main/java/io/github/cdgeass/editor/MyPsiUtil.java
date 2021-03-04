@@ -5,7 +5,7 @@ import com.intellij.psi.PsiType;
 import lombok.experimental.UtilityClass;
 
 /**
- * @author linqihang
+ * @author cdgeass
  * @since 2020-09-21
  */
 @UtilityClass

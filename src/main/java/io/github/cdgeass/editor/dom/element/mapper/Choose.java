@@ -8,7 +8,7 @@ import java.util.List;
 
 /**
  * @author cdgeass
- * @since  2020-06-20
+ * @since 2020-06-20
  */
 public interface Choose extends DomElement {
 
