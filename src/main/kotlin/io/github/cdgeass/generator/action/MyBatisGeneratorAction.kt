@@ -20,13 +20,12 @@ import com.intellij.openapi.module.ModuleUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.ui.SelectFromListDialog
-import com.intellij.openapi.vfs.VirtualFileManager
-import io.github.cdgeass.generator.settings.Settings
+import io.github.cdgeass.generator.settings.*
 import org.apache.commons.lang3.tuple.MutablePair
 import org.codehaus.plexus.util.StringUtils
 import org.mybatis.generator.api.MyBatisGenerator
-import org.mybatis.generator.api.ProgressCallback
 import org.mybatis.generator.config.*
+import org.mybatis.generator.config.Context
 import org.mybatis.generator.internal.DefaultShellCallback
 import javax.swing.ListSelectionModel
 
@@ -44,9 +43,8 @@ class MyBatisGeneratorAction : AnAction() {
     private fun generateTable(project: Project, selectedTables: Set<DbTable>) {
         computeModuleAndPackage(project, selectedTables)
 
-        val settings = Settings.getInstance(project)
         for (selectedTable in selectedTables) {
-            generateTable(project, settings, selectedTable)
+            generateTable(project, selectedTable)
         }
     }
 
@@ -144,7 +142,6 @@ class MyBatisGeneratorAction : AnAction() {
 
     private fun generateTable(
         project: Project,
-        settings: Settings,
         selectedTable: DbTable
     ) {
         val schema = DasUtil.getSchema(selectedTable)
@@ -157,54 +154,34 @@ class MyBatisGeneratorAction : AnAction() {
             }
         }
 
-        val context = buildContext(settings, dataSource)
+        val context = buildContext(project, dataSource)
             .apply {
                 jdbcConnectionConfiguration = buildJdbcConnectionConfiguration(dataSource)
-                javaTypeResolverConfiguration = buildJavaTypeResolverConfiguration(settings)
-                javaModelGeneratorConfiguration =
-                    buildJavaModelGeneratorConfiguration(settings, project, schema)
-                sqlMapGeneratorConfiguration =
-                    buildSqlMapGeneratorConfiguration(settings, project, schema)
-                javaClientGeneratorConfiguration =
-                    buildJavaClientGeneratorConfiguration(settings, project, schema)
-                commentGeneratorConfiguration = buildCommentGeneratorConfiguration(settings)
-                addTableConfiguration(buildTableConfiguration(settings, this, selectedTable))
-                buildPlugins().forEach { addPluginConfiguration(it) }
+                javaTypeResolverConfiguration = buildJavaTypeResolverConfiguration(project)
+                javaModelGeneratorConfiguration = buildJavaModelGeneratorConfiguration(project, schema)
+                sqlMapGeneratorConfiguration = buildSqlMapGeneratorConfiguration(project, schema)
+                javaClientGeneratorConfiguration = buildJavaClientGeneratorConfiguration(project, schema)
+                commentGeneratorConfiguration = buildCommentGeneratorConfiguration(project)
+
+                addTableConfiguration(buildTableConfiguration(project, this, selectedTable))
+                buildPlugins(project).forEach { addPluginConfiguration(it) }
             }
 
         configuration.addContext(context)
 
         val warnings = mutableListOf<String>()
         val myBatisGenerator = MyBatisGenerator(configuration, DefaultShellCallback(true), warnings)
-        myBatisGenerator.generate(object : ProgressCallback {
-            override fun introspectionStarted(totalTasks: Int) {
-            }
 
-            override fun generationStarted(totalTasks: Int) {
-            }
-
-            override fun saveStarted(totalTasks: Int) {
-            }
-
-            override fun startTask(taskName: String?) {
-            }
-
-            override fun done() {
-                VirtualFileManager.getInstance().syncRefresh()
-                Messages.showInfoMessage("Generate success!", "MyBatis Generator")
-            }
-
-            override fun checkCancel() {
-            }
-        })
+        myBatisGenerator.generate(GenerateProgressCallback())
     }
 
-    private fun buildContext(settings: Settings, dataSource: LocalDataSource): Context {
-        return Context(ModelType.getModelType(settings.defaultModelType))
+    private fun buildContext(project: Project, dataSource: LocalDataSource): Context {
+        val context = io.github.cdgeass.generator.settings.Context.getInstance(project)
+        return Context(ModelType.getModelType(context.defaultModelType))
             .apply {
                 id = dataSource.name
-                targetRuntime = settings.targetRuntime
-                settings.contextProperties.forEach { (property, value) -> addProperty(property, value) }
+                targetRuntime = context.targetRuntime
+                context.properties.forEach { (property, value) -> addProperty(property, value) }
             }
     }
 
@@ -231,10 +208,11 @@ class MyBatisGeneratorAction : AnAction() {
             }
     }
 
-    private fun buildJavaTypeResolverConfiguration(settings: Settings): JavaTypeResolverConfiguration {
+    private fun buildJavaTypeResolverConfiguration(project: Project): JavaTypeResolverConfiguration {
+        val javaTypeResolver = JavaTypeResolver.getInstance(project)
         return JavaTypeResolverConfiguration()
             .apply {
-                settings.javaTypeResolverProperties.forEach { (property, value) ->
+                javaTypeResolver.properties.forEach { (property, value) ->
                     addProperty(
                         property,
                         value
@@ -244,7 +222,6 @@ class MyBatisGeneratorAction : AnAction() {
     }
 
     private fun buildJavaModelGeneratorConfiguration(
-        settings: Settings,
         project: Project,
         schema: String
     ): JavaModelGeneratorConfiguration {
@@ -254,6 +231,8 @@ class MyBatisGeneratorAction : AnAction() {
                 MODEL_MODULE_PREFIX + schema
             )!!
         )!!
+
+        val javaModelGenerator = JavaModelGenerator.getInstance(project)
         return JavaModelGeneratorConfiguration()
             .apply {
                 targetProject = ModuleUtil.getModuleDirPath(module) + propertiesComponent.getValue(
@@ -261,7 +240,7 @@ class MyBatisGeneratorAction : AnAction() {
                     SOURCE_DIR_DEFAULT_VALUE
                 )
                 targetPackage = propertiesComponent.getValue(MODEL_PACKAGE_PREFIX + schema)!!
-                settings.javaModelGeneratorProperties.forEach { (property, value) ->
+                javaModelGenerator.properties.forEach { (property, value) ->
                     addProperty(
                         property,
                         value
@@ -270,17 +249,15 @@ class MyBatisGeneratorAction : AnAction() {
             }
     }
 
-    private fun buildSqlMapGeneratorConfiguration(
-        settings: Settings,
-        project: Project,
-        schema: String
-    ): SqlMapGeneratorConfiguration {
+    private fun buildSqlMapGeneratorConfiguration(project: Project, schema: String): SqlMapGeneratorConfiguration {
         val propertiesComponent = PropertiesComponent.getInstance(project)
         val module = ModuleManager.getInstance(project).findModuleByName(
             propertiesComponent.getValue(
                 CLIENT_MODULE_PREFIX + schema
             )!!
         )!!
+
+        val sqlMapGenerator = SqlMapGenerator.getInstance(project)
         return SqlMapGeneratorConfiguration()
             .apply {
                 targetProject = ModuleUtil.getModuleDirPath(module) + propertiesComponent.getValue(
@@ -288,7 +265,7 @@ class MyBatisGeneratorAction : AnAction() {
                     RESOURCES_DIR_DEFAULT_VALUE
                 )
                 targetPackage = propertiesComponent.getValue(CLIENT_PACKAGE_PREFIX + schema)
-                settings.sqlMapGeneratorProperties.forEach { (property, value) ->
+                sqlMapGenerator.properties.forEach { (property, value) ->
                     addProperty(
                         property,
                         value
@@ -298,7 +275,6 @@ class MyBatisGeneratorAction : AnAction() {
     }
 
     private fun buildJavaClientGeneratorConfiguration(
-        settings: Settings,
         project: Project,
         schema: String
     ): JavaClientGeneratorConfiguration {
@@ -308,6 +284,8 @@ class MyBatisGeneratorAction : AnAction() {
                 CLIENT_MODULE_PREFIX + schema
             )!!
         )!!
+
+        val javaClientGenerator = JavaClientGenerator.getInstance(project)
         return JavaClientGeneratorConfiguration()
             .apply {
                 targetProject = ModuleUtil.getModuleDirPath(module) + propertiesComponent.getValue(
@@ -315,8 +293,8 @@ class MyBatisGeneratorAction : AnAction() {
                     SOURCE_DIR_DEFAULT_VALUE
                 )
                 targetPackage = propertiesComponent.getValue(CLIENT_PACKAGE_PREFIX + schema)
-                configurationType = settings.javaClientType
-                settings.javaClientProperties.forEach { (property, value) ->
+                configurationType = javaClientGenerator.type
+                javaClientGenerator.properties.forEach { (property, value) ->
                     addProperty(
                         property,
                         value
@@ -326,34 +304,38 @@ class MyBatisGeneratorAction : AnAction() {
     }
 
     private fun buildTableConfiguration(
-        settings: Settings,
+        project: Project,
         context: Context,
         selectedTable: DbTable
     ): TableConfiguration {
+        val table = Table.getInstance(project)
         return TableConfiguration(context)
             .apply {
                 schema = DasUtil.getSchema(selectedTable)
                 tableName = selectedTable.name
                 domainObjectName = CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, selectedTable.name)
-                isInsertStatementEnabled = settings.enableInsert
-                isSelectByPrimaryKeyStatementEnabled = settings.enableSelectByPrimaryKey
-                isUpdateByPrimaryKeyStatementEnabled = settings.enableUpdateByPrimaryKey
-                isDeleteByPrimaryKeyStatementEnabled = settings.enableDeleteByPrimaryKey
-                isDeleteByExampleStatementEnabled = settings.enableDeleteByExample
-                isCountByExampleStatementEnabled = settings.enableCountByExample
-                isUpdateByExampleStatementEnabled = settings.enableUpdateByExample
-
-                isWildcardEscapingEnabled = settings.modelEscapeWildCards
-                isDelimitIdentifiers = settings.delimitIdentifiers
-                isAllColumnDelimitingEnabled = settings.delimitAllColumns
-                settings.tableProperties.forEach { (property, value) -> addProperty(property, value) }
+                // insert
+                isInsertStatementEnabled = table.enableInsert
+                // select
+                isSelectByPrimaryKeyStatementEnabled = table.enableSelectByPrimaryKey
+                isSelectByExampleStatementEnabled = table.enableSelectByExample
+                // update
+                isUpdateByPrimaryKeyStatementEnabled = table.enableUpdateByPrimaryKey
+                isUpdateByExampleStatementEnabled = table.enableUpdateByExample
+                // delete
+                isDeleteByPrimaryKeyStatementEnabled = table.enableDeleteByPrimaryKey
+                isDeleteByExampleStatementEnabled = table.enableDeleteByExample
+                // count
+                isCountByExampleStatementEnabled = table.enableCountByExample
+                table.properties.forEach { (property, value) -> addProperty(property, value) }
             }
     }
 
-    private fun buildCommentGeneratorConfiguration(settings: Settings): CommentGeneratorConfiguration {
+    private fun buildCommentGeneratorConfiguration(project: Project): CommentGeneratorConfiguration {
+        val commentGenerator = CommentGenerator.getInstance(project)
         return CommentGeneratorConfiguration()
             .apply {
-                settings.commentGeneratorProperties.forEach { (property, value) ->
+                commentGenerator.properties.forEach { (property, value) ->
                     addProperty(
                         property, value
                     )
@@ -361,14 +343,17 @@ class MyBatisGeneratorAction : AnAction() {
             }
     }
 
-    private fun buildPlugins(): List<PluginConfiguration> {
-        return listOf(
-            PluginConfiguration().apply {
-                configurationType = "io.github.cdgeass.generator.plugin.LombokDataAnnotationPlugin"
-            }
-//            PluginConfiguration().apply {
-//                configurationType = "io.github.cdgeass.generator.plugin.RootInterfaceGenericPlugin"
-//            }
-        )
+    private fun buildPlugins(project: Project): List<PluginConfiguration> {
+        val settings = Settings.getInstance(project)
+
+        val plugins = mutableListOf<PluginConfiguration>()
+        if (settings.enableLombok) {
+            plugins.add(
+                PluginConfiguration().apply {
+                    configurationType = "io.github.cdgeass.generator.plugin.LombokDataAnnotationPlugin"
+                }
+            )
+        }
+        return plugins
     }
 }

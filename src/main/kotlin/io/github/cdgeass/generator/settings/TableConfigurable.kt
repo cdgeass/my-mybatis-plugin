@@ -36,10 +36,26 @@ class TableConfigurable(project: Project) : BoundConfigurable("Table") {
     override fun createPanel(): DialogPanel {
         return panel {
             row {
-
+                checkBox("EnableInsert", table::enableInsert)
             }
             row {
-
+                checkBox("EnableSelectByPrimaryKey", table::enableSelectByPrimaryKey)
+                checkBox("EnableSelectByExample", table::enableSelectByExample)
+            }
+            row {
+                checkBox("EnableUpdateByPrimaryKey", table::enableUpdateByPrimaryKey)
+                checkBox("EnableUpdateByExample", table::enableUpdateByExample)
+            }
+            row {
+                checkBox("EnableUpdateByPrimaryKey", table::enableUpdateByPrimaryKey)
+                checkBox("EnableUpdateByExample", table::enableUpdateByExample)
+            }
+            row {
+                checkBox("EnableDeleteByPrimaryKey", table::enableDeleteByPrimaryKey)
+                checkBox("EnableDeleteByExample", table::enableDeleteByExample)
+            }
+            row {
+                checkBox("EnableCountByExample", table::enableCountByExample)
             }
             row {
                 panel(

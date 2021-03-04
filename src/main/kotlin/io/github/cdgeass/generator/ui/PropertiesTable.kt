@@ -90,9 +90,9 @@ class PropertiesTableModel(
 }
 
 class PropertyColumnInfo(
-        private val properties: LinkedHashMap<String, out Any>,
-        private val usedProperties: MutableSet<String>
-) : ColumnInfo<MutablePair<String, String>, String>("property") {
+    private val properties: LinkedHashMap<String, out Any>,
+    private val usedProperties: MutableSet<String>
+) : ColumnInfo<MutablePair<String, String>, String>("Property") {
 
     override fun valueOf(item: MutablePair<String, String>): String {
         return item.left
@@ -119,8 +119,8 @@ class PropertyColumnInfo(
 }
 
 class ValueColumnInfo(
-        private val properties: LinkedHashMap<String, out Any>
-) : ColumnInfo<MutablePair<String, String>, Any>("value") {
+    private val properties: LinkedHashMap<String, out Any>
+) : ColumnInfo<MutablePair<String, String>, Any>("Value") {
 
     override fun valueOf(item: MutablePair<String, String>): String {
         return item.right

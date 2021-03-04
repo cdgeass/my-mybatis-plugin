@@ -6,7 +6,7 @@ import com.intellij.openapi.components.BaseState
  * @author cdgeass
  * @since 2021-02-18
  */
-class JavaClientState : BaseState() {
+class JavaClientGeneratorState : BaseState() {
 
     var type by string("")
 

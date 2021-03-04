@@ -30,12 +30,12 @@
         <projectService serviceImplementation="io.github.cdgeass.generator.settings.JavaTypeResolver"/>
         <projectService serviceImplementation="io.github.cdgeass.generator.settings.JavaModelGenerator"/>
         <projectService serviceImplementation="io.github.cdgeass.generator.settings.SqlMapGenerator"/>
-        <projectService serviceImplementation="io.github.cdgeass.generator.settings.JavaClient"/>
+        <projectService serviceImplementation="io.github.cdgeass.generator.settings.JavaClientGenerator"/>
         <projectService serviceImplementation="io.github.cdgeass.generator.settings.Table"/>
         <projectService serviceImplementation="io.github.cdgeass.generator.settings.CommentGenerator"/>
         <projectConfigurable instance="io.github.cdgeass.generator.settings.SettingsConfigurable"
                              id="io.github.cdgeass.generator.settings.SettingsConfigurable"
-                             displayName="MyBatis Generator" parentId="tools" nonDefaultProject="false">
+                             displayName="MyBatis Generator" nonDefaultProject="false">
             <configurable instance="io.github.cdgeass.generator.settings.ContextConfigurable"
                           id="io.github.cdgeass.generator.settings.ContextConfigurable"
                           displayName="Context"
@@ -65,6 +65,7 @@
                           displayName="CommentGenerator"
                           nonDefaultProject="false"/>
         </projectConfigurable>
+
         <codeInsight.lineMarkerProvider language="JAVA"
                                         implementationClass="io.github.cdgeass.editor.provider.DaoLineMarkerProvider"/>
         <codeInsight.lineMarkerProvider language="XML"

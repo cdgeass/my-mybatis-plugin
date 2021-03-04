@@ -10,14 +10,14 @@ import com.intellij.openapi.project.Project
  * @author cdgeass
  * @since 2021-02-18
  */
-@State(name = "JavaClient", storages = [(Storage("io.github.cdgeass.my-mybatis.MyBatisGenerator"))])
-class JavaClient : PersistentStateComponent<JavaClientState> {
+@State(name = "JavaClientGenerator", storages = [(Storage("io.github.cdgeass.my-mybatis.MyBatisGenerator"))])
+class JavaClientGenerator : PersistentStateComponent<JavaClientGeneratorState> {
 
-    private var state = JavaClientState()
+    private var state = JavaClientGeneratorState()
 
     override fun getState() = state
 
-    override fun loadState(state: JavaClientState) {
+    override fun loadState(state: JavaClientGeneratorState) {
         this.state = state
     }
 
@@ -34,8 +34,8 @@ class JavaClient : PersistentStateComponent<JavaClientState> {
         }
 
     companion object {
-        fun getInstance(project: Project): JavaClient {
-            return ServiceManager.getService(project, JavaClient::class.java)
+        fun getInstance(project: Project): JavaClientGenerator {
+            return ServiceManager.getService(project, JavaClientGenerator::class.java)
         }
     }
 
