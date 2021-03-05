@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "io.github.cdgeass"
-version = "1.2.9"
+version = "1.3.0"
 
 repositories {
     mavenCentral()
@@ -36,13 +36,14 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach 
     }
 }
 tasks.getByName<org.jetbrains.intellij.tasks.PatchPluginXmlTask>("patchPluginXml") {
-    changeNotes("""
-    1.2.9</br>
-    <ul>
-        <li>fix issues(<a href="https://github.com/cdgeass/my-mybatis-plugin/issues/6">#6</a>)</li>
-        <li>fix item in foreach</li>
-    </ul>
-      """
+    sinceBuild(202)
+    changeNotes(
+        """
+        1.3.0</br>
+        <ul>
+            <li>add MyBatis Generator</li>
+        </ul>
+        """
     )
 }
 tasks.publishPlugin {
