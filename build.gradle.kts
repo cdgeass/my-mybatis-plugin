@@ -1,5 +1,5 @@
 plugins {
-    id("org.jetbrains.intellij") version "0.4.20"
+    id("org.jetbrains.intellij") version "0.7.2"
     java
     kotlin("jvm") version "1.4.10"
 }
@@ -13,7 +13,7 @@ repositories {
 
 dependencies {
     testImplementation("junit", "junit", "4.12")
-    implementation("com.github.jsqlparser:jsqlparser:3.1")
+    implementation("com.github.jsqlparser:jsqlparser:4.0")
     implementation("org.mybatis.generator:mybatis-generator-core:1.4.0")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
 
