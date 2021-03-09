@@ -8,7 +8,7 @@ import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.ui.EditorTextField;
 import io.github.cdgeass.constants.StringConstants;
-import io.github.cdgeass.formatter.WithParamFormatter;
+import io.github.cdgeass.formatter.SqlFormatterKt;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.Nullable;
 
@@ -39,11 +39,12 @@ public class FormatSelectionDialog extends DialogWrapper {
             return null;
         }
 
-        if (!WithParamFormatter.canFormatter(selectedText)) {
+        if (!SqlFormatterKt.canFormat(selectedText)) {
             return null;
         }
 
-        var formattedSql = WithParamFormatter.format(selectedText);
+        var formattedSqls = SqlFormatterKt.format(selectedText);
+        var formattedSql = StringUtils.joinWith(System.lineSeparator() + StringConstants.SEPARATOR_LINE + System.lineSeparator(), formattedSqls);
         var sqlEditorTextField = new EditorTextField(formattedSql);
 
         var editorColorsManager = EditorColorsManager.getInstance();

@@ -5,12 +5,10 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.EditorFontType;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
-import com.intellij.openapi.editor.markup.TextAttributes;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.EditorTextField;
-import com.intellij.ui.JBColor;
 import io.github.cdgeass.constants.StringConstants;
-import io.github.cdgeass.formatter.WithParamFormatter;
+import io.github.cdgeass.formatter.SqlFormatterKt;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.swing.*;
@@ -63,8 +61,9 @@ public class FormatToolWindow {
 
         formatButton.addActionListener(e -> {
             var text = unformattedTextField.getText();
-            if (WithParamFormatter.canFormatter(text)) {
-                var sql = WithParamFormatter.format(text);
+            if (SqlFormatterKt.canFormat(text)) {
+                var sqls = SqlFormatterKt.format(text);
+                var sql = StringUtils.joinWith(System.lineSeparator() + StringConstants.SEPARATOR_LINE + System.lineSeparator(), sqls);
                 formattedTextField.setText(sql);
                 formattedTextField.setCaretPosition(0);
                 highlightConsumer.accept(formattedTextField.getEditor());
