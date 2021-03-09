@@ -26,6 +26,7 @@ import net.sf.jsqlparser.statement.truncate.Truncate
 import net.sf.jsqlparser.statement.update.Update
 import net.sf.jsqlparser.statement.upsert.Upsert
 import net.sf.jsqlparser.statement.values.ValuesStatement
+import java.util.*
 
 /**
  * @author cdgeass
@@ -34,27 +35,22 @@ import net.sf.jsqlparser.statement.values.ValuesStatement
 class CustomStatementVisitor(level: Int) : AbstractCustomVisitor(level), StatementVisitor {
 
     override fun visit(comment: Comment?) {
-        val comment = comment ?: return
-        appendTab().append(comment.toString())
+        appendTab().append(comment?.toString() ?: "")
     }
 
     override fun visit(commit: Commit?) {
-        val commit = commit ?: return
-        appendTab().append(commit.toString())
+        appendTab().append(commit?.toString() ?: "")
     }
 
     override fun visit(delete: Delete?) {
-        val delete = delete ?: return
-
         append("DELETE ")
-
-        if (delete.tables.isNotEmpty()) {
+        if (delete?.tables?.isNotEmpty() == true) {
             append(" " + delete.tables.joinToString(", ") { it.toString() })
         }
 
-        appendTab().append("FROM ").append(delete.table.toString())
+        appendTab().append("FROM ").append(delete?.table?.toString() ?: "")
 
-        delete.joins.forEach { join ->
+        delete?.joins?.forEach { join ->
             if (join.isSimple) {
                 append(", ").append(join(join, currentLevel()))
             } else {
@@ -62,25 +58,23 @@ class CustomStatementVisitor(level: Int) : AbstractCustomVisitor(level), Stateme
             }
         }
 
-        if (delete.where != null) {
+        if (delete?.where != null) {
             appendTab().append("WHERE ").append(delete.where.toString())
         }
 
-        if (delete.orderByElements.isNotEmpty()) {
+        if (delete?.orderByElements?.isNotEmpty() == true) {
             appendTab().append(PlainSelect.orderByToString(delete.orderByElements))
         }
 
-        if (delete.limit != null) {
+        if (delete?.limit != null) {
             appendTab().append(delete.limit.toString())
         }
     }
 
     override fun visit(update: Update?) {
-        val update = update ?: return
+        appendTab().append("UPDATE ").append(update?.table?.toString() ?: "")
 
-        appendTab().append("UPDATE ").append(update.table.toString())
-
-        update.startJoins.forEach { startJoin ->
+        update?.startJoins?.forEach { startJoin ->
             if (startJoin.isSimple) {
                 append(", ").append(join(startJoin, currentLevel()))
             } else {
@@ -89,17 +83,17 @@ class CustomStatementVisitor(level: Int) : AbstractCustomVisitor(level), Stateme
         }
 
         appendTab().append("SET ")
-        if (!update.isUseSelect) {
+        if (update?.isUseSelect != true) {
             append(
-                update.columns.mapIndexed { index: Int, column: Column ->
+                update?.columns?.mapIndexed { index: Int, column: Column ->
                     column.toString() + " = " + update.expressions[index].toString()
-                }.joinToString(",")
+                }?.joinToString(",") ?: ""
             )
         } else {
             if (update.isUseColumnsBrackets) {
                 append("(")
             }
-            append(update.columns.joinToString(",") { toString() })
+            append(update.columns?.joinToString(",") { toString() } ?: "")
             if (update.isUseColumnsBrackets) {
                 append(")")
             }
@@ -107,14 +101,14 @@ class CustomStatementVisitor(level: Int) : AbstractCustomVisitor(level), Stateme
             append(" = ")
 
             append("(")
-            append(CustomStatementVisitor(nextLevel()).apply { update.select.accept(this) }.toString())
+            append(CustomStatementVisitor(nextLevel()).apply { update.select?.accept(this) }.toString())
             append(")")
         }
 
-        if (update.fromItem != null) {
+        if (update?.fromItem != null) {
             appendTab().append("FROM ")
             append(CustomFromItemVisitor(nextLevel()).apply { update.fromItem.accept(this) }.toString())
-            update.joins.forEach { join ->
+            update.joins?.forEach { join ->
                 if (join.isSimple) {
                     append(", ").append(join(join, currentLevel()))
                 } else {
@@ -125,89 +119,85 @@ class CustomStatementVisitor(level: Int) : AbstractCustomVisitor(level), Stateme
     }
 
     override fun visit(insert: Insert?) {
-        val insert = insert ?: return
-
         appendTab().append("INSERT ")
 
-        insert.modifierPriority?.apply {
+        insert?.modifierPriority?.apply {
             append(this.name).append(" ")
         }
 
-        if (insert.isModifierIgnore) {
+        if (insert?.isModifierIgnore == true) {
             append("IGNORE ")
         }
 
-        append("INTO ").append(insert.table.toString())
+        append("INTO ").append(insert?.table?.toString() ?: "")
 
-        if (insert.columns.isNotEmpty()) {
-            append(getStringList(insert.columns, true, true)).append(" ")
+        if (insert?.columns?.isNotEmpty() == true) {
+            append(getStringList(insert.columns, useComma = true, useBrackets = true)).append(" ")
         }
 
-        if (insert.isUseValues) {
+        if (insert?.isUseValues == true) {
             appendTab().append("VALUES ")
         }
 
-        if (insert.itemsList != null) {
+        if (insert?.itemsList != null) {
             append(insert.itemsList.toString())
         } else {
-            if (insert.isUseSelectBrackets) {
+            if (insert?.isUseSelectBrackets == true) {
                 append("(")
             }
 
-            append(CustomStatementVisitor(nextLevel()).apply { insert.select.accept(this) }.toString())
+            append(CustomStatementVisitor(nextLevel()).apply { insert?.select?.accept(this) }.toString())
 
-            if (insert.isUseSelectBrackets) {
+            if (insert?.isUseSelectBrackets == true) {
                 append(")")
             }
         }
 
-        if (insert.isUseSet) {
+        if (insert?.isUseSet == true) {
             appendTab().append("SET ")
             append(
-                insert.setColumns.mapIndexed { index: Int, column: Column ->
+                insert.setColumns?.mapIndexed { index: Int, column: Column ->
                     column.toString() + " = " + insert.setExpressionList[index].toString()
-                }.joinToString(",")
+                }?.joinToString(",") ?: ""
             )
         }
 
-        if (insert.isUseDuplicate) {
+        if (insert?.isUseDuplicate == true) {
             appendTab().append("ON DUPLICATE KEY UPDATE ")
             append(
-                insert.duplicateUpdateColumns.mapIndexed { index: Int, column: Column ->
+                insert.duplicateUpdateColumns?.mapIndexed { index: Int, column: Column ->
                     column.toString() + " = " + insert.duplicateUpdateExpressionList[index].toString()
-                }.joinToString(",")
+                }?.joinToString(",") ?: ""
             )
         }
 
-        if (insert.isReturningAllColumns) {
+        if (insert?.isReturningAllColumns == true) {
             appendTab().append("RETURNING *")
-        } else if (insert.returningExpressionList.isNotEmpty()) {
+        } else if (insert?.returningExpressionList?.isNotEmpty() == true) {
             appendTab().append("RETURNING ")
-                .append(getStringList(insert.returningExpressionList, true, true))
+                .append(getStringList(insert.returningExpressionList, useComma = true, useBrackets = true))
         }
     }
 
     override fun visit(replace: Replace?) {
-        val replace = replace ?: return
-
         appendTab().append("REPLACE ")
 
-        if (replace.isUseIntoTables) {
+        if (replace?.isUseIntoTables == true) {
             append("INTO ")
         }
-        append(replace.table.toString())
+        append(replace?.table?.toString() ?: "")
 
-        if (replace.expressions.isNotEmpty()) {
+        if (replace?.expressions?.isNotEmpty() == true) {
             appendTab().append("SET ").append(
-                replace.columns.mapIndexed { index: Int, column: Column ->
+                replace.columns?.mapIndexed { index: Int, column: Column ->
                     column.toString() + " = " + replace.expressions[index].toString()
-                }.joinToString(",")
+                }?.joinToString(",") ?: ""
             )
-        } else if (replace.columns.isNotEmpty()) {
-            append(getStringList(replace.columns, true, true))
+        } else if (replace?.columns?.isNotEmpty() == true) {
+            append(getStringList(replace.columns ?: Collections.emptyList(), useComma = true, useBrackets = true))
         }
 
-        if (replace.itemsList != null) {
+        if (replace?.itemsList != null) {
             if (replace.isUseValues) {
                 appendTab().append("VALUES ")
             }
@@ -216,100 +206,84 @@ class CustomStatementVisitor(level: Int) : AbstractCustomVisitor(level), Stateme
     }
 
     override fun visit(drop: Drop?) {
-        val drop = drop ?: return
-        appendTab().append(drop.toString())
+        appendTab().append(drop?.toString() ?: "")
     }
 
     override fun visit(truncate: Truncate?) {
-        val truncate = truncate ?: return
-        appendTab().append(truncate.toString())
+        appendTab().append(truncate?.toString() ?: "")
     }
 
     override fun visit(createIndex: CreateIndex?) {
-        val createIndex = createIndex ?: return
-        appendTab().append(createIndex.toString())
+        appendTab().append(createIndex?.toString() ?: "")
     }
 
     override fun visit(aThis: CreateSchema?) {
-        val aThis = aThis ?: return
-        appendTab().append(aThis.toString())
+        appendTab().append(aThis?.toString() ?: "")
     }
 
     override fun visit(createTable: CreateTable?) {
-        val createTable = createTable ?: return
-        appendTab().append(createTable.toString())
+        appendTab().append(createTable?.toString() ?: "")
     }
 
     override fun visit(createView: CreateView?) {
-        val createView = createView ?: return
-        appendTab().append(createView.toString())
+        appendTab().append(createView?.toString() ?: "")
     }
 
     override fun visit(alterView: AlterView?) {
-        val alterView = alterView ?: return
-        appendTab().append(alterView.toString())
+        appendTab().append(alterView?.toString() ?: "")
     }
 
     override fun visit(alter: Alter?) {
-        val alter = alter ?: return
-        appendTab().append(alter.toString())
+        appendTab().append(alter?.toString() ?: "")
     }
 
     override fun visit(stmts: Statements?) {
-        val stmts = stmts ?: return
-
-        stmts.statements.forEach { it.accept(this) }
+        stmts?.statements?.forEach { it.accept(this) }
     }
 
     override fun visit(execute: Execute?) {
-        val execute = execute ?: return
-        appendTab().append(execute.toString())
+        appendTab().append(execute?.toString() ?: "")
     }
 
     override fun visit(set: SetStatement?) {
-        val set = set ?: return
-        appendTab().append(set.toString())
+        appendTab().append(set?.toString() ?: "")
     }
 
     override fun visit(set: ShowColumnsStatement?) {
-        val set = set ?: return
-        appendTab().append(set.toString())
+        appendTab().append(set?.toString() ?: "")
     }
 
     override fun visit(showTables: ShowTablesStatement?) {
-        val showTables = showTables ?: return
-        appendTab().append(showTables.toString())
+        appendTab().append(showTables?.toString() ?: "")
     }
 
     override fun visit(merge: Merge?) {
-        val merge = merge ?: return
-
-        appendTab().append("MERGE INTO").append(merge.table.toString()).append(" USING ")
-        if (merge.usingTable != null) {
-            append(merge.usingTable.toString())
-        } else if (merge.usingSelect != null) {
+        appendTab().append("MERGE INTO").append(merge?.table?.toString() ?: "").append(" USING ")
+        if (merge?.usingTable != null) {
+            append(merge.usingTable?.toString() ?: "")
+        } else if (merge?.usingSelect != null) {
             append("(")
                 .append(CustomFromItemVisitor(nextLevel()).apply { merge.usingSelect.accept(this) }.toString())
                 .append(")")
         }
 
-        if (merge.usingAlias != null) {
+        if (merge?.usingAlias != null) {
             append(merge.usingAlias.toString())
         }
 
-        appendTab().append("ON (").append(merge.onCondition.toString()).append(")")
+        appendTab().append("ON (").append(merge?.onCondition?.toString() ?: "").append(")")
 
-        if (merge.isInsertFirst) {
+        if (merge?.isInsertFirst == true) {
             if (merge.mergeInsert != null) {
                 appendTab().append(merge.mergeInsert.toString())
             }
         }
 
-        if (merge.mergeUpdate != null) {
-            appendTab().append(merge.mergeUpdate.toString())
+        if (merge?.mergeUpdate != null) {
+            appendTab().append(merge.mergeUpdate?.toString() ?: "")
         }
 
-        if (merge.isInsertFirst) {
+        if (merge?.isInsertFirst == true) {
             if (merge.mergeInsert != null) {
                 appendTab().append(merge.mergeInsert.toString())
             }
@@ -317,105 +291,88 @@ class CustomStatementVisitor(level: Int) : AbstractCustomVisitor(level), Stateme
     }
 
     override fun visit(select: Select?) {
-        val select = select ?: return
-
-        if (select.withItemsList.isNotEmpty()) {
+        if (select?.withItemsList?.isNotEmpty() == true) {
             appendTab().append("WITH ").append(
                 select.withItemsList.joinToString(",") { toString() }
             )
         }
-        append(CustomSelectVisitor(currentLevel()).apply { select.selectBody.accept(this) }.toString())
+        append(CustomSelectVisitor(currentLevel()).apply { select?.selectBody?.accept(this) }.toString())
     }
 
     override fun visit(upsert: Upsert?) {
-        val upsert = upsert ?: return
+        appendTab().append("UPSERT INTO ").append(upsert?.table.toString())
 
-        appendTab().append("UPSERT INTO ").append(upsert.table.toString())
-
-        if (upsert.columns.isNotEmpty()) {
-            append(getStringList(upsert.columns, true, true)).append(" ")
+        if (upsert?.columns?.isNotEmpty() == true) {
+            append(getStringList(upsert.columns, useComma = true, useBrackets = true)).append(" ")
         }
 
-        if (upsert.isUseValues) {
+        if (upsert?.isUseValues == true) {
             appendTab().append("VALUES ")
         }
 
-        if (upsert.itemsList != null) {
+        if (upsert?.itemsList != null) {
             append(upsert.itemsList.toString())
         } else {
-            if (upsert.isUseSelectBrackets) {
+            if (upsert?.isUseSelectBrackets == true) {
                 append("(")
             }
-            if (upsert.select != null) {
+            if (upsert?.select != null) {
                 append(CustomStatementVisitor(nextLevel()).apply { upsert.select.accept(this) }.toString())
             }
 
-            if (upsert.isUseSelectBrackets) {
+            if (upsert?.isUseSelectBrackets == true) {
                 append(")")
             }
         }
 
-        if (upsert.isUseDuplicate) {
+        if (upsert?.isUseDuplicate == true) {
             appendTab().append("ON DUPLICATE KEY UPDATE")
             append(
-                upsert.duplicateUpdateColumns.mapIndexed { index: Int, column: Column ->
+                upsert.duplicateUpdateColumns?.mapIndexed { index: Int, column: Column ->
                     column.toString() + " = " + upsert.duplicateUpdateExpressionList[index].toString()
-                }.joinToString(",")
+                }?.joinToString(",") ?: ""
             )
         }
     }
 
     override fun visit(use: UseStatement?) {
-        val use = use ?: return
-
-        appendTab().append(use.toString())
+        appendTab().append(use?.toString() ?: "")
     }
 
     override fun visit(block: Block?) {
-        val block = block ?: return
-
-        appendTab().append(block.toString())
+        appendTab().append(block?.toString() ?: "")
     }
 
     override fun visit(values: ValuesStatement?) {
-        val values = values ?: return
-
-        appendTab().append(getStringList(values.expressions, true, true))
+        appendTab().append(getStringList(values?.expressions ?: emptyList(), useComma = true, useBrackets = true))
     }
 
     override fun visit(describe: DescribeStatement?) {
-        val describe = describe ?: return
-
-        appendTab().append(describe.toString())
+        appendTab().append(describe?.toString() ?: "")
     }
 
     override fun visit(aThis: ExplainStatement?) {
-        val aThis = aThis ?: return
-
         appendTab().append("EXPLAIN ")
-            .append(CustomStatementVisitor(currentLevel()).apply { aThis.accept(this) }.toString())
+            .append(CustomStatementVisitor(currentLevel()).apply { aThis?.accept(this) }.toString())
     }
 
     override fun visit(aThis: ShowStatement?) {
-        val aThis = aThis ?: return
-
         appendTab().append(aThis.toString())
     }
 
     override fun visit(aThis: DeclareStatement?) {
-        val aThis = aThis ?: return
-
         appendTab().append("DECLARE ")
-        if (aThis.declareType == DeclareType.AS) {
+        if (aThis?.declareType == DeclareType.AS) {
             append(aThis.userVariable.toString() + " AS " + aThis.typeName)
         } else {
-            if (aThis.declareType == DeclareType.TABLE) {
-                append(aThis.userVariable.toString()).append(" TABLE (")
-                    .append(aThis.columnDefinitions.joinToString(",") { toString() })
+            if (aThis?.declareType == DeclareType.TABLE) {
+                append(aThis.userVariable?.toString() ?: "")
+                    .append(" TABLE (")
+                    .append(aThis.columnDefinitions?.joinToString(",") { toString() } ?: "")
                     .append(")")
             } else {
                 append(
-                    aThis.typeDefExprList.joinToString(",") { type ->
+                    aThis?.typeDefExprList?.joinToString(",") { type ->
                         val sb = StringBuilder()
                         if (type.userVariable != null) {
                             sb.append(type.userVariable.toString()).append(" ")
@@ -425,48 +382,38 @@ class CustomStatementVisitor(level: Int) : AbstractCustomVisitor(level), Stateme
                             sb.append(" = ").append(type.defaultExpr.toString())
                         }
                         sb.toString()
-                    }
+                    } ?: ""
                 )
             }
         }
     }
 
     override fun visit(grant: Grant?) {
-        val grant = grant ?: return
-
         appendTab().append("GRANT ")
-        if (grant.role != null) {
+        if (grant?.role != null) {
             append(grant.role.toString())
         } else {
-            append(grant.privileges.joinToString(",") { toString() })
+            append(grant?.privileges?.joinToString(",") { toString() } ?: "")
                 .append(" ON ")
-                .append(grant.objectName)
+                .append(grant?.objectName ?: "")
         }
         append(" TO ")
-            .append(grant.users.joinToString(",") { toString() })
+            .append(grant?.users?.joinToString(",") { toString() } ?: "")
     }
 
     override fun visit(createSequence: CreateSequence?) {
-        val createSequence = createSequence ?: return
-
-        appendTab().append(createSequence.toString())
+        appendTab().append(createSequence?.toString() ?: "")
     }
 
     override fun visit(alterSequence: AlterSequence?) {
-        val alterSequence = alterSequence ?: return
-
-        appendTab().append(alterSequence.toString())
+        appendTab().append(alterSequence?.toString() ?: "")
     }
 
     override fun visit(createFunctionalStatement: CreateFunctionalStatement?) {
-        val createFunctionalInterface = createFunctionalStatement ?: return
-
-        appendTab().append(createFunctionalInterface.toString())
+        appendTab().append(createFunctionalStatement?.toString() ?: "")
     }
 
     override fun visit(createSynonym: CreateSynonym?) {
-        val createSynonym = createSynonym ?: return
-
-        appendTab().append(createSynonym.toString())
+        appendTab().append(createSynonym?.toString() ?: "")
     }
 }

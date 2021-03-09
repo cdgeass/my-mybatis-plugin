@@ -18,6 +18,7 @@ private var THREAD_NAME_PATTERN = Pattern.compile("\\[\\s?([a-zA-Z\\d-]+)\\s?]")
 private val PARAMETER_TYPE_PATTERN = Pattern.compile("(.*)\\((\\S+)\\)")
 
 private const val NULL = "null"
+private const val LINE_SEPARATOR = "\n"
 
 /**
  * 判断所选字符串是否是 mybatis log
@@ -30,7 +31,9 @@ fun canFormat(text: String): Boolean {
  * 将 mybatis log 格式化
  */
 fun format(text: String): List<String> {
-    val lines = text.split(System.lineSeparator())
+    if (!canFormat(text)) return emptyList()
+
+    val lines = text.split(LINE_SEPARATOR)
 
     val threadLogMap: MutableMap<String, MutablePair<String?, String?>> = mutableMapOf()
     var count = 0

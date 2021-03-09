@@ -2,6 +2,7 @@ package io.github.cdgeass.formatter.visitor
 
 import net.sf.jsqlparser.statement.select.*
 import net.sf.jsqlparser.statement.values.ValuesStatement
+import java.util.*
 
 /**
  * @author cdgeass
@@ -10,60 +11,59 @@ import net.sf.jsqlparser.statement.values.ValuesStatement
 class CustomSelectVisitor(level: Int) : AbstractCustomVisitor(level), SelectVisitor {
 
     override fun visit(plainSelect: PlainSelect?) {
-        val plainSelect = plainSelect ?: return
-
-        if (plainSelect.isUseBrackets) {
+        if (plainSelect?.isUseBrackets == true) {
             append("(")
         }
         appendTab().append("SELECT ")
 
-        if (plainSelect.oracleHint != null) {
+        if (plainSelect?.oracleHint != null) {
             append(plainSelect.oracleHint.toString()).append(" ")
         }
 
-        if (plainSelect.skip != null) {
+        if (plainSelect?.skip != null) {
             append(plainSelect.skip.toString()).append(" ")
         }
 
-        if (plainSelect.first != null) {
+        if (plainSelect?.first != null) {
             append(plainSelect.first.toString()).append(" ")
         }
 
-        if (plainSelect.distinct != null) {
+        if (plainSelect?.distinct != null) {
             append(plainSelect.distinct.toString()).append(" ")
         }
-        if (plainSelect.top != null) {
+        if (plainSelect?.top != null) {
             append(plainSelect.top.toString()).append(" ")
         }
-        if (plainSelect.mySqlSqlNoCache) {
+        if (plainSelect?.mySqlSqlNoCache == true) {
             append("SQL_NO_CACHE").append(" ")
         }
-        if (plainSelect.mySqlSqlCalcFoundRows) {
+        if (plainSelect?.mySqlSqlCalcFoundRows == true) {
             append("SQL_CALC_FOUND_ROWS").append(" ")
         }
-        append(getStringList(plainSelect.selectItems, true, false, true, nextLevel()))
+        append(
+            getStringList(
+                plainSelect?.selectItems ?: emptyList(),
+                useComma = true,
+                useBrackets = false,
+                useLineBreak = true,
+                level = nextLevel()
+            )
+        )
 
-        if (plainSelect.intoTables != null) {
+        if (plainSelect?.intoTables != null) {
             append(" INTO ").append(plainSelect.intoTables.joinToString(",") { toString() })
         }
 
-        if (plainSelect.fromItem != null) {
+        if (plainSelect?.fromItem != null) {
             appendTab().append("FROM ")
                 .append(CustomFromItemVisitor(nextLevel()).apply {
                     plainSelect.fromItem.accept(this)
                 }.toString())
-            if (plainSelect.joins != null) {
-                plainSelect.joins.forEach {
-                    if (it.isSimple) {
-                        append(
-                            ", " + join(
-                                it,
-                                currentLevel()
-                            )
-                        )
-                    } else {
-                        append(" " + join(it, currentLevel()))
-                    }
+            plainSelect.joins?.forEach {
+                if (it.isSimple) {
+                    append(", " + join(it, currentLevel()))
+                } else {
+                    append(" " + join(it, currentLevel()))
                 }
             }
 
@@ -82,7 +82,7 @@ class CustomSelectVisitor(level: Int) : AbstractCustomVisitor(level), SelectVisi
             if (plainSelect.having != null) {
                 appendTab().append("HAVING ").append(plainSelect.having.toString())
             }
-            if (plainSelect.orderByElements.isNotEmpty()) {
+            if (plainSelect.orderByElements?.isNotEmpty() == true) {
                 appendTab().append(
                     orderByToString(
                         plainSelect.isOracleSiblings,
@@ -115,22 +115,20 @@ class CustomSelectVisitor(level: Int) : AbstractCustomVisitor(level), SelectVisi
                 appendTab().append(plainSelect.optimizeFor.toString())
             }
         } else {
-            if (plainSelect.where != null) {
+            if (plainSelect?.where != null) {
                 appendTab().append("WHERE ").append(plainSelect.where.toString())
             }
         }
-        if (plainSelect.forXmlPath != null) {
+        if (plainSelect?.forXmlPath != null) {
             appendTab().append("FOR XML PATH(").append(plainSelect.forXmlPath).append(")")
         }
-        if (plainSelect.isUseBrackets) {
+        if (plainSelect?.isUseBrackets == true) {
             appendPreTab().append(")")
         }
     }
 
     override fun visit(setOpList: SetOperationList?) {
-        val setOpList = setOpList ?: return
-
-        setOpList.selects.forEachIndexed { index: Int, select: SelectBody ->
+        setOpList?.selects?.forEachIndexed { index: Int, select: SelectBody ->
             if (index != 0) {
                 appendTab().append(setOpList.operations[index - 1].toString()).append(" ")
             }
@@ -144,45 +142,47 @@ class CustomSelectVisitor(level: Int) : AbstractCustomVisitor(level), SelectVisi
             }
         }
 
-        if (setOpList.orderByElements != null) {
+        if (setOpList?.orderByElements != null) {
             appendTab().append(PlainSelect.orderByToString(setOpList.orderByElements))
         }
-        if (setOpList.limit != null) {
+        if (setOpList?.limit != null) {
             appendTab().append(setOpList.limit.toString().trim())
         }
-        if (setOpList.offset != null) {
+        if (setOpList?.offset != null) {
             if (setOpList.limit == null) {
                 appendTab()
             }
             append(setOpList.offset.toString().trim())
         }
-        if (setOpList.fetch != null) {
+        if (setOpList?.fetch != null) {
             appendTab().append(setOpList.fetch.toString())
         }
     }
 
     override fun visit(withItem: WithItem?) {
-        val withItem = withItem ?: return
-
         appendTab()
-        if (withItem.isRecursive) {
+        if (withItem?.isRecursive == true) {
             append("RECURSIVE ")
         }
 
-        append(withItem.name)
+        append(withItem?.name ?: "")
 
-        if (withItem.withItemList.isNotEmpty()) {
-            append(getStringList(withItem.withItemList, true, true))
+        if (withItem?.withItemList?.isNotEmpty() == true) {
+            append(getStringList(withItem.withItemList, useComma = true, useBrackets = true))
         }
 
         appendTab().append("AS (")
-        append(CustomSelectVisitor(nextLevel()).apply { withItem.selectBody.accept(this) }.toString())
+        append(CustomSelectVisitor(nextLevel()).apply { withItem?.selectBody?.accept(this) }.toString())
         appendTab().append(")")
     }
 
     override fun visit(aThis: ValuesStatement?) {
-        val aThis = aThis ?: return
-
-        appendTab().append("VALUES ").append(getStringList(aThis.expressions, true, true))
+        appendTab().append("VALUES ").append(
+            getStringList(
+                aThis?.expressions ?: Collections.emptyList(),
+                useComma = true,
+                useBrackets = true
+            )
+        )
     }
 }

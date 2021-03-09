@@ -3,8 +3,8 @@ package io.github.cdgeass.action;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
-import com.intellij.openapi.diagnostic.Logger;
-import io.github.cdgeass.dialog.FormatSelectionDialog;
+import io.github.cdgeass.formatter.FormatDialog;
+import io.github.cdgeass.formatter.FormatterKt;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -12,8 +12,6 @@ import org.jetbrains.annotations.NotNull;
  * @since 2020-04-15
  */
 public class FormatSelectionAction extends AnAction {
-
-    private static final Logger log = Logger.getInstance(FormatSelectionAction.class);
 
     public FormatSelectionAction() {
     }
@@ -25,7 +23,8 @@ public class FormatSelectionAction extends AnAction {
             return;
         }
 
-        new FormatSelectionDialog(editor.getSelectionModel()).show();
+        var selectionModel = editor.getSelectionModel();
+        new FormatDialog(e.getProject(), selectionModel.getSelectedText()).show();
     }
 
     @Override
@@ -36,7 +35,7 @@ public class FormatSelectionAction extends AnAction {
         }
 
         String selectedText = editor.getSelectionModel().getSelectedText();
-        if (selectedText == null || selectedText.length() == 0) {
+        if (!FormatterKt.canFormat(selectedText)) {
             e.getPresentation().setEnabledAndVisible(false);
         }
     }

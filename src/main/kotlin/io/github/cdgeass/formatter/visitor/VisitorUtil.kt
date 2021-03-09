@@ -11,6 +11,7 @@ import net.sf.jsqlparser.statement.select.PlainSelect
  * @author cdgeass
  * @since 2021-03-05
  */
+const val LINE_SEPARATOR = "\n"
 
 fun getStringList(list: List<Any>, useComma: Boolean, useBrackets: Boolean): String {
     return getStringList(list, useComma, useBrackets, false, 0)
@@ -19,7 +20,7 @@ fun getStringList(list: List<Any>, useComma: Boolean, useBrackets: Boolean): Str
 fun getStringList(list: List<Any>, useComma: Boolean, useBrackets: Boolean, useLineBreak: Boolean, level: Int): String {
     val ans = StringBuilder()
     var comma = ","
-    val lineBreak = if (useLineBreak) System.lineSeparator() else ""
+    val lineBreak = if (useLineBreak) LINE_SEPARATOR else ""
     val tabCharacter = StringConstants.TAB_CHARACTER.repeat(level.coerceAtLeast(0))
     if (!useComma) {
         comma = ""
@@ -49,7 +50,7 @@ fun orderByToString(oracleSiblings: Boolean, orderByElements: List<OrderByElemen
 }
 
 fun join(join: Join, level: Int): String {
-    val tabCharacter = StringConstants.TAB_CHARACTER.repeat(Math.max(0, level))
+    val tabCharacter = StringConstants.TAB_CHARACTER.repeat(level.coerceAtLeast(0))
     val customFromItemSelectVisitor = CustomFromItemVisitor(level + 1)
     return if (join.isSimple && join.isOuter) {
         join.rightItem.accept(customFromItemSelectVisitor)
@@ -58,7 +59,7 @@ fun join(join: Join, level: Int): String {
         join.rightItem.accept(customFromItemSelectVisitor)
         "" + customFromItemSelectVisitor
     } else {
-        var type: String = System.lineSeparator() + tabCharacter
+        var type: String = LINE_SEPARATOR + tabCharacter
         when {
             join.isRight -> {
                 type += "RIGHT "
@@ -118,9 +119,12 @@ fun expression(expression: Expression, level: Int): String {
         val rightExpression = expression.rightExpression
         var stringExpression = expression.stringExpression
         if (StringConstants.AND == stringExpression) {
-            stringExpression = System.lineSeparator() + tabCharacter + stringExpression + " "
+            stringExpression = "$LINE_SEPARATOR$tabCharacter$stringExpression "
         }
-        return expression((leftExpression as BinaryExpression), level) + stringExpression + rightExpression
+        return (if (leftExpression is BinaryExpression) expression(
+            leftExpression,
+            level
+        ) else leftExpression.toString()) + stringExpression + rightExpression
     }
     return expression.toString()
 }

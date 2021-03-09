@@ -23,7 +23,7 @@ abstract class AbstractCustomVisitor(
 
     fun appendTab(): AbstractCustomVisitor {
         if (level != 0) {
-            stringBuilder.append(tab)
+            stringBuilder.append(LINE_SEPARATOR).append(tab)
         }
         return this
     }
