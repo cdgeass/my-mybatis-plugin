@@ -20,6 +20,7 @@ import com.intellij.openapi.module.ModuleUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.ui.SelectFromListDialog
+import io.github.cdgeass.PluginBundle
 import io.github.cdgeass.generator.settings.*
 import org.apache.commons.lang3.tuple.MutablePair
 import org.codehaus.plexus.util.StringUtils
@@ -72,7 +73,7 @@ class MyBatisGeneratorAction : AnAction() {
         val modules = moduleManager.modules
 
         val computeModule = { modulePair: MutablePair<String?, Module?>,
-                              target: String ->
+                              title: String ->
             if (modulePair.left == null) {
                 if (modules.size == 1) {
                     modulePair.right = modules[0]
@@ -81,14 +82,17 @@ class MyBatisGeneratorAction : AnAction() {
                         project,
                         modules,
                         { (it as Module).name },
-                        "Select Module To Generate $target",
+                        title,
                         ListSelectionModel.SINGLE_SELECTION
                     )
                     selectFromListDialog.show()
                     val selectedModules = selectFromListDialog.selection
                     if (selectedModules.isEmpty()) {
-                        Messages.showErrorDialog("Please select a module to generate", "MyBatis Generator")
-                        throw RuntimeException("Please Select A Module To Generate $target")
+                        Messages.showErrorDialog(
+                            PluginBundle.message("generator.module.selector.noModule"),
+                            PluginBundle.message("generator.title")
+                        )
+                        throw RuntimeException()
                     }
                     modulePair.right = (selectedModules[0] as Module)
                 }
@@ -103,36 +107,54 @@ class MyBatisGeneratorAction : AnAction() {
             val schema = DasUtil.getSchema(selectedTable)
 
             // 选择client的生成路径
-            val clientModulePair: MutablePair<String?, Module?> =
-                MutablePair(propertiesComponent.getValue(CLIENT_MODULE_PREFIX + schema), null)
-            computeModule(clientModulePair, "Client")
+            val clientModulePair: MutablePair<String?, Module?> = MutablePair(
+                propertiesComponent.getValue(CLIENT_MODULE_PREFIX + schema),
+                null
+            )
+            computeModule(clientModulePair, PluginBundle.message("generator.module.selector.client.title"))
+
             if (propertiesComponent.getValue(CLIENT_PACKAGE_PREFIX + schema)?.isNotBlank() != true) {
-                val selectedPackage =
-                    PackageChooserDialog("Select A Package To Generate Client", clientModulePair.right!!)
-                        .apply { show() }
-                        .selectedPackage
-                        .qualifiedName
+                val selectedPackage = PackageChooserDialog(
+                    PluginBundle.message("generator.package.selector.client.title"),
+                    clientModulePair.right!!
+                )
+                    .apply { show() }
+                    .selectedPackage
+                    .qualifiedName
+
                 if (selectedPackage.isBlank()) {
-                    Messages.showErrorDialog("Please select a package to generate client", "MyBatis Generator")
-                    throw RuntimeException("Please Select A Module To Generate Client")
+                    Messages.showErrorDialog(
+                        PluginBundle.message("generator.package.selector.client.noPackage"),
+                        PluginBundle.message("generator.title")
+                    )
+                    throw RuntimeException()
                 }
                 propertiesComponent.setValue(CLIENT_PACKAGE_PREFIX + schema, selectedPackage)
             }
             propertiesComponent.setValue(CLIENT_MODULE_PREFIX + schema, clientModulePair.left!!)
 
             // 选择model的生成路径
-            val modelModulePair: MutablePair<String?, Module?> =
-                MutablePair(propertiesComponent.getValue(MODEL_MODULE_PREFIX + schema), null)
-            computeModule(modelModulePair, "Model")
+            val modelModulePair: MutablePair<String?, Module?> = MutablePair(
+                propertiesComponent.getValue(MODEL_MODULE_PREFIX + schema),
+                null
+            )
+            computeModule(modelModulePair, PluginBundle.message("generator.module.selector.model.title"))
+
             if (propertiesComponent.getValue(MODEL_PACKAGE_PREFIX + schema)?.isNotBlank() != true) {
-                val selectedPackage =
-                    PackageChooserDialog("Select A Package To Generate Model", modelModulePair.right!!)
-                        .apply { show() }
-                        .selectedPackage
-                        .qualifiedName
+                val selectedPackage = PackageChooserDialog(
+                    PluginBundle.message("generator.package.selector.model.title"),
+                    modelModulePair.right!!
+                )
+                    .apply { show() }
+                    .selectedPackage
+                    .qualifiedName
+
                 if (selectedPackage.isBlank()) {
-                    Messages.showErrorDialog("Please select a package to generate", "MyBatis Generator")
-                    throw RuntimeException("Please Select A Module To Generate Model")
+                    Messages.showErrorDialog(
+                        PluginBundle.message("generator.package.selector.model.noPackage"),
+                        PluginBundle.message("generator.title")
+                    )
+                    throw RuntimeException()
                 }
                 propertiesComponent.setValue(MODEL_PACKAGE_PREFIX + schema, selectedPackage)
             }
@@ -193,8 +215,8 @@ class MyBatisGeneratorAction : AnAction() {
             password = credentials.getPasswordAsString()!!
         } else {
             password = Messages.showInputDialog(
-                "Input the password of %s".format(dataSource.name),
-                "MyBatis Generator", AllIcons.Actions.Commit
+                PluginBundle.message("generator.datasource.password.input.title", dataSource.name),
+                PluginBundle.message("generator.title"), AllIcons.Actions.Commit
             )!!
             PasswordSafe.instance.setPassword(credentialAttributes, password)
         }
