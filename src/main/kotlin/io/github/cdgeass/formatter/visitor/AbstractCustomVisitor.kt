@@ -21,9 +21,12 @@ abstract class AbstractCustomVisitor(
         return this
     }
 
-    fun appendTab(): AbstractCustomVisitor {
+    fun appendTab(linefeed: Boolean = true): AbstractCustomVisitor {
+        if (linefeed && stringBuilder.isNotBlank()) {
+            stringBuilder.append(LINE_SEPARATOR)
+        }
         if (level != 0) {
-            stringBuilder.append(LINE_SEPARATOR).append(tab)
+            stringBuilder.append(tab)
         }
         return this
     }

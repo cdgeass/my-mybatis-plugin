@@ -43,29 +43,30 @@ fun editorTextField(project: Project, selectedText: String): EditorTextField {
     editorTextField.font = font
 
     // 文本高亮
-    val highlightManager = HighlightManager.getInstance(project)
     editorTextField.addSettingsProvider { editor ->
+        val highlightManager = HighlightManager.getInstance(project)
+
         val text = editor.document.text
         val length = text.length
         var offset = 0
         var i = 1
-        val lineCount = StringUtils.countMatches(text, SEPARATOR_LINE)
+        val lineCount = StringUtils.countMatches(text, SEPARATOR_LINE) + 1
         while (i <= lineCount) {
             val index: Int = if (i != lineCount) {
                 StringUtils.ordinalIndexOf(text, SEPARATOR_LINE, i)
             } else {
-                length - 1
+                length
             }
 
-            // sql
+            // sql 高亮 颜色切换
             highlightManager.addRangeHighlight(
                 editor, offset, index,
-                if (i % 2 == 0) TEXT_ATTRIBUTES_KEY_1 else TEXT_ATTRIBUTES_KEY_2, false, null
+                if ((i) % 2 == 0) TEXT_ATTRIBUTES_KEY_1 else TEXT_ATTRIBUTES_KEY_2, false, null
             )
 
             // 分割线 最后一条 sql 后无分割线
             highlightManager.addRangeHighlight(
-                editor, index, (index + SEPARATOR_LINE.length + 1).coerceAtMost(length - 1),
+                editor, index, (index + SEPARATOR_LINE.length + 1).coerceAtMost(length),
                 SEPARATOR_TEXT_ATTRIBUTES_KEY, false, null
             )
 

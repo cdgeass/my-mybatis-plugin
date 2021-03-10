@@ -10,7 +10,7 @@ import net.sf.jsqlparser.statement.select.*
 class CustomFromItemVisitor(level: Int) : AbstractCustomVisitor(level), FromItemVisitor {
 
     override fun visit(tableName: Table?) {
-        appendTab().append(tableName?.toString() ?: "")
+        appendTab(false).append(tableName?.toString() ?: "")
     }
 
     override fun visit(subSelect: SubSelect?) {

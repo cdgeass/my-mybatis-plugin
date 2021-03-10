@@ -87,6 +87,7 @@
         <toolWindow id="My Mybatis" anchor="right" factoryClass="io.github.cdgeass.dialog.FormatToolWindowFactory"
                     icon="/icons/toolWindow.png"/>
         <additionalTextAttributes scheme="Default" file="colorScheme/FormatDefault.xml"/>
+        <additionalTextAttributes scheme="Darcula" file="colorScheme/FormatDefault.xml"/>
     </extensions>
 
     <actions>
