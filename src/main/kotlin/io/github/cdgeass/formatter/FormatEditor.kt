@@ -21,10 +21,10 @@ private const val SEPARATOR_LINE = "-- -----------------------------------"
 private const val LINE_SEPARATOR = "\n"
 
 fun editorTextField(project: Project, selectedText: String): EditorTextField {
-    val sqls = format(selectedText)
+    val sqlList = format(selectedText)
 
     val editorTextField = EditorTextField(
-        sqls.joinToString(LINE_SEPARATOR + SEPARATOR_LINE + LINE_SEPARATOR)
+        sqlList.joinToString(LINE_SEPARATOR + SEPARATOR_LINE + LINE_SEPARATOR)
     ).apply {
         this.preferredSize = Dimension(500, 450)
         this.setCaretPosition(0)

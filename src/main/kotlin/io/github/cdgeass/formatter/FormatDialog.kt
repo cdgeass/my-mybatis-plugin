@@ -3,6 +3,7 @@ package io.github.cdgeass.formatter
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.ui.layout.panel
+import io.github.cdgeass.PluginBundle
 import javax.swing.JComponent
 
 /**
@@ -16,7 +17,7 @@ class FormatDialog(
 
     init {
         init()
-        title = "Format Sql"
+        title = PluginBundle.message("formatter.dialog.title")
     }
 
     override fun createCenterPanel(): JComponent {
