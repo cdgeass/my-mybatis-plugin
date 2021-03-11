@@ -1,6 +1,7 @@
 package io.github.cdgeass.formatter
 
 import com.intellij.codeInsight.highlighting.HighlightManager
+import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.colors.EditorColorsManager
 import com.intellij.openapi.editor.colors.EditorFontType
 import com.intellij.openapi.editor.colors.TextAttributesKey
@@ -17,63 +18,104 @@ val SEPARATOR_TEXT_ATTRIBUTES_KEY = TextAttributesKey.createTextAttributesKey("M
 val TEXT_ATTRIBUTES_KEY_1 = TextAttributesKey.createTextAttributesKey("MY_MYBATIS::MYBATIS_LOG_TEXT_1")
 val TEXT_ATTRIBUTES_KEY_2 = TextAttributesKey.createTextAttributesKey("MY_MYBATIS::MYBATIS_LOG_TEXT_2")
 
-private const val SEPARATOR_LINE = "-- -----------------------------------"
-private const val LINE_SEPARATOR = "\n"
+const val SEPARATOR_LINE = "-- -----------------------------------"
+const val LINE_SEPARATOR = "\n"
 
-fun editorTextField(project: Project, selectedText: String): EditorTextField {
-    val sqlList = format(selectedText)
+/**
+ * 空编辑框
+ */
+fun editorTextField(
+    text: String = "",
+    dimension: Dimension = Dimension(500, 300),
+    editable: Boolean = false
+): EditorTextField {
+    // 根据当前主题设置编辑框字体
+    val editorColorsManager = EditorColorsManager.getInstance()
+    val font = editorColorsManager.schemeForCurrentUITheme.getFont(EditorFontType.PLAIN)
 
-    val editorTextField = EditorTextField(
-        sqlList.joinToString(LINE_SEPARATOR + SEPARATOR_LINE + LINE_SEPARATOR)
-    ).apply {
-        this.preferredSize = Dimension(500, 450)
-        this.setCaretPosition(0)
-        this.addSettingsProvider { editor ->
-            editor.setHorizontalScrollbarVisible(true)
-            editor.setVerticalScrollbarVisible(true)
-            editor.isOneLineMode = false
+    val editorTextField = EditorTextField(text)
+    editorTextField.preferredSize = dimension
+    editorTextField.font = font
+    editorTextField.setOneLineMode(false)
+    editorTextField.setCaretPosition(0)
+
+    editorTextField.addSettingsProvider { editor ->
+        editor.setHorizontalScrollbarVisible(true)
+        editor.setVerticalScrollbarVisible(true)
+
+        if (!editable) {
             editor.isRendererMode = true
             editor.setCaretEnabled(false)
         }
     }
 
-    // 根据当前主题设置编辑框字体
-    val editorColorsManager = EditorColorsManager.getInstance()
-    val font = editorColorsManager.schemeForCurrentUITheme.getFont(EditorFontType.PLAIN)
-    editorTextField.font = font
-
-    // 文本高亮
-    editorTextField.addSettingsProvider { editor ->
-        val highlightManager = HighlightManager.getInstance(project)
-
-        val text = editor.document.text
-        val length = text.length
-        var offset = 0
-        var i = 1
-        val lineCount = StringUtils.countMatches(text, SEPARATOR_LINE) + 1
-        while (i <= lineCount) {
-            val index: Int = if (i != lineCount) {
-                StringUtils.ordinalIndexOf(text, SEPARATOR_LINE, i)
-            } else {
-                length
-            }
-
-            // sql 高亮 颜色切换
-            highlightManager.addRangeHighlight(
-                editor, offset, index,
-                if ((i) % 2 == 0) TEXT_ATTRIBUTES_KEY_1 else TEXT_ATTRIBUTES_KEY_2, false, null
-            )
-
-            // 分割线 最后一条 sql 后无分割线
-            highlightManager.addRangeHighlight(
-                editor, index, (index + SEPARATOR_LINE.length + 1).coerceAtMost(length),
-                SEPARATOR_TEXT_ATTRIBUTES_KEY, false, null
-            )
-
-            offset = index + SEPARATOR_LINE.length + 1
-            i++
-        }
-    }
-
     return editorTextField
+}
+
+/**
+ * 清除编辑框内容
+ */
+fun EditorTextField.clean(): EditorTextField {
+    this.text = ""
+    return this
+}
+
+/**
+ * 含格式化 SQL 并高亮
+ */
+fun EditorTextField.format(project: Project, text: String? = null): EditorTextField {
+    val text = text ?: this.text
+    if (canFormat(text)) {
+        this.text = format(text).joinToString(LINE_SEPARATOR + SEPARATOR_LINE + LINE_SEPARATOR)
+        this.highlight(project)
+    }
+    return this
+}
+
+/**
+ * 文本框初未始化完成时没有持有 editor 需要提供 SettingsProvider 在初始化中进行高亮
+ * 初始化完成后可直接操作 editor 进行高亮
+ */
+fun EditorTextField.highlight(project: Project): EditorTextField {
+    if (this.editor != null) {
+        highlight(this.editor!!, project)
+    } else {
+        this.addSettingsProvider { editor -> highlight(editor, project) }
+    }
+    return this
+}
+
+/**
+ * SQL 高亮
+ */
+fun highlight(editor: Editor, project: Project) {
+    val highlightManager = HighlightManager.getInstance(project)
+
+    val text = editor.document.text
+    val length = text.length
+    var offset = 0
+    var i = 1
+    val lineCount = StringUtils.countMatches(text, SEPARATOR_LINE) + 1
+    while (i <= lineCount) {
+        val index: Int = if (i != lineCount) {
+            StringUtils.ordinalIndexOf(text, SEPARATOR_LINE, i)
+        } else {
+            length
+        }
+
+        // sql 高亮 颜色切换
+        highlightManager.addRangeHighlight(
+            editor, offset, index,
+            if ((i) % 2 == 0) TEXT_ATTRIBUTES_KEY_1 else TEXT_ATTRIBUTES_KEY_2, false, null
+        )
+
+        // 分割线 最后一条 sql 后无分割线
+        highlightManager.addRangeHighlight(
+            editor, index, (index + SEPARATOR_LINE.length + 1).coerceAtMost(length),
+            SEPARATOR_TEXT_ATTRIBUTES_KEY, false, null
+        )
+
+        offset = index + SEPARATOR_LINE.length + 1
+        i++
+    }
 }

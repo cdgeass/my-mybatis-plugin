@@ -4,6 +4,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.ui.layout.panel
 import io.github.cdgeass.PluginBundle
+import java.awt.Dimension
 import javax.swing.JComponent
 
 /**
@@ -23,7 +24,10 @@ class FormatDialog(
     override fun createCenterPanel(): JComponent {
         return panel {
             row {
-                component(editorTextField(project, selectedText))
+                component(
+                    editorTextField(selectedText, Dimension(500, 400))
+                        .format(project, selectedText)
+                )
             }
         }
     }

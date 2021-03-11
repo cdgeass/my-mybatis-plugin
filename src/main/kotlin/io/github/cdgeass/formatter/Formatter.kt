@@ -18,7 +18,6 @@ private var THREAD_NAME_PATTERN = Pattern.compile("\\[\\s?([a-zA-Z\\d-]+)\\s?]")
 private val PARAMETER_TYPE_PATTERN = Pattern.compile("(.*)\\((\\S+)\\)")
 
 private const val NULL = "null"
-private const val LINE_SEPARATOR = "\n"
 
 /**
  * 判断所选字符串是否是 mybatis log
