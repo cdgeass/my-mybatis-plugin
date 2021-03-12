@@ -4,6 +4,7 @@ import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.ToolWindow
 import com.intellij.openapi.wm.ToolWindowFactory
+import com.intellij.sql.psi.SqlLanguage
 import com.intellij.ui.content.Content
 import com.intellij.ui.content.ContentFactory
 import com.intellij.ui.layout.panel
@@ -29,7 +30,7 @@ class FormatToolWindowFactory : ToolWindowFactory, DumbAware {
 
     private fun createFormatContent(project: Project, factory: ContentFactory): Content {
         val unformattedEditorTextField = editorTextField(editable = true)
-        val formattedEditorTextField = editorTextField()
+        val formattedEditorTextField = editorTextField(SqlLanguage.INSTANCE, project)
 
         return factory.createContent(
             panel {

@@ -1,8 +1,5 @@
 package io.github.cdgeass.formatter
 
-import io.github.cdgeass.formatter.visitor.CustomStatementVisitor
-import net.sf.jsqlparser.JSQLParserException
-import net.sf.jsqlparser.parser.CCJSqlParserUtil
 import org.apache.commons.lang3.RegExUtils
 import org.apache.commons.lang3.tuple.MutablePair
 import java.util.regex.Pattern
@@ -115,14 +112,7 @@ private fun format(preparing: String, parametersWithType: List<String>): String 
         preparing = RegExUtils.replaceFirst(preparing, "\\?", parameterString)
     }
 
-    val statementVisitor = CustomStatementVisitor(0)
-    return try {
-        val statement = CCJSqlParserUtil.parse(preparing)
-        statement.accept(statementVisitor)
-        statementVisitor.toString()
-    } catch (e: JSQLParserException) {
-        preparing
-    }
+    return "$preparing;"
 }
 
 /**

@@ -13,7 +13,6 @@ repositories {
 
 dependencies {
     testImplementation("junit", "junit", "4.12")
-    implementation("com.github.jsqlparser:jsqlparser:4.0")
     implementation("org.mybatis.generator:mybatis-generator-core:1.4.0")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
 

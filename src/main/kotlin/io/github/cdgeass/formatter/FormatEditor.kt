@@ -1,14 +1,21 @@
 package io.github.cdgeass.formatter
 
 import com.intellij.codeInsight.highlighting.HighlightManager
+import com.intellij.lang.Language
+import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.colors.EditorColorsManager
 import com.intellij.openapi.editor.colors.EditorFontType
 import com.intellij.openapi.editor.colors.TextAttributesKey
 import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiFileFactory
+import com.intellij.psi.codeStyle.CodeStyleManager
+import com.intellij.sql.psi.SqlLanguage
 import com.intellij.ui.EditorTextField
+import com.intellij.ui.LanguageTextField
 import org.apache.commons.lang.StringUtils
 import java.awt.Dimension
+
 
 /**
  * @author cdgeass
@@ -25,6 +32,8 @@ const val LINE_SEPARATOR = "\n"
  * 空编辑框
  */
 fun editorTextField(
+    language: Language? = null,
+    project: Project? = null,
     text: String = "",
     dimension: Dimension = Dimension(500, 300),
     editable: Boolean = false
@@ -33,10 +42,13 @@ fun editorTextField(
     val editorColorsManager = EditorColorsManager.getInstance()
     val font = editorColorsManager.schemeForCurrentUITheme.getFont(EditorFontType.PLAIN)
 
-    val editorTextField = EditorTextField(text)
+    val editorTextField: EditorTextField = if (language != null && project != null) {
+        LanguageTextField(language, project, text, false)
+    } else {
+        EditorTextField(text).apply { this.setOneLineMode(false) }
+    }
     editorTextField.preferredSize = dimension
     editorTextField.font = font
-    editorTextField.setOneLineMode(false)
     editorTextField.setCaretPosition(0)
 
     editorTextField.addSettingsProvider { editor ->
@@ -61,12 +73,20 @@ fun EditorTextField.clean(): EditorTextField {
 }
 
 /**
- * 含格式化 SQL 并高亮
+ * 格式化 SQL 并高亮
  */
 fun EditorTextField.format(project: Project, text: String? = null): EditorTextField {
-    val text = text ?: this.text
+    var text = text ?: this.text
     if (canFormat(text)) {
-        this.text = format(text).joinToString(LINE_SEPARATOR + SEPARATOR_LINE + LINE_SEPARATOR)
+        text = format(text).joinToString("$LINE_SEPARATOR$SEPARATOR_LINE$LINE_SEPARATOR")
+
+        // 使用 codeStyle 进行 Reformat
+        val psiFileFromText = PsiFileFactory.getInstance(project).createFileFromText(SqlLanguage.INSTANCE, text)
+        WriteCommandAction.runWriteCommandAction(project) {
+            CodeStyleManager.getInstance(project).reformat(psiFileFromText)
+        }
+        this.text = psiFileFromText.text
+
         this.highlight(project)
     }
     return this
