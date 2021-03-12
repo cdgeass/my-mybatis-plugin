@@ -23,13 +23,13 @@ class FormatAction : AnAction() {
         e.presentation.description = PluginBundle.message("formatter.action.description")
 
         val editor = e.getData(PlatformDataKeys.EDITOR) ?: let {
-            e.presentation.isVisible = false
+//            e.presentation.isVisible = false
             e.presentation.isEnabled = false
             return
         }
         if (editor.editorKind != EditorKind.CONSOLE) {
-            e.presentation.isVisible = false
-            e.presentation.isEnabled = false
+//            e.presentation.isVisible = false
+//            e.presentation.isEnabled = false
             return
         }
 

@@ -5,7 +5,6 @@ import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.sql.psi.SqlLanguage
 import com.intellij.ui.layout.panel
 import io.github.cdgeass.PluginBundle
-import java.awt.Dimension
 import javax.swing.JComponent
 
 /**
@@ -26,9 +25,9 @@ class FormatDialog(
         return panel {
             row {
                 component(
-                    editorTextField(SqlLanguage.INSTANCE, project, selectedText, Dimension(500, 400))
+                    editorTextField(SqlLanguage.INSTANCE, project, selectedText)
                         .format(project, selectedText)
-                )
+                ).constraints(grow)
             }
         }
     }

@@ -35,7 +35,7 @@ fun editorTextField(
     language: Language? = null,
     project: Project? = null,
     text: String = "",
-    dimension: Dimension = Dimension(500, 300),
+    dimension: Dimension? = null,
     editable: Boolean = false
 ): EditorTextField {
     // 根据当前主题设置编辑框字体
@@ -47,7 +47,9 @@ fun editorTextField(
     } else {
         EditorTextField(text).apply { this.setOneLineMode(false) }
     }
-    editorTextField.preferredSize = dimension
+    if (dimension != null) {
+        editorTextField.preferredSize = dimension
+    }
     editorTextField.font = font
     editorTextField.setCaretPosition(0)
 
