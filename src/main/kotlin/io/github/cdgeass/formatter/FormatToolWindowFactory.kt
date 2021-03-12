@@ -2,6 +2,7 @@ package io.github.cdgeass.formatter
 
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.wm.ToolWindow
 import com.intellij.openapi.wm.ToolWindowFactory
 import com.intellij.sql.psi.SqlLanguage
@@ -36,6 +37,9 @@ class FormatToolWindowFactory : ToolWindowFactory, DumbAware {
         return factory.createContent(
             panel {
                 row {
+                    label(PluginBundle.message("formatter.toolwindow.unformatted"))
+                }
+                row {
                     component(unformattedEditorTextField).constraints(growX)
                 }
                 row {
@@ -48,10 +52,17 @@ class FormatToolWindowFactory : ToolWindowFactory, DumbAware {
                             StringSelection(formattedEditorTextField.text),
                             null
                         )
+                        Messages.showInfoMessage(
+                            PluginBundle.message("formatter.toolwindow.copy.success"),
+                            PluginBundle.message("title"),
+                        )
                     }.constraints(growX)
                     button(PluginBundle.message("formatter.toolwindow.format")) {
                         formattedEditorTextField.format(project, unformattedEditorTextField.text)
                     }.constraints(pushX)
+                }
+                row {
+                    label(PluginBundle.message("formatter.toolwindow.formatted"))
                 }
                 row {
                     component(formattedEditorTextField).constraints(growX)
