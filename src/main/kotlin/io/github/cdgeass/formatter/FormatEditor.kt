@@ -57,10 +57,11 @@ fun editorTextField(
         editor.setHorizontalScrollbarVisible(true)
         editor.setVerticalScrollbarVisible(true)
 
-        if (!editable) {
-            editor.isRendererMode = true
-            editor.setCaretEnabled(false)
-        }
+        // 设置成 RendererMode 时, vim 插件会在右上角出现 ReloadVimRc 的浮动按钮
+//        if (!editable) {
+//            editor.isRendererMode = true
+//            editor.setCaretEnabled(false)
+//        }
     }
 
     return editorTextField
