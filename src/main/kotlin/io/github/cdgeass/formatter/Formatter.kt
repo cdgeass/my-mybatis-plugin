@@ -65,20 +65,26 @@ fun format(text: String): List<String> {
             val preparingStr = line.substringAfter(PREPARING).trim()
             threadLogMap.compute(threadName) { _, logPair: MutablePair<String?, String?>? ->
                 if (logPair == null) {
-                    return@compute MutablePair(preparingStr, null)
+                    MutablePair(preparingStr, null)
                 } else {
                     logPair.left = preparingStr
-                    return@compute logPair
+                    logPair
                 }
             }
         } else if (line.contains(PARAMETERS)) {
             val parametersStr = line.substringAfter(PARAMETERS).trim()
-            threadLogMap.compute(threadName) { _, logPair: MutablePair<String?, String?>? ->
-                if (logPair == null) {
-                    MutablePair(null, parametersStr)
-                } else {
-                    logPair.right = parametersStr
-                    logPair
+            if (threadLogMap[threadName] == null && threadLogMap["1"] != null && threadLogMap["1"]!!.right == null) {
+                // 第一条 SQL 不包含线程名
+                threadLogMap["1"] = threadLogMap["1"]!!.apply { right = parametersStr }
+                count++
+            } else {
+                threadLogMap.compute(threadName) { _, logPair: MutablePair<String?, String?>? ->
+                    if (logPair == null) {
+                        MutablePair(null, parametersStr)
+                    } else {
+                        logPair.right = parametersStr
+                        logPair
+                    }
                 }
             }
         }
