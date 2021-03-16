@@ -11,10 +11,14 @@ import java.util.regex.Pattern
 private const val PREPARING = "Preparing:"
 private const val PARAMETERS = "Parameters:"
 
-private var THREAD_NAME_PATTERN = Pattern.compile("\\[\\s?([a-zA-Z\\d-]+)\\s?]")
 private val PARAMETER_TYPE_PATTERN = Pattern.compile("(.*)\\((\\S+)\\)")
 
 private const val NULL = "null"
+
+data class LinkedNode(
+    val value: MutablePair<String, String>,
+    var next: LinkedNode?
+)
 
 /**
  * 判断所选字符串是否是 mybatis log
@@ -29,78 +33,52 @@ fun canFormat(text: String): Boolean {
 fun format(text: String): List<String> {
     if (!canFormat(text)) return emptyList()
 
-    val lines = text.split(LINE_SEPARATOR)
+    val sqlList = mutableListOf<String>()
 
-    val threadLogMap: MutableMap<String, MutablePair<String?, String?>> = mutableMapOf()
-    var count = 0
-    var suffix = 0
-    lines.forEach { line ->
-        var threadName = ""
-
-        // 获取线程名, 用以多线程 sql 和参数匹配 无法获取线程名则计数进行匹配
-        val matcher = THREAD_NAME_PATTERN.matcher(line)
-        if (matcher.find()) {
-            threadName = matcher.group(1)
-            // 判断线程名是否重复, 如果重复则 suffix++
-            if (threadLogMap.containsKey(threadName)) {
-                suffix++
-                val logPair = threadLogMap[threadName]!!
-                if (line.contains(PREPARING) && logPair.left != null) {
-                    threadName = "$threadName-$suffix"
-                } else if (line.contains(PARAMETERS) && logPair.right != null) {
-                    threadName = "$threadName-$suffix"
-                }
-            }
-        } else {
-            // 如果是 Preparing 则计数 +1, 如果是 Parameters 则不加 以匹配上一条 Preparing
+    var curr: LinkedNode? = null
+    var last: LinkedNode? = null
+    text.split(LINE_SEPARATOR)
+        .filter { line -> line.contains(PREPARING) || line.contains(PARAMETERS) }
+        .forEach { line ->
             if (line.contains(PREPARING)) {
-                count++
-                threadName = "$count"
-            } else if (line.contains(PARAMETERS)) {
-                threadName = "$count"
-            }
-        }
-
-        if (line.contains(PREPARING)) {
-            val preparingStr = line.substringAfter(PREPARING).trim()
-            threadLogMap.compute(threadName) { _, logPair: MutablePair<String?, String?>? ->
-                if (logPair == null) {
-                    MutablePair(preparingStr, null)
+                val preparingStr = line.substringAfter(PREPARING).trim()
+                if (curr == null) {
+                    curr = LinkedNode(MutablePair(preparingStr, null), null)
+                    last = curr
                 } else {
-                    logPair.left = preparingStr
-                    logPair
-                }
-            }
-        } else if (line.contains(PARAMETERS)) {
-            val parametersStr = line.substringAfter(PARAMETERS).trim()
-            if (threadLogMap[threadName] == null && threadLogMap["1"] != null && threadLogMap["1"]!!.right == null) {
-                // 第一条 SQL 不包含线程名
-                threadLogMap["1"] = threadLogMap["1"]!!.apply { right = parametersStr }
-                count++
-            } else {
-                threadLogMap.compute(threadName) { _, logPair: MutablePair<String?, String?>? ->
-                    if (logPair == null) {
-                        MutablePair(null, parametersStr)
-                    } else {
-                        logPair.right = parametersStr
-                        logPair
+                    curr!!.next = LinkedNode(MutablePair(preparingStr, null), null)
+                    if (last == null) {
+                        // 防止中间缺失 Preparing
+                        last = curr
                     }
+                    curr = curr!!.next
+                }
+            } else if (line.contains(PARAMETERS)) {
+                val parametersStr = line.substringAfter(PARAMETERS).trim()
+                while (last?.value?.right != null) {
+                    last = last!!.next
+                }
+                if (last != null) {
+                    last!!.value.right = parametersStr
+                    val parameters = last!!.value.right.split(",").map { it.trim() }
+                    val sql = format(last!!.value.left, parameters)
+                    sqlList.add(sql)
                 }
             }
         }
+
+    last = last?.next
+    while (last != null) {
+        val value = last!!.value
+        val preparingStr = value.left ?: continue
+
+        val sql = format(preparingStr, emptyList())
+        sqlList.add(sql)
+
+        last = last!!.next
     }
 
-    return threadLogMap.map { entry ->
-        val value = entry.value
-        val preparingStr = value.left ?: ""
-
-        if (!preparingStr.contains("?")) {
-            format(preparingStr, emptyList())
-        } else {
-            val parameters = value.right?.split(",")?.map { it.trim() } ?: emptyList()
-            format(preparingStr, parameters)
-        }
-    }
+    return sqlList
 }
 
 /**

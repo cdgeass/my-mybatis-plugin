@@ -7,6 +7,7 @@ import com.intellij.sql.psi.SqlLanguage
 import com.intellij.ui.EditorTextField
 import com.intellij.ui.layout.panel
 import io.github.cdgeass.PluginBundle
+import java.awt.Dimension
 import java.awt.Toolkit
 import java.awt.datatransfer.StringSelection
 import java.awt.event.ActionEvent
@@ -20,8 +21,12 @@ import javax.swing.JComponent
 class FormatDialog(
     private val project: Project,
     private val selectedText: String,
-    private val editorTextField: EditorTextField = editorTextField(SqlLanguage.INSTANCE, project, selectedText)
-        .format(project, selectedText)
+    private val editorTextField: EditorTextField = editorTextField(
+        SqlLanguage.INSTANCE,
+        project,
+        selectedText,
+        Dimension(500, 400)
+    ).format(project, selectedText)
 ) : DialogWrapper(project, true, IdeModalityType.IDE) {
 
     init {
@@ -49,10 +54,6 @@ class FormatDialog(
     }
 
     override fun createCenterPanel(): JComponent {
-
-
-        setOKButtonText(PluginBundle.message("formatter.dialog.copy"))
-
         return panel {
             row {
                 component(editorTextField).constraints(grow)
