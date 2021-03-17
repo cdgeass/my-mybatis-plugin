@@ -12,7 +12,7 @@ import com.intellij.psi.xml.XmlTag
 import com.intellij.psi.xml.XmlToken
 import com.intellij.psi.xml.XmlTokenType
 import com.intellij.xml.util.XmlPsiUtil
-import io.github.cdgeass.editor.dom.DomUtil
+import io.github.cdgeass.codeInsight.util.findByNamespace
 
 /**
  * @author cdgeass
@@ -46,10 +46,10 @@ class ClientLineMarkerProvider : RelatedItemLineMarkerProvider() {
     }
 
     private fun collectTargets(element: PsiIdentifier, parent: PsiClass): List<PsiElement> {
-        val qualifiedName = parent.qualifiedName ?: return listOf()
-        val xmlFiles = DomUtil.findByNamespace(qualifiedName, element.project)
+        val qualifiedName = parent.qualifiedName ?: return emptyList()
+        val xmlFiles = findByNamespace(qualifiedName, element.project)
 
-        return xmlFiles.mapNotNull { xmlFile ->
+        return xmlFiles.map { xmlFile ->
             val xmlTokens = mutableListOf<XmlToken>()
             XmlPsiUtil.processXmlElementChildren(
                 xmlFile,
@@ -66,7 +66,7 @@ class ClientLineMarkerProvider : RelatedItemLineMarkerProvider() {
                 true
             )
             xmlTokens
-        }.flatten().distinct()
+        }.flatten()
     }
 
 }

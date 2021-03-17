@@ -88,6 +88,7 @@
                     icon="/icons/mybatis_logo.png"/>
         <additionalTextAttributes scheme="Default" file="colorScheme/editor.xml"/>
         <additionalTextAttributes scheme="Darcula" file="colorScheme/editor.xml"/>
+        <fileBasedIndex implementation="io.github.cdgeass.codeInsight.util.MyXmlNamespaceIndex"/>
     </extensions>
 
     <actions>
