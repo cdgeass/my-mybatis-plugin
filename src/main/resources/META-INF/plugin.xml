@@ -67,7 +67,7 @@
         </projectConfigurable>
 
         <codeInsight.lineMarkerProvider language="JAVA"
-                                        implementationClass="io.github.cdgeass.editor.provider.DaoLineMarkerProvider"/>
+                                        implementationClass="io.github.cdgeass.codeInsight.daemon.ClientLineMarkerProvider"/>
         <codeInsight.lineMarkerProvider language="XML"
                                         implementationClass="io.github.cdgeass.editor.provider.XmlLineMarkerProvider"/>
         <dom.fileMetaData implementation="io.github.cdgeass.editor.dom.element.ConfigurationDescription"

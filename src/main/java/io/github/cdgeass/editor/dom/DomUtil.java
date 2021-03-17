@@ -11,7 +11,6 @@ import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.xml.DomElement;
 import com.intellij.util.xml.DomManager;
 import io.github.cdgeass.constants.StringConstants;
-import lombok.experimental.UtilityClass;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -25,10 +24,9 @@ import java.util.stream.Collectors;
  * @author cdgeass
  * @since 2020-08-13
  */
-@UtilityClass
 public class DomUtil extends com.intellij.util.xml.DomUtil {
 
-    public <T extends DomElement> T findFileElement(PsiElement element, Class<T> domClass) {
+    public static <T extends DomElement> T findFileElement(PsiElement element, Class<T> domClass) {
         if (!(element instanceof XmlFile)) {
             return null;
         }
@@ -41,7 +39,7 @@ public class DomUtil extends com.intellij.util.xml.DomUtil {
     }
 
     @SuppressWarnings("all")
-    public <T extends DomElement> T findDomElement(PsiElement element, Class<T> domClass) {
+    public static <T extends DomElement> T findDomElement(PsiElement element, Class<T> domClass) {
         if (element == null) {
             return null;
         }
@@ -60,7 +58,7 @@ public class DomUtil extends com.intellij.util.xml.DomUtil {
         return domElement.getClass().getName().startsWith(domClass.getName()) ? (T) domElement : null;
     }
 
-    public String getContainingFileNameSpace(PsiElement element) {
+    public static String getContainingFileNameSpace(PsiElement element) {
         var psiFile = element.getContainingFile();
         if (!(psiFile instanceof XmlFile)) {
             return null;
@@ -74,7 +72,7 @@ public class DomUtil extends com.intellij.util.xml.DomUtil {
         return xmlTag.getAttributeValue(StringConstants.NAMESPACE);
     }
 
-    public List<XmlFile> findByNamespace(String namespace, Project project) {
+    public static List<XmlFile> findByNamespace(String namespace, Project project) {
         if (StringUtils.isBlank(namespace) || project == null) {
             return Collections.emptyList();
         }
@@ -96,7 +94,7 @@ public class DomUtil extends com.intellij.util.xml.DomUtil {
                 .collect(Collectors.toList());
     }
 
-    public <T extends DomElement> List<T> findByNamespace(String namespace, Project project, Class<T> domClass) {
+    public static <T extends DomElement> List<T> findByNamespace(String namespace, Project project, Class<T> domClass) {
         return findByNamespace(namespace, project)
                 .stream()
                 .map(xmlFile -> findFileElement(xmlFile, domClass))
@@ -104,7 +102,7 @@ public class DomUtil extends com.intellij.util.xml.DomUtil {
                 .collect(Collectors.toList());
     }
 
-    public List<XmlTag> findByNameInNamespace(String namespace, Project project, String name) {
+    public static List<XmlTag> findByNameInNamespace(String namespace, Project project, String name) {
         var xmlFiles = findByNamespace(namespace, project);
         return xmlFiles.stream()
                 .flatMap(xmlFile -> PsiTreeUtil.findChildrenOfType(xmlFile, XmlTag.class).stream())
