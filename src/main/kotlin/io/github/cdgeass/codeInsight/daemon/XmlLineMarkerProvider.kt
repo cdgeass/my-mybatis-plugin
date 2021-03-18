@@ -4,6 +4,7 @@ import com.intellij.codeInsight.daemon.RelatedItemLineMarkerInfo
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerProvider
 import com.intellij.codeInsight.navigation.NavigationGutterIconBuilder
 import com.intellij.icons.AllIcons
+import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.elementType
@@ -62,8 +63,20 @@ class XmlLineMarkerProvider : RelatedItemLineMarkerProvider() {
         val statement = DomUtil.findDomElement(element, Statement::class.java) ?: return null
 
         val psiMethod = statement.id.value ?: return null
+        val psiClass = PsiTreeUtil.findFirstParent(psiMethod) { psiElement ->
+            psiElement is PsiClass
+        } ?: return null
+
+        // 如果 xml 指向的是父类方法 直接定位子类上 TODO 增加可选项
+        val mapper = DomUtil.findDomElement(element, Mapper::class.java) ?: return null
+        val identifier = if (psiClass == mapper.namespace.value) {
+            psiMethod.identifyingElement
+        } else {
+            mapper.namespace.value?.identifyingElement
+        } ?: return null
+
         return NavigationGutterIconBuilder.create(AllIcons.Gutter.ImplementingMethod)
-            .setTarget(psiMethod.identifyingElement)
+            .setTarget(identifier)
             .createLineMarkerInfo(element)
     }
 
