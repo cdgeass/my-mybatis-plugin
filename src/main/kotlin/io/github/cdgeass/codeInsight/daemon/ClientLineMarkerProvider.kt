@@ -74,6 +74,9 @@ class ClientLineMarkerProvider : RelatedItemLineMarkerProvider() {
             )
             xmlTokens
         }.flatten()
+        if (targets.isEmpty()) {
+            return null
+        }
 
         return NavigationGutterIconBuilder.create(AllIcons.Gutter.OverridenMethod)
             .setTargets(targets)
@@ -107,6 +110,9 @@ class ClientLineMarkerProvider : RelatedItemLineMarkerProvider() {
             )
             xmlTokens
         }.flatten()
+        if (targets.isEmpty()) {
+            return null
+        }
 
         return NavigationGutterIconBuilder.create(AllIcons.Gutter.ImplementedMethod)
             .setTargets(targets)

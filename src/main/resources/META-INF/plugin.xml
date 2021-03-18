@@ -66,13 +66,14 @@
                           nonDefaultProject="false"/>
         </projectConfigurable>
 
+        <fileBasedIndex implementation="io.github.cdgeass.codeInsight.util.MyXmlNamespaceIndex"/>
         <codeInsight.lineMarkerProvider language="JAVA"
                                         implementationClass="io.github.cdgeass.codeInsight.daemon.ClientLineMarkerProvider"/>
         <codeInsight.lineMarkerProvider language="XML"
-                                        implementationClass="io.github.cdgeass.editor.provider.XmlLineMarkerProvider"/>
+                                        implementationClass="io.github.cdgeass.codeInsight.daemon.XmlLineMarkerProvider"/>
         <dom.fileMetaData implementation="io.github.cdgeass.editor.dom.element.ConfigurationDescription"
                           rootTagName="configuration"/>
-        <dom.fileMetaData implementation="io.github.cdgeass.editor.dom.element.MapperDescription"
+        <dom.fileMetaData implementation="io.github.cdgeass.codeInsight.dom.description.MapperDescription"
                           rootTagName="mapper"/>
         <completion.contributor language="any"
                                 implementationClass="io.github.cdgeass.editor.dom.references.ResultFieldCompletionContributor"
@@ -88,7 +89,6 @@
                     icon="/icons/mybatis_logo.png"/>
         <additionalTextAttributes scheme="Default" file="colorScheme/editor.xml"/>
         <additionalTextAttributes scheme="Darcula" file="colorScheme/editor.xml"/>
-        <fileBasedIndex implementation="io.github.cdgeass.codeInsight.util.MyXmlNamespaceIndex"/>
     </extensions>
 
     <actions>
