@@ -78,7 +78,7 @@ class ClientLineMarkerProvider : RelatedItemLineMarkerProvider() {
             return null
         }
 
-        return NavigationGutterIconBuilder.create(AllIcons.Gutter.OverridenMethod)
+        return NavigationGutterIconBuilder.create(AllIcons.Gutter.ImplementedMethod)
             .setTargets(targets)
             .createLineMarkerInfo(element)
     }

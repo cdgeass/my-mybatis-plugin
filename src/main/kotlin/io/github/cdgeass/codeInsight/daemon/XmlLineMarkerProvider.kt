@@ -9,7 +9,6 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.elementType
 import com.intellij.psi.xml.XmlTag
-import com.intellij.psi.xml.XmlToken
 import com.intellij.psi.xml.XmlTokenType
 import com.intellij.util.xml.DomUtil
 import io.github.cdgeass.editor.dom.element.mapper.Mapper
@@ -29,9 +28,7 @@ class XmlLineMarkerProvider : RelatedItemLineMarkerProvider() {
         element: PsiElement,
         result: MutableCollection<in RelatedItemLineMarkerInfo<*>>
     ) {
-        if (element !is XmlToken ||
-            element.elementType != XmlTokenType.XML_NAME
-        ) {
+        if (element.elementType != XmlTokenType.XML_NAME) {
             return
         }
 
@@ -54,7 +51,7 @@ class XmlLineMarkerProvider : RelatedItemLineMarkerProvider() {
         val mapper = DomUtil.findDomElement(element, Mapper::class.java) ?: return null
 
         val psiClass = mapper.namespace.value ?: return null
-        return NavigationGutterIconBuilder.create(AllIcons.Gutter.OverridingMethod)
+        return NavigationGutterIconBuilder.create(AllIcons.Gutter.ImplementingMethod)
             .setTarget(psiClass.identifyingElement)
             .createLineMarkerInfo(element)
     }

@@ -3,8 +3,8 @@ package io.github.cdgeass.editor.dom.element.mapper;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiMethod;
 import com.intellij.util.xml.*;
+import io.github.cdgeass.codeInsight.dom.converter.PsiMethodReferenceConverter;
 import io.github.cdgeass.editor.dom.element.convert.AliasReferenceConvert;
-import io.github.cdgeass.editor.dom.element.convert.PsiMethodReferenceConvert;
 
 import java.util.List;
 
@@ -14,7 +14,7 @@ import java.util.List;
  */
 public interface Statement extends DomElement {
 
-    @Convert(PsiMethodReferenceConvert.class)
+    @Convert(PsiMethodReferenceConverter.class)
     GenericAttributeValue<PsiMethod> getId();
 
     @Attribute("parameterMap")
