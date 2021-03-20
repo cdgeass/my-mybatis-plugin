@@ -2,6 +2,7 @@ package io.github.cdgeass.editor.dom.element.mapper;
 
 import com.intellij.psi.PsiClass;
 import com.intellij.util.xml.*;
+import io.github.cdgeass.codeInsight.dom.element.Statement;
 
 import java.util.List;
 
@@ -15,6 +16,9 @@ public interface Mapper extends DomElement {
 
     @SubTag("cache-ref")
     CacheRef getCacheRef();
+
+    @SubTagsList({"select", "delete", "update", "insert"})
+    List<Statement> getStatements();
 
     @SubTag("cache")
     Cache getCache();

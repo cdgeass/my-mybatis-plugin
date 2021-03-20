@@ -11,8 +11,8 @@ import com.intellij.psi.util.elementType
 import com.intellij.psi.xml.XmlTag
 import com.intellij.psi.xml.XmlTokenType
 import com.intellij.util.xml.DomUtil
-import io.github.cdgeass.editor.dom.element.mapper.Mapper
-import io.github.cdgeass.editor.dom.element.mapper.Statement
+import io.github.cdgeass.codeInsight.dom.element.Mapper
+import io.github.cdgeass.codeInsight.dom.element.Statement
 
 /**
  * @author cdgeass
@@ -50,7 +50,7 @@ class XmlLineMarkerProvider : RelatedItemLineMarkerProvider() {
     private fun collectRootTarget(element: PsiElement): RelatedItemLineMarkerInfo<PsiElement>? {
         val mapper = DomUtil.findDomElement(element, Mapper::class.java) ?: return null
 
-        val psiClass = mapper.namespace.value ?: return null
+        val psiClass = mapper.getNamespace().value ?: return null
         return NavigationGutterIconBuilder.create(AllIcons.Gutter.ImplementingMethod)
             .setTarget(psiClass.identifyingElement)
             .createLineMarkerInfo(element)
@@ -59,17 +59,17 @@ class XmlLineMarkerProvider : RelatedItemLineMarkerProvider() {
     private fun collectTarget(element: PsiElement): RelatedItemLineMarkerInfo<PsiElement>? {
         val statement = DomUtil.findDomElement(element, Statement::class.java) ?: return null
 
-        val psiMethod = statement.id.value ?: return null
+        val psiMethod = statement.getId().value ?: return null
         val psiClass = PsiTreeUtil.findFirstParent(psiMethod) { psiElement ->
             psiElement is PsiClass
         } ?: return null
 
         // 如果 xml 指向的是父类方法 直接定位子类上 TODO 增加可选项
         val mapper = DomUtil.findDomElement(element, Mapper::class.java) ?: return null
-        val identifier = if (psiClass == mapper.namespace.value) {
+        val identifier = if (psiClass == mapper.getNamespace().value) {
             psiMethod.identifyingElement
         } else {
-            mapper.namespace.value?.identifyingElement
+            mapper.getNamespace().value?.identifyingElement
         } ?: return null
 
         return NavigationGutterIconBuilder.create(AllIcons.Gutter.ImplementingMethod)

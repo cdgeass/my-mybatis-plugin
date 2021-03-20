@@ -1,7 +1,7 @@
 package io.github.cdgeass.codeInsight.dom.description
 
 import com.intellij.util.xml.DomFileDescription
-import io.github.cdgeass.editor.dom.element.mapper.Mapper
+import io.github.cdgeass.codeInsight.dom.element.Mapper
 
 /**
  * @author cdgeass
