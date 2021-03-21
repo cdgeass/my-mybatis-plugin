@@ -5,13 +5,13 @@ import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiReference
 import com.intellij.util.xml.*
 import io.github.cdgeass.codeInsight.dom.element.Mapper
-import io.github.cdgeass.codeInsight.dom.reference.JavaDomReference
+import io.github.cdgeass.codeInsight.reference.MyPsiElementReference
 
 /**
  * @author cdgeass
  * @since 2021-03-18
  */
-class DomMethodConverter : Converter<PsiMethod>(), CustomReferenceConverter<PsiMethod> {
+class MyPsiMethodConverter : Converter<PsiMethod>(), CustomReferenceConverter<PsiMethod> {
 
     override fun toString(t: PsiMethod?, context: ConvertContext?): String? {
         return t?.name
@@ -38,7 +38,7 @@ class DomMethodConverter : Converter<PsiMethod>(), CustomReferenceConverter<PsiM
             return PsiReference.EMPTY_ARRAY
         }
 
-        return arrayOf(JavaDomReference(element, value?.value?.let { listOf(it) }))
+        return arrayOf(MyPsiElementReference(element, value?.value?.let { listOf(it) }))
     }
 
 }

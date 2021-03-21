@@ -3,7 +3,7 @@ package io.github.cdgeass.codeInsight.dom.element
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiPackage
 import com.intellij.util.xml.*
-import io.github.cdgeass.codeInsight.dom.converter.DomClassConverter
+import io.github.cdgeass.codeInsight.dom.converter.MyPsiClassConverter
 
 /**
  * @author cdgeass
@@ -28,7 +28,7 @@ interface TypeAlias : DomElement {
 
     fun getAlias(): GenericAttributeValue<String>
 
-    @Convert(DomClassConverter::class)
+    @Convert(MyPsiClassConverter::class)
     fun getType(): GenericAttributeValue<PsiClass>
 }
 

@@ -1,14 +1,16 @@
-package io.github.cdgeass.codeInsight.dom.reference
+package io.github.cdgeass.codeInsight.reference
 
 import com.intellij.psi.*
+import com.intellij.util.xml.DomElement
+import io.github.cdgeass.codeInsight.util.getIdentifyElement
 
 /**
  * @author cdgeass
- * @since 2021/3/18
+ * @since 2021/3/20
  */
-class JavaDomReference(
+class MyDomElementReference(
     psiElement: PsiElement,
-    private val targets: List<PsiElement>?
+    private val domElements: Array<DomElement>
 ) : PsiReferenceBase<PsiElement>(psiElement), PsiPolyVariantReference {
 
     override fun resolve(): PsiElement? {
@@ -20,10 +22,9 @@ class JavaDomReference(
     }
 
     override fun multiResolve(incompleteCode: Boolean): Array<ResolveResult> {
-        if (targets.isNullOrEmpty()) {
-            return emptyArray()
-        }
-        return targets.map { PsiElementResolveResult(it) }.toTypedArray()
+        return domElements.mapNotNull { getIdentifyElement(it) }
+            .map { PsiElementResolveResult(it) }
+            .toTypedArray()
     }
 
 }

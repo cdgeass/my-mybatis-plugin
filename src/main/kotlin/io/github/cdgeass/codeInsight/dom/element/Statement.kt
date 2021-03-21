@@ -4,7 +4,8 @@ import com.intellij.psi.PsiMethod
 import com.intellij.util.xml.Convert
 import com.intellij.util.xml.DomElement
 import com.intellij.util.xml.GenericAttributeValue
-import io.github.cdgeass.codeInsight.dom.converter.DomMethodConverter
+import com.intellij.util.xml.SubTagList
+import io.github.cdgeass.codeInsight.dom.converter.MyPsiMethodConverter
 
 /**
  * @author cdgeass
@@ -12,7 +13,9 @@ import io.github.cdgeass.codeInsight.dom.converter.DomMethodConverter
  */
 interface Statement : DomElement {
 
-    @Convert(DomMethodConverter::class)
+    @Convert(MyPsiMethodConverter::class)
     fun getId(): GenericAttributeValue<PsiMethod>
 
+    @SubTagList("include")
+    fun getIncludes(): List<Include>
 }

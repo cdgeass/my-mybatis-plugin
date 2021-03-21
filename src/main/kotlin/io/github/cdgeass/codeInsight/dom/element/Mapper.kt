@@ -29,6 +29,6 @@ interface Mapper : DomElement {
     fun getUpdates(): List<Statement>
 
     @SubTagList("insert")
-    fun getInsert(): List<Statement>
+    fun getInserts(): List<Insert>
 
 }

@@ -25,6 +25,23 @@
 
     <extensions defaultExtensionNs="com.intellij">
         <!-- Add your extensions here -->
+        <additionalTextAttributes scheme="Default" file="colorScheme/editor.xml"/>
+        <additionalTextAttributes scheme="Darcula" file="colorScheme/editor.xml"/>
+        <!-- formatter -->
+        <toolWindow id="My MyBatis" anchor="right" factoryClass="io.github.cdgeass.formatter.FormatToolWindowFactory"
+                    icon="/icons/mybatis_logo.png"/>
+        <!-- codeInsight -->
+        <fileBasedIndex implementation="io.github.cdgeass.codeInsight.util.MyXmlNamespaceIndex"/>
+        <dom.fileMetaData implementation="io.github.cdgeass.codeInsight.dom.description.ConfigurationDescription"
+                          rootTagName="configuration"/>
+        <dom.fileMetaData implementation="io.github.cdgeass.codeInsight.dom.description.MapperDescription"
+                          rootTagName="mapper"/>
+        <codeInsight.lineMarkerProvider language="JAVA"
+                                        implementationClass="io.github.cdgeass.codeInsight.daemon.ClientLineMarkerProvider"/>
+        <codeInsight.lineMarkerProvider language="XML"
+                                        implementationClass="io.github.cdgeass.codeInsight.daemon.XmlLineMarkerProvider"/>
+        <psi.referenceContributor implementation="io.github.cdgeass.codeInsight.contributor.DomReferenceContributor"/>
+        <!-- generator -->
         <projectService serviceImplementation="io.github.cdgeass.generator.settings.Settings"/>
         <projectService serviceImplementation="io.github.cdgeass.generator.settings.Context"/>
         <projectService serviceImplementation="io.github.cdgeass.generator.settings.JavaTypeResolver"/>
@@ -65,34 +82,11 @@
                           displayName="CommentGenerator"
                           nonDefaultProject="false"/>
         </projectConfigurable>
-
-        <fileBasedIndex implementation="io.github.cdgeass.codeInsight.util.MyXmlNamespaceIndex"/>
-        <codeInsight.lineMarkerProvider language="JAVA"
-                                        implementationClass="io.github.cdgeass.codeInsight.daemon.ClientLineMarkerProvider"/>
-        <codeInsight.lineMarkerProvider language="XML"
-                                        implementationClass="io.github.cdgeass.codeInsight.daemon.XmlLineMarkerProvider"/>
-        <dom.fileMetaData implementation="io.github.cdgeass.codeInsight.dom.description.ConfigurationDescription"
-                          rootTagName="configuration"/>
-        <dom.fileMetaData implementation="io.github.cdgeass.codeInsight.dom.description.MapperDescription"
-                          rootTagName="mapper"/>
-        <completion.contributor language="any"
-                                implementationClass="io.github.cdgeass.editor.dom.references.ResultFieldCompletionContributor"
-                                order="first"/>
-        <completion.contributor language="any"
-                                implementationClass="io.github.cdgeass.editor.dom.references.ExpressionCompletionContributor"
-                                order="first"/>
-        <completion.contributor language="any"
-                                implementationClass="io.github.cdgeass.editor.dom.references.MapperCompletionContributor"
-                                order="first"/>
-        <psi.referenceContributor implementation="io.github.cdgeass.editor.dom.references.MapperReferenceContributor"/>
-        <toolWindow id="My MyBatis" anchor="right" factoryClass="io.github.cdgeass.formatter.FormatToolWindowFactory"
-                    icon="/icons/mybatis_logo.png"/>
-        <additionalTextAttributes scheme="Default" file="colorScheme/editor.xml"/>
-        <additionalTextAttributes scheme="Darcula" file="colorScheme/editor.xml"/>
     </extensions>
 
     <actions>
         <!-- Add your actions here -->
+        <!-- formatter -->
         <action id="io.github.cdgeass.formatter.FormatAction"
                 class="io.github.cdgeass.formatter.FormatAction"
                 text="Format Log"
@@ -100,6 +94,7 @@
             <add-to-group group-id="EditorPopupMenu" anchor="first"/>
             <add-to-group group-id="ConsoleEditorPopupMenu" anchor="first"/>
         </action>
+        <!-- generator -->
         <action id="io.github.cdgeass.generator.action.MyBatisGeneratorAction"
                 class="io.github.cdgeass.generator.action.MyBatisGeneratorAction"
                 description="An action to run Mybatis Generator" text="MyBatis Generator">

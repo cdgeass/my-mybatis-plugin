@@ -6,14 +6,14 @@ import com.intellij.psi.PsiReference
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.xml.*
 import io.github.cdgeass.codeInsight.dom.element.Configuration
-import io.github.cdgeass.codeInsight.dom.reference.JavaDomReference
+import io.github.cdgeass.codeInsight.reference.MyPsiElementReference
 import io.github.cdgeass.codeInsight.util.findByNamespace
 
 /**
  * @author cdgeass
  * @since 2021/3/19
  */
-class DomClassConverter : Converter<PsiClass>(), CustomReferenceConverter<PsiClass> {
+class MyPsiClassConverter : Converter<PsiClass>(), CustomReferenceConverter<PsiClass> {
 
     override fun toString(t: PsiClass?, context: ConvertContext?): String? {
         return t?.name
@@ -76,6 +76,6 @@ class DomClassConverter : Converter<PsiClass>(), CustomReferenceConverter<PsiCla
             return PsiReference.EMPTY_ARRAY
         }
 
-        return arrayOf(JavaDomReference(element, value?.value?.let { listOf(it) }))
+        return arrayOf(MyPsiElementReference(element, value?.value?.let { listOf(it) }))
     }
 }

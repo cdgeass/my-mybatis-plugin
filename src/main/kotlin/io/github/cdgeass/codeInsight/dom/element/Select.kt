@@ -4,8 +4,8 @@ import com.intellij.psi.PsiClass
 import com.intellij.util.xml.Attribute
 import com.intellij.util.xml.Convert
 import com.intellij.util.xml.GenericAttributeValue
-import io.github.cdgeass.codeInsight.dom.converter.DomClassConverter
-import io.github.cdgeass.codeInsight.dom.converter.DomElementConverter
+import io.github.cdgeass.codeInsight.dom.converter.MyDomElementConverter
+import io.github.cdgeass.codeInsight.dom.converter.MyPsiClassConverter
 
 /**
  * @author cdgeass
@@ -14,10 +14,10 @@ import io.github.cdgeass.codeInsight.dom.converter.DomElementConverter
 interface Select : Statement {
 
     @Attribute("resultMap")
-    @Convert(DomElementConverter::class)
+    @Convert(MyDomElementConverter::class)
     fun getResultMap(): GenericAttributeValue<ResultMap>
 
     @Attribute("resultType")
-    @Convert(DomClassConverter::class)
+    @Convert(MyPsiClassConverter::class)
     fun getResultType(): GenericAttributeValue<PsiClass>
 }

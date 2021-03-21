@@ -7,13 +7,13 @@ import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlAttributeValue
 import com.intellij.util.xml.*
 import io.github.cdgeass.codeInsight.dom.element.Mapper
-import io.github.cdgeass.codeInsight.dom.reference.DomDomReference
+import io.github.cdgeass.codeInsight.reference.MyDomElementReference
 
 /**
  * @author cdgeass
  * @since 2021/3/20
  */
-class DomElementConverter : Converter<DomElement>(), CustomReferenceConverter<DomElement> {
+class MyDomElementConverter : Converter<DomElement>(), CustomReferenceConverter<DomElement> {
 
     override fun toString(t: DomElement?, context: ConvertContext?): String? {
         return t?.xmlElementName
@@ -37,7 +37,7 @@ class DomElementConverter : Converter<DomElement>(), CustomReferenceConverter<Do
         }
 
         val domElements = if (value?.value != null) arrayOf(value.value!!) else emptyArray()
-        return arrayOf(DomDomReference(element, domElements))
+        return arrayOf(MyDomElementReference(element, domElements))
     }
 
     private fun getXmlAttributeName(psiElement: PsiElement): String? {
@@ -55,6 +55,9 @@ class DomElementConverter : Converter<DomElement>(), CustomReferenceConverter<Do
         return when (xmlAttributeName) {
             "resultMap" -> {
                 mapper.getResultMaps().find { resultMap -> resultMap.getId().value == s }
+            }
+            "refid" -> {
+                mapper.getSqlList().find { sql -> sql.getId().value == s }
             }
             else -> {
                 null
