@@ -1,6 +1,9 @@
 package io.github.cdgeass.codeInsight.reference
 
-import com.intellij.psi.*
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiElementResolveResult
+import com.intellij.psi.PsiPolyVariantReferenceBase
+import com.intellij.psi.ResolveResult
 
 /**
  * @author cdgeass
@@ -9,21 +12,13 @@ import com.intellij.psi.*
 class MyPsiElementReference(
     psiElement: PsiElement,
     private val targets: List<PsiElement>?
-) : PsiReferenceBase<PsiElement>(psiElement), PsiPolyVariantReference {
-
-    override fun resolve(): PsiElement? {
-        val results = multiResolve(true)
-        if (results.isEmpty()) {
-            return null
-        }
-        return results[0].element
-    }
+) : PsiPolyVariantReferenceBase<PsiElement>(psiElement) {
 
     override fun multiResolve(incompleteCode: Boolean): Array<ResolveResult> {
         if (targets.isNullOrEmpty()) {
             return emptyArray()
         }
-        return targets.map { PsiElementResolveResult(it) }.toTypedArray()
+        return PsiElementResolveResult.createResults(targets)
     }
 
 }
