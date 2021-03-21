@@ -38,7 +38,7 @@ class DomMethodConverter : Converter<PsiMethod>(), CustomReferenceConverter<PsiM
             return PsiReference.EMPTY_ARRAY
         }
 
-        return arrayOf(JavaDomReference(element))
+        return arrayOf(JavaDomReference(element, value?.value?.let { listOf(it) }))
     }
 
 }

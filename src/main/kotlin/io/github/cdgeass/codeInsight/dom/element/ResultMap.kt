@@ -1,6 +1,7 @@
 package io.github.cdgeass.codeInsight.dom.element
 
 import com.intellij.psi.PsiClass
+import com.intellij.util.xml.Attribute
 import com.intellij.util.xml.Convert
 import com.intellij.util.xml.DomElement
 import com.intellij.util.xml.GenericAttributeValue
@@ -14,6 +15,7 @@ interface ResultMap : DomElement {
 
     fun getId(): GenericAttributeValue<String>
 
+    @Attribute("type")
     @Convert(DomClassConverter::class)
     fun getType(): GenericAttributeValue<PsiClass>
 

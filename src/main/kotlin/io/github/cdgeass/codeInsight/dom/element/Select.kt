@@ -17,6 +17,7 @@ interface Select : Statement {
     @Convert(DomElementConverter::class)
     fun getResultMap(): GenericAttributeValue<ResultMap>
 
+    @Attribute("resultType")
     @Convert(DomClassConverter::class)
     fun getResultType(): GenericAttributeValue<PsiClass>
 }

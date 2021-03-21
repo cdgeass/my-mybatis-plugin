@@ -1,20 +1,29 @@
 package io.github.cdgeass.codeInsight.dom.reference
 
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiReferenceBase
-import com.intellij.util.xml.DomElement
-import com.intellij.util.xml.DomUtil
-import io.github.cdgeass.codeInsight.util.getNavigationElement
+import com.intellij.psi.*
 
 /**
  * @author cdgeass
  * @since 2021/3/18
  */
-class JavaDomReference(psiElement: PsiElement) : PsiReferenceBase<PsiElement>(psiElement) {
+class JavaDomReference(
+    psiElement: PsiElement,
+    private val targets: List<PsiElement>?
+) : PsiReferenceBase<PsiElement>(psiElement), PsiPolyVariantReference {
 
     override fun resolve(): PsiElement? {
-        val domElement = DomUtil.findDomElement(myElement, DomElement::class.java) ?: return null
-        return getNavigationElement(domElement)
+        val results = multiResolve(true)
+        if (results.isEmpty()) {
+            return null
+        }
+        return results[0].element
+    }
+
+    override fun multiResolve(incompleteCode: Boolean): Array<ResolveResult> {
+        if (targets.isNullOrEmpty()) {
+            return emptyArray()
+        }
+        return targets.map { PsiElementResolveResult(it) }.toTypedArray()
     }
 
 }

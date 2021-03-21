@@ -1,0 +1,39 @@
+package io.github.cdgeass.codeInsight.dom.element
+
+import com.intellij.psi.PsiClass
+import com.intellij.psi.PsiPackage
+import com.intellij.util.xml.*
+import io.github.cdgeass.codeInsight.dom.converter.DomClassConverter
+
+/**
+ * @author cdgeass
+ * @since 2021/3/21
+ */
+interface Configuration : DomElement {
+
+    @SubTag("typeAliases")
+    fun getTypeAliases(): TypeAliases
+}
+
+interface TypeAliases : DomElement {
+
+    @SubTagList("typeAlias")
+    fun getTypeAliases(): List<TypeAlias>
+
+    @SubTagList("package")
+    fun getPackages(): List<Package>
+}
+
+interface TypeAlias : DomElement {
+
+    fun getAlias(): GenericAttributeValue<String>
+
+    @Convert(DomClassConverter::class)
+    fun getType(): GenericAttributeValue<PsiClass>
+}
+
+interface Package : DomElement {
+
+    @Convert(PsiPackageConverter::class)
+    fun getName(): GenericAttributeValue<PsiPackage>
+}

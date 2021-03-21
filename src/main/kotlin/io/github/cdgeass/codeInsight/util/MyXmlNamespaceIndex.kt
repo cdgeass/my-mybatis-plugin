@@ -54,6 +54,9 @@ class MyXmlNamespaceIndex : ScalarIndexExtension<String>() {
         xmlTags.forEach { xmlTag ->
             if (xmlTag.name == "mapper" && xmlTag.getAttributeValue("namespace") != null) {
                 return xmlTag.getAttributeValue("namespace")
+            } else if (xmlTag.name == "configuration") {
+                // mybatis 配置文件
+                return "mybatis.configuration"
             }
         }
 

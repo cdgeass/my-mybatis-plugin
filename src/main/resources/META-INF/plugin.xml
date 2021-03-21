@@ -71,7 +71,7 @@
                                         implementationClass="io.github.cdgeass.codeInsight.daemon.ClientLineMarkerProvider"/>
         <codeInsight.lineMarkerProvider language="XML"
                                         implementationClass="io.github.cdgeass.codeInsight.daemon.XmlLineMarkerProvider"/>
-        <dom.fileMetaData implementation="io.github.cdgeass.editor.dom.element.ConfigurationDescription"
+        <dom.fileMetaData implementation="io.github.cdgeass.codeInsight.dom.description.ConfigurationDescription"
                           rootTagName="configuration"/>
         <dom.fileMetaData implementation="io.github.cdgeass.codeInsight.dom.description.MapperDescription"
                           rootTagName="mapper"/>
