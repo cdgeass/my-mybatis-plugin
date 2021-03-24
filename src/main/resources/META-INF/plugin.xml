@@ -40,7 +40,6 @@
                                         implementationClass="io.github.cdgeass.codeInsight.daemon.ClientLineMarkerProvider"/>
         <codeInsight.lineMarkerProvider language="XML"
                                         implementationClass="io.github.cdgeass.codeInsight.daemon.XmlLineMarkerProvider"/>
-        <psi.referenceContributor implementation="io.github.cdgeass.codeInsight.contributor.DomReferenceContributor"/>
         <!-- generator -->
         <projectService serviceImplementation="io.github.cdgeass.generator.settings.Settings"/>
         <projectService serviceImplementation="io.github.cdgeass.generator.settings.Context"/>

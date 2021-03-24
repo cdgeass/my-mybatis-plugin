@@ -2,6 +2,7 @@ package io.github.cdgeass.codeInsight.dom.element
 
 import com.intellij.util.xml.DomElement
 import com.intellij.util.xml.GenericAttributeValue
+import com.intellij.util.xml.NameValue
 
 /**
  * @author cdgeass
@@ -9,5 +10,6 @@ import com.intellij.util.xml.GenericAttributeValue
  */
 interface Sql : DomElement {
 
+    @NameValue
     fun getId(): GenericAttributeValue<String>
 }
