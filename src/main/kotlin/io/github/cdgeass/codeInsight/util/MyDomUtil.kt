@@ -2,13 +2,15 @@ package io.github.cdgeass.codeInsight.util
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
+import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.psi.xml.XmlAttribute
+import com.intellij.psi.xml.XmlAttributeValue
 import com.intellij.psi.xml.XmlFile
 import com.intellij.util.xml.DomElement
 import com.intellij.util.xml.DomManager
 import io.github.cdgeass.codeInsight.dom.element.Mapper
-import io.github.cdgeass.codeInsight.dom.element.ResultMap
-import io.github.cdgeass.codeInsight.dom.element.Sql
 import io.github.cdgeass.codeInsight.dom.element.Statement
+import io.github.cdgeass.codeInsight.dom.element.WithIdDomElement
 
 /**
  * @author cdgeass
@@ -20,10 +22,10 @@ fun getMappers(namespace: String, project: Project): List<Mapper> {
     return xmlFiles.mapNotNull { domManager.getFileElement(it, Mapper::class.java)?.rootElement }
 }
 
-fun getMappers(psiElement: PsiElement): List<Mapper> {
-    val project = psiElement.project
+fun getMappers(element: PsiElement): List<Mapper> {
+    val project = element.project
 
-    val file = psiElement.containingFile
+    val file = element.containingFile
     if (file !is XmlFile) return emptyList()
 
     val namespace = file.rootTag?.getAttributeValue("namespace")
@@ -32,31 +34,50 @@ fun getMappers(psiElement: PsiElement): List<Mapper> {
     return getMappers(namespace, project)
 }
 
-fun getIdentifyElement(domElement: DomElement): PsiElement? {
-    return when (domElement) {
-        is Statement -> {
-            getStatementIdentifyElement(domElement)
+fun resolveElementReferences(element: PsiElement, ignored: Boolean = false): List<DomElement> {
+    if (element !is XmlAttributeValue) return emptyList()
+
+    val attributeName = PsiTreeUtil.findFirstParent(element) {
+        it is XmlAttribute
+    }?.let { it as XmlAttribute }?.name ?: return emptyList()
+
+    var attributeValue = element.value
+    val mappers = if (attributeValue.contains(".")) {
+        val namespace = attributeValue.substringBeforeLast(".")
+        attributeValue = attributeValue.substringAfterLast(".")
+        getMappers(namespace, element.project)
+    } else {
+        getMappers(element)
+    }
+    return when (attributeName) {
+        "resultMap" -> {
+            mappers.flatMap { it.getResultMaps() }
+                .filter {
+                    ignored || it.getId().value == attributeValue
+                }
         }
-        is ResultMap -> {
-            getResultMapIdentifyElement(domElement)
-        }
-        is Sql -> {
-            getSqlIdentifyElement(domElement)
+        "refid" -> {
+            mappers.flatMap { it.getSqlList() }
+                .filter {
+                    ignored || it.getId().value == attributeValue
+                }
         }
         else -> {
-            null
+            emptyList()
         }
     }
 }
 
-private fun getStatementIdentifyElement(statement: Statement): PsiElement? {
-    return statement.getId().xmlAttributeValue
-}
-
-private fun getResultMapIdentifyElement(resultMap: ResultMap): PsiElement? {
-    return resultMap.getId().xmlAttributeValue
-}
-
-private fun getSqlIdentifyElement(sql: Sql): PsiElement? {
-    return sql.getId().xmlAttributeValue
+fun getPsiElement(domElement: DomElement): PsiElement? {
+    return when (domElement) {
+        is WithIdDomElement -> {
+            domElement.getId().xmlAttributeValue
+        }
+        is Statement -> {
+            domElement.getId().xmlAttributeValue
+        }
+        else -> {
+            domElement.xmlElement
+        }
+    }
 }
