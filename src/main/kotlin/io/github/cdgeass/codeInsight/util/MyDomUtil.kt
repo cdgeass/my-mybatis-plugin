@@ -57,7 +57,7 @@ fun resolveElementReferences(element: PsiElement, ignored: Boolean = false): Lis
                 }
         }
         "refid" -> {
-            mappers.flatMap { it.getSqlList() }
+            mappers.flatMap { it.getSqls() }
                 .filter {
                     ignored || it.getId().value == attributeValue
                 }

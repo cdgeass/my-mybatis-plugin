@@ -3,13 +3,14 @@
 
 package io.github.cdgeass.codeInsight.dom.element
 
+import com.intellij.util.xml.DomElement
 import com.intellij.util.xml.GenericAttributeValue
 
 /**
- * mybatis-3-mapper.dtd:sql interface.
+ * mybatis-3-mapper.dtd:selectKey interface.
  * @author cdgeass
  */
-interface Sql : WithIdDomElement {
+interface SelectKey : DomElement {
 
 	/**
 	 * Returns the value of the simple content.
@@ -24,18 +25,46 @@ interface Sql : WithIdDomElement {
 	fun setValue(value: String)
 
 	/**
+	 * Returns the value of the order child.
+	 * Attribute order
+	 * @return the value of the order child.
+	 */
+	fun getOrder(): GenericAttributeValue<String>
+
+	/**
+	 * Returns the value of the keyProperty child.
+	 * Attribute keyProperty
+	 * @return the value of the keyProperty child.
+	 */
+	fun getKeyProperty(): GenericAttributeValue<String>
+
+	/**
+	 * Returns the value of the resultType child.
+	 * Attribute resultType
+	 * @return the value of the resultType child.
+	 */
+	fun getResultType(): GenericAttributeValue<String>
+
+	/**
+	 * Returns the value of the keyColumn child.
+	 * Attribute keyColumn
+	 * @return the value of the keyColumn child.
+	 */
+	fun getKeyColumn(): GenericAttributeValue<String>
+
+	/**
+	 * Returns the value of the statementType child.
+	 * Attribute statementType
+	 * @return the value of the statementType child.
+	 */
+	fun getStatementType(): GenericAttributeValue<String>
+
+	/**
 	 * Returns the value of the databaseId child.
 	 * Attribute databaseId
 	 * @return the value of the databaseId child.
 	 */
 	fun getDatabaseId(): GenericAttributeValue<String>
-
-	/**
-	 * Returns the value of the lang child.
-	 * Attribute lang
-	 * @return the value of the lang child.
-	 */
-	fun getLang(): GenericAttributeValue<String>
 
 	/**
 	 * Returns the list of include children.
@@ -105,7 +134,7 @@ interface Sql : WithIdDomElement {
 	 * Returns the list of choose children.
 	 * @return the list of choose children.
 	 */
-	fun getChooses(): List<Choose>
+	fun getChooses(): kotlin.collections.List<Choose>
 
 	/**
 	 * Adds new child to the list of choose children.

@@ -4,12 +4,13 @@
 package io.github.cdgeass.codeInsight.dom.element
 
 import com.intellij.util.xml.GenericAttributeValue
+import com.intellij.util.xml.SubTagList
 
 /**
- * mybatis-3-mapper.dtd:sql interface.
+ * mybatis-3-mapper.dtd:update interface.
  * @author cdgeass
  */
-interface Sql : WithIdDomElement {
+interface Update : Statement {
 
 	/**
 	 * Returns the value of the simple content.
@@ -24,11 +25,18 @@ interface Sql : WithIdDomElement {
 	fun setValue(value: String)
 
 	/**
-	 * Returns the value of the databaseId child.
-	 * Attribute databaseId
-	 * @return the value of the databaseId child.
+	 * Returns the value of the parameterMap child.
+	 * Attribute parameterMap
+	 * @return the value of the parameterMap child.
 	 */
-	fun getDatabaseId(): GenericAttributeValue<String>
+	fun getParameterMap(): GenericAttributeValue<String>
+
+	/**
+	 * Returns the value of the keyColumn child.
+	 * Attribute keyColumn
+	 * @return the value of the keyColumn child.
+	 */
+	fun getKeyColumn(): GenericAttributeValue<String>
 
 	/**
 	 * Returns the value of the lang child.
@@ -36,6 +44,69 @@ interface Sql : WithIdDomElement {
 	 * @return the value of the lang child.
 	 */
 	fun getLang(): GenericAttributeValue<String>
+
+	/**
+	 * Returns the value of the keyProperty child.
+	 * Attribute keyProperty
+	 * @return the value of the keyProperty child.
+	 */
+	fun getKeyProperty(): GenericAttributeValue<String>
+
+	/**
+	 * Returns the value of the parameterType child.
+	 * Attribute parameterType
+	 * @return the value of the parameterType child.
+	 */
+	fun getParameterType(): GenericAttributeValue<String>
+
+	/**
+	 * Returns the value of the statementType child.
+	 * Attribute statementType
+	 * @return the value of the statementType child.
+	 */
+	fun getStatementType(): GenericAttributeValue<String>
+
+	/**
+	 * Returns the value of the databaseId child.
+	 * Attribute databaseId
+	 * @return the value of the databaseId child.
+	 */
+	fun getDatabaseId(): GenericAttributeValue<String>
+
+	/**
+	 * Returns the value of the flushCache child.
+	 * Attribute flushCache
+	 * @return the value of the flushCache child.
+	 */
+	fun getFlushCache(): GenericAttributeValue<String>
+
+	/**
+	 * Returns the value of the timeout child.
+	 * Attribute timeout
+	 * @return the value of the timeout child.
+	 */
+	fun getTimeout(): GenericAttributeValue<String>
+
+	/**
+	 * Returns the value of the useGeneratedKeys child.
+	 * Attribute useGeneratedKeys
+	 * @return the value of the useGeneratedKeys child.
+	 */
+	fun getUseGeneratedKeys(): GenericAttributeValue<String>
+
+	/**
+	 * Returns the list of selectKey children.
+	 * @return the list of selectKey children.
+	 */
+	@SubTagList("selectKey")
+	fun getSelectKeys(): List<SelectKey>
+
+	/**
+	 * Adds new child to the list of selectKey children.
+	 * @return created child
+	 */
+	@SubTagList("selectKey")
+	fun addSelectKey(): SelectKey
 
 	/**
 	 * Returns the list of include children.

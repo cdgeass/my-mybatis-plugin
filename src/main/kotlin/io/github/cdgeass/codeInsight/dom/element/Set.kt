@@ -3,13 +3,13 @@
 
 package io.github.cdgeass.codeInsight.dom.element
 
-import com.intellij.util.xml.GenericAttributeValue
+import com.intellij.util.xml.DomElement
 
 /**
- * mybatis-3-mapper.dtd:sql interface.
+ * mybatis-3-mapper.dtd:set interface.
  * @author cdgeass
  */
-interface Sql : WithIdDomElement {
+interface Set : DomElement {
 
 	/**
 	 * Returns the value of the simple content.
@@ -22,20 +22,6 @@ interface Sql : WithIdDomElement {
 	 * @param value the new value to set
 	 */
 	fun setValue(value: String)
-
-	/**
-	 * Returns the value of the databaseId child.
-	 * Attribute databaseId
-	 * @return the value of the databaseId child.
-	 */
-	fun getDatabaseId(): GenericAttributeValue<String>
-
-	/**
-	 * Returns the value of the lang child.
-	 * Attribute lang
-	 * @return the value of the lang child.
-	 */
-	fun getLang(): GenericAttributeValue<String>
 
 	/**
 	 * Returns the list of include children.

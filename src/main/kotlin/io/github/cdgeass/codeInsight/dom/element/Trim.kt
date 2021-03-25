@@ -3,13 +3,14 @@
 
 package io.github.cdgeass.codeInsight.dom.element
 
+import com.intellij.util.xml.DomElement
 import com.intellij.util.xml.GenericAttributeValue
 
 /**
- * mybatis-3-mapper.dtd:sql interface.
+ * mybatis-3-mapper.dtd:trim interface.
  * @author cdgeass
  */
-interface Sql : WithIdDomElement {
+interface Trim : DomElement {
 
 	/**
 	 * Returns the value of the simple content.
@@ -24,18 +25,32 @@ interface Sql : WithIdDomElement {
 	fun setValue(value: String)
 
 	/**
-	 * Returns the value of the databaseId child.
-	 * Attribute databaseId
-	 * @return the value of the databaseId child.
+	 * Returns the value of the suffixOverrides child.
+	 * Attribute suffixOverrides
+	 * @return the value of the suffixOverrides child.
 	 */
-	fun getDatabaseId(): GenericAttributeValue<String>
+	fun getSuffixOverrides(): GenericAttributeValue<String>
 
 	/**
-	 * Returns the value of the lang child.
-	 * Attribute lang
-	 * @return the value of the lang child.
+	 * Returns the value of the prefix child.
+	 * Attribute prefix
+	 * @return the value of the prefix child.
 	 */
-	fun getLang(): GenericAttributeValue<String>
+	fun getPrefix(): GenericAttributeValue<String>
+
+	/**
+	 * Returns the value of the suffix child.
+	 * Attribute suffix
+	 * @return the value of the suffix child.
+	 */
+	fun getSuffix(): GenericAttributeValue<String>
+
+	/**
+	 * Returns the value of the prefixOverrides child.
+	 * Attribute prefixOverrides
+	 * @return the value of the prefixOverrides child.
+	 */
+	fun getPrefixOverrides(): GenericAttributeValue<String>
 
 	/**
 	 * Returns the list of include children.

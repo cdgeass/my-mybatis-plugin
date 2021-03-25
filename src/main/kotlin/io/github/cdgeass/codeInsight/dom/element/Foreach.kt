@@ -3,13 +3,15 @@
 
 package io.github.cdgeass.codeInsight.dom.element
 
+import com.intellij.util.xml.DomElement
 import com.intellij.util.xml.GenericAttributeValue
+import com.intellij.util.xml.Required
 
 /**
- * mybatis-3-mapper.dtd:sql interface.
+ * mybatis-3-mapper.dtd:foreach interface.
  * @author cdgeass
  */
-interface Sql : WithIdDomElement {
+interface Foreach : DomElement {
 
 	/**
 	 * Returns the value of the simple content.
@@ -24,18 +26,47 @@ interface Sql : WithIdDomElement {
 	fun setValue(value: String)
 
 	/**
-	 * Returns the value of the databaseId child.
-	 * Attribute databaseId
-	 * @return the value of the databaseId child.
+	 * Returns the value of the open child.
+	 * Attribute open
+	 * @return the value of the open child.
 	 */
-	fun getDatabaseId(): GenericAttributeValue<String>
+	fun getOpen(): GenericAttributeValue<String>
 
 	/**
-	 * Returns the value of the lang child.
-	 * Attribute lang
-	 * @return the value of the lang child.
+	 * Returns the value of the index child.
+	 * Attribute index
+	 * @return the value of the index child.
 	 */
-	fun getLang(): GenericAttributeValue<String>
+	fun getIndex(): GenericAttributeValue<String>
+
+	/**
+	 * Returns the value of the item child.
+	 * Attribute item
+	 * @return the value of the item child.
+	 */
+	fun getItem(): GenericAttributeValue<String>
+
+	/**
+	 * Returns the value of the separator child.
+	 * Attribute separator
+	 * @return the value of the separator child.
+	 */
+	fun getSeparator(): GenericAttributeValue<String>
+
+	/**
+	 * Returns the value of the close child.
+	 * Attribute close
+	 * @return the value of the close child.
+	 */
+	fun getClose(): GenericAttributeValue<String>
+
+	/**
+	 * Returns the value of the collection child.
+	 * Attribute collection
+	 * @return the value of the collection child.
+	 */
+	@Required
+	fun getCollection(): GenericAttributeValue<String>
 
 	/**
 	 * Returns the list of include children.

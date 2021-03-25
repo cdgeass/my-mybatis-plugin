@@ -3,40 +3,37 @@
 
 package io.github.cdgeass.codeInsight.dom.element
 
-import com.intellij.psi.PsiClass
-import com.intellij.util.xml.Convert
+import com.intellij.util.xml.DomElement
 import com.intellij.util.xml.GenericAttributeValue
 import com.intellij.util.xml.Required
-import io.github.cdgeass.codeInsight.dom.converter.MyPsiClassConverter
 
 /**
- * mybatis-3-mapper.dtd:resultMap interface.
+ * mybatis-3-mapper.dtd:case interface.
  * @author cdgeass
  */
-interface ResultMap : WithIdDomElement {
+interface Case : DomElement {
 
 	/**
-	 * Returns the value of the autoMapping child.
-	 * Attribute autoMapping
-	 * @return the value of the autoMapping child.
+	 * Returns the value of the resultType child.
+	 * Attribute resultType
+	 * @return the value of the resultType child.
 	 */
-	fun getAutoMapping(): GenericAttributeValue<String>
+	fun getResultType(): GenericAttributeValue<String>
 
 	/**
-	 * Returns the value of the type child.
-	 * Attribute type
-	 * @return the value of the type child.
+	 * Returns the value of the resultMap child.
+	 * Attribute resultMap
+	 * @return the value of the resultMap child.
+	 */
+	fun getResultMap(): GenericAttributeValue<String>
+
+	/**
+	 * Returns the value of the value child.
+	 * Attribute value
+	 * @return the value of the value child.
 	 */
 	@Required
-	@Convert(MyPsiClassConverter::class)
-	fun getType(): GenericAttributeValue<PsiClass>
-
-	/**
-	 * Returns the value of the extends child.
-	 * Attribute extends
-	 * @return the value of the extends child.
-	 */
-	fun getExtends(): GenericAttributeValue<String>
+	fun getValue(): GenericAttributeValue<String>
 
 	/**
 	 * Returns the value of the constructor child.
