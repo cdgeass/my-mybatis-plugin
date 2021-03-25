@@ -8,6 +8,7 @@ import com.intellij.psi.xml.XmlAttributeValue
 import com.intellij.util.xml.*
 import io.github.cdgeass.codeInsight.dom.element.Mapper
 import io.github.cdgeass.codeInsight.reference.MyDomElementReference
+import io.github.cdgeass.codeInsight.util.getMappers
 
 /**
  * @author cdgeass
@@ -40,19 +41,32 @@ class MyDomElementConverter : Converter<DomElement>(), CustomReferenceConverter<
         return arrayOf(MyDomElementReference(element, domElements))
     }
 
-    private fun getXmlAttributeName(psiElement: PsiElement): String? {
+    private fun getDomElement(s: String, psiElement: PsiElement, mapper: Mapper? = null): DomElement? {
+        val mapper = mapper ?: DomUtil.findDomElement(psiElement, Mapper::class.java) ?: return null
+        val domElement = getTarget(s, mapper, psiElement)
+
+        if (domElement != null || !s.contains(".")) {
+            return domElement
+        }
+
+        // 如果当前 mapper 没有找到则尝试根据 namespace 查询其他 mapper
+        val namespace = s.substringBeforeLast(".")
+        return getMappers(namespace, psiElement.project).mapNotNull {
+            getDomElement(
+                s.substringAfterLast("."),
+                psiElement,
+                it
+            )
+        }.firstOrNull()
+    }
+
+    private fun getTarget(s: String, mapper: Mapper, psiElement: PsiElement): DomElement? {
         if (psiElement !is XmlAttributeValue) {
             return null
         }
 
         val xmlAttribute = PsiTreeUtil.findFirstParent(psiElement) { it is XmlAttribute } as XmlAttribute
-        return xmlAttribute.name
-    }
-
-    private fun getDomElement(s: String, psiElement: PsiElement): DomElement? {
-        val xmlAttributeName = getXmlAttributeName(psiElement) ?: return null
-        val mapper = DomUtil.findDomElement(psiElement, Mapper::class.java) ?: return null
-        return when (xmlAttributeName) {
+        return when (xmlAttribute.name) {
             "resultMap" -> {
                 mapper.getResultMaps().find { resultMap -> resultMap.getId().value == s }
             }
