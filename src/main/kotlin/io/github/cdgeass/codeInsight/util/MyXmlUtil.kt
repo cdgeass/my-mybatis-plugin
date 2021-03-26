@@ -5,6 +5,7 @@ import com.intellij.psi.PsiManager
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.xml.XmlFile
 import com.intellij.util.indexing.FileBasedIndex
+import io.github.cdgeass.codeInsight.MyXmlNamespaceIndex
 
 /**
  * @author cdgeass

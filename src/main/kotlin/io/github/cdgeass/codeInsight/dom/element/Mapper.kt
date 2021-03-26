@@ -74,20 +74,6 @@ interface Mapper : DomElement {
 	fun addResultMap(): ResultMap
 
 	/**
-	 * Returns the list of parameterMap children.
-	 * @return the list of parameterMap children.
-	 */
-	@SubTagList("parameterMap")
-	fun getParameterMaps(): List<ParameterMap>
-
-	/**
-	 * Adds new child to the list of parameterMap children.
-	 * @return created child
-	 */
-	@SubTagList("parameterMap")
-	fun addParameterMap(): ParameterMap
-
-	/**
 	 * Returns the list of sql children.
 	 * @return the list of sql children.
 	 */

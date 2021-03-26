@@ -1,11 +1,14 @@
 package io.github.cdgeass.codeInsight.util
 
+import com.intellij.database.util.isNotNullOrEmpty
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.psi.util.parentOfType
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlAttributeValue
 import com.intellij.psi.xml.XmlFile
+import com.intellij.psi.xml.XmlTag
 import com.intellij.util.xml.DomElement
 import com.intellij.util.xml.DomManager
 import io.github.cdgeass.codeInsight.dom.element.Mapper
@@ -43,14 +46,22 @@ fun resolveElementReferences(element: PsiElement, ignored: Boolean = false): Lis
 
     var attributeValue = element.value
     val mappers = if (attributeValue.contains(".")) {
-        val namespace = attributeValue.substringBeforeLast(".")
-        attributeValue = attributeValue.substringAfterLast(".")
+        val xmlTag = element.parentOfType<XmlTag>()
+        val namespace = if (xmlTag?.name == "cache-ref") {
+            // cache-ref 直接应用 namespace
+            attributeValue
+        } else {
+            val temp = attributeValue.substringBeforeLast(".")
+            attributeValue = attributeValue.substringAfterLast(".")
+            temp
+        }
+
         getMappers(namespace, element.project)
     } else {
         getMappers(element)
     }
     return when (attributeName) {
-        "resultMap" -> {
+        "resultMap", "extends" -> {
             mappers.flatMap { it.getResultMaps() }
                 .filter {
                     ignored || it.getId().value == attributeValue
@@ -61,6 +72,15 @@ fun resolveElementReferences(element: PsiElement, ignored: Boolean = false): Lis
                 .filter {
                     ignored || it.getId().value == attributeValue
                 }
+        }
+        "select" -> {
+            mappers.flatMap { it.getSelects() }
+                .filter {
+                    ignored || it.getId().rawText == attributeValue
+                }
+        }
+        "namespace" -> {
+            mappers.flatMap { it.getCaches() }
         }
         else -> {
             emptyList()
@@ -80,4 +100,22 @@ fun getPsiElement(domElement: DomElement): PsiElement? {
             domElement.xmlElement
         }
     }
+}
+
+fun getParentWithClass(element: PsiElement): DomElement? {
+    val xmlAttribute = PsiTreeUtil.findFirstParent(element) { it is XmlAttribute }?.let { it as XmlAttribute }
+    // TODO attribute name == ”name" IdArg Arg
+    if (xmlAttribute?.name != "property") {
+        return null
+    }
+
+    val xmlTag = PsiTreeUtil.findFirstParent(xmlAttribute) {
+        it is XmlTag &&
+                (it.getAttributeValue("resultType").isNotNullOrEmpty ||
+                        it.getAttributeValue("ofType").isNotNullOrEmpty ||
+                        it.getAttributeValue("resultMap").isNotNullOrEmpty)
+    }?.let { it as XmlTag } ?: return null
+
+    val domManager = DomManager.getDomManager(element.project)
+    return domManager.getDomElement(xmlTag)
 }

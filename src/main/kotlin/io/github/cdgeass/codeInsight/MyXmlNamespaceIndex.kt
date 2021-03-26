@@ -1,4 +1,4 @@
-package io.github.cdgeass.codeInsight.util
+package io.github.cdgeass.codeInsight
 
 import com.intellij.ide.highlighter.XmlFileType
 import com.intellij.psi.util.PsiTreeUtil
@@ -14,7 +14,7 @@ import com.intellij.util.io.KeyDescriptor
 class MyXmlNamespaceIndex : ScalarIndexExtension<String>() {
 
     companion object {
-        val NAME: ID<String, Void> = ID.create("io.github.cdgeass.codeInsight.util.MyXmlNamespaceIndex")
+        val NAME: ID<String, Void> = ID.create("io.github.cdgeass.codeInsight.MyXmlNamespaceIndex")
     }
 
     override fun getName(): ID<String, Void> {

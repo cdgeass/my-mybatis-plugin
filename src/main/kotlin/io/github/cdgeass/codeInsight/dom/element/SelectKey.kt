@@ -3,8 +3,12 @@
 
 package io.github.cdgeass.codeInsight.dom.element
 
+import com.intellij.psi.PsiClass
+import com.intellij.util.xml.Attribute
+import com.intellij.util.xml.Convert
 import com.intellij.util.xml.DomElement
 import com.intellij.util.xml.GenericAttributeValue
+import io.github.cdgeass.codeInsight.dom.converter.MyPsiClassConverter
 
 /**
  * mybatis-3-mapper.dtd:selectKey interface.
@@ -43,7 +47,9 @@ interface SelectKey : DomElement {
 	 * Attribute resultType
 	 * @return the value of the resultType child.
 	 */
-	fun getResultType(): GenericAttributeValue<String>
+	@Attribute("resultType")
+	@Convert(MyPsiClassConverter::class)
+	fun getResultType(): GenericAttributeValue<PsiClass>
 
 	/**
 	 * Returns the value of the keyColumn child.

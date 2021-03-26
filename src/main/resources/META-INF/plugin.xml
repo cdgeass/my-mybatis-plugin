@@ -31,7 +31,7 @@
         <toolWindow id="My MyBatis" anchor="right" factoryClass="io.github.cdgeass.formatter.FormatToolWindowFactory"
                     icon="/icons/mybatis_logo.png"/>
         <!-- codeInsight -->
-        <fileBasedIndex implementation="io.github.cdgeass.codeInsight.util.MyXmlNamespaceIndex"/>
+        <fileBasedIndex implementation="io.github.cdgeass.codeInsight.MyXmlNamespaceIndex"/>
         <dom.fileMetaData implementation="io.github.cdgeass.codeInsight.dom.description.ConfigurationDescription"
                           rootTagName="configuration"/>
         <dom.fileMetaData implementation="io.github.cdgeass.codeInsight.dom.description.MapperDescription"

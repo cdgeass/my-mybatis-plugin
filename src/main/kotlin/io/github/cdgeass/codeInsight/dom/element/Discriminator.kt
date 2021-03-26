@@ -3,9 +3,9 @@
 
 package io.github.cdgeass.codeInsight.dom.element
 
-import com.intellij.util.xml.DomElement
-import com.intellij.util.xml.GenericAttributeValue
-import com.intellij.util.xml.Required
+import com.intellij.psi.PsiClass
+import com.intellij.util.xml.*
+import io.github.cdgeass.codeInsight.dom.converter.MyPsiClassConverter
 
 /**
  * mybatis-3-mapper.dtd:discriminator interface.
@@ -32,7 +32,9 @@ interface Discriminator : DomElement {
 	 * Attribute typeHandler
 	 * @return the value of the typeHandler child.
 	 */
-	fun getTypeHandler(): GenericAttributeValue<String>
+	@Attribute("typeHandler")
+	@Convert(MyPsiClassConverter::class)
+	fun getTypeHandler(): GenericAttributeValue<PsiClass>
 
 	/**
 	 * Returns the value of the javaType child.
@@ -40,7 +42,9 @@ interface Discriminator : DomElement {
 	 * @return the value of the javaType child.
 	 */
 	@Required
-	fun getJavaType(): GenericAttributeValue<String>
+	@Attribute("javaType")
+	@Convert(MyPsiClassConverter::class)
+	fun getJavaType(): GenericAttributeValue<PsiClass>
 
 	/**
 	 * Returns the list of case children.

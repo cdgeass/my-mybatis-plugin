@@ -3,7 +3,11 @@
 
 package io.github.cdgeass.codeInsight.dom.element
 
+import com.intellij.psi.PsiClass
+import com.intellij.util.xml.Attribute
+import com.intellij.util.xml.Convert
 import com.intellij.util.xml.GenericAttributeValue
+import io.github.cdgeass.codeInsight.dom.converter.MyPsiClassConverter
 
 /**
  * mybatis-3-mapper.dtd:delete interface.
@@ -24,13 +28,6 @@ interface Delete : Statement {
 	fun setValue(value: String)
 
 	/**
-	 * Returns the value of the parameterMap child.
-	 * Attribute parameterMap
-	 * @return the value of the parameterMap child.
-	 */
-	fun getParameterMap(): GenericAttributeValue<String>
-
-	/**
 	 * Returns the value of the statementType child.
 	 * Attribute statementType
 	 * @return the value of the statementType child.
@@ -42,7 +39,9 @@ interface Delete : Statement {
 	 * Attribute parameterType
 	 * @return the value of the parameterType child.
 	 */
-	fun getParameterType(): GenericAttributeValue<String>
+	@Attribute("parameterType")
+	@Convert(MyPsiClassConverter::class)
+	fun getParameterType(): GenericAttributeValue<PsiClass>
 
 	/**
 	 * Returns the value of the databaseId child.

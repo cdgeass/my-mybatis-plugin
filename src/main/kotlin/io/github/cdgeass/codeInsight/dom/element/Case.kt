@@ -3,9 +3,10 @@
 
 package io.github.cdgeass.codeInsight.dom.element
 
-import com.intellij.util.xml.DomElement
-import com.intellij.util.xml.GenericAttributeValue
-import com.intellij.util.xml.Required
+import com.intellij.psi.PsiClass
+import com.intellij.util.xml.*
+import io.github.cdgeass.codeInsight.dom.converter.MyDomElementConverter
+import io.github.cdgeass.codeInsight.dom.converter.MyPsiClassConverter
 
 /**
  * mybatis-3-mapper.dtd:case interface.
@@ -18,14 +19,18 @@ interface Case : DomElement {
 	 * Attribute resultType
 	 * @return the value of the resultType child.
 	 */
-	fun getResultType(): GenericAttributeValue<String>
+	@Attribute("resultType")
+	@Convert(MyPsiClassConverter::class)
+	fun getResultType(): GenericAttributeValue<PsiClass>
 
 	/**
 	 * Returns the value of the resultMap child.
 	 * Attribute resultMap
 	 * @return the value of the resultMap child.
 	 */
-	fun getResultMap(): GenericAttributeValue<String>
+	@Attribute("resultMap")
+	@Convert(MyDomElementConverter::class)
+	fun getResultMap(): GenericAttributeValue<ResultMap>
 
 	/**
 	 * Returns the value of the value child.

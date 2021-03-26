@@ -3,8 +3,15 @@
 
 package io.github.cdgeass.codeInsight.dom.element
 
+import com.intellij.psi.PsiClass
+import com.intellij.psi.PsiField
+import com.intellij.util.xml.Attribute
+import com.intellij.util.xml.Convert
 import com.intellij.util.xml.DomElement
 import com.intellij.util.xml.GenericAttributeValue
+import io.github.cdgeass.codeInsight.dom.converter.MyDomElementConverter
+import io.github.cdgeass.codeInsight.dom.converter.MyPsiClassConverter
+import io.github.cdgeass.codeInsight.dom.converter.MyPsiFieldConverter
 
 /**
  * mybatis-3-mapper.dtd:idArg interface.
@@ -17,21 +24,27 @@ interface IdArg : DomElement {
 	 * Attribute select
 	 * @return the value of the select child.
 	 */
-	fun getSelect(): GenericAttributeValue<String>
+	@Attribute("select")
+	@Convert(MyDomElementConverter::class)
+	fun getSelect(): GenericAttributeValue<Select>
 
 	/**
 	 * Returns the value of the name child.
 	 * Attribute name
 	 * @return the value of the name child.
 	 */
-	fun getName(): GenericAttributeValue<String>
+	@Attribute("name")
+	@Convert(MyPsiFieldConverter::class)
+	fun getName(): GenericAttributeValue<PsiField>
 
 	/**
 	 * Returns the value of the resultMap child.
 	 * Attribute resultMap
 	 * @return the value of the resultMap child.
 	 */
-	fun getResultMap(): GenericAttributeValue<String>
+	@Attribute("resultMap")
+	@Convert(MyDomElementConverter::class)
+	fun getResultMap(): GenericAttributeValue<ResultMap>
 
 	/**
 	 * Returns the value of the columnPrefix child.
@@ -59,13 +72,17 @@ interface IdArg : DomElement {
 	 * Attribute typeHandler
 	 * @return the value of the typeHandler child.
 	 */
-	fun getTypeHandler(): GenericAttributeValue<String>
+	@Attribute("typeHandler")
+	@Convert(MyPsiClassConverter::class)
+	fun getTypeHandler(): GenericAttributeValue<PsiClass>
 
 	/**
 	 * Returns the value of the javaType child.
 	 * Attribute javaType
 	 * @return the value of the javaType child.
 	 */
-	fun getJavaType(): GenericAttributeValue<String>
+	@Attribute("javaType")
+	@Convert(MyPsiClassConverter::class)
+	fun getJavaType(): GenericAttributeValue<PsiClass>
 
 }

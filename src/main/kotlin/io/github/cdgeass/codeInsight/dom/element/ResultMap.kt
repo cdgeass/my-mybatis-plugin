@@ -4,9 +4,11 @@
 package io.github.cdgeass.codeInsight.dom.element
 
 import com.intellij.psi.PsiClass
+import com.intellij.util.xml.Attribute
 import com.intellij.util.xml.Convert
 import com.intellij.util.xml.GenericAttributeValue
 import com.intellij.util.xml.Required
+import io.github.cdgeass.codeInsight.dom.converter.MyDomElementConverter
 import io.github.cdgeass.codeInsight.dom.converter.MyPsiClassConverter
 
 /**
@@ -20,7 +22,7 @@ interface ResultMap : WithIdDomElement {
 	 * Attribute autoMapping
 	 * @return the value of the autoMapping child.
 	 */
-	fun getAutoMapping(): GenericAttributeValue<String>
+	fun getAutoMapping(): GenericAttributeValue<Boolean>
 
 	/**
 	 * Returns the value of the type child.
@@ -28,6 +30,7 @@ interface ResultMap : WithIdDomElement {
 	 * @return the value of the type child.
 	 */
 	@Required
+	@Attribute("type")
 	@Convert(MyPsiClassConverter::class)
 	fun getType(): GenericAttributeValue<PsiClass>
 
@@ -36,7 +39,9 @@ interface ResultMap : WithIdDomElement {
 	 * Attribute extends
 	 * @return the value of the extends child.
 	 */
-	fun getExtends(): GenericAttributeValue<String>
+	@Attribute("extends")
+	@Convert(MyDomElementConverter::class)
+	fun getExtends(): GenericAttributeValue<ResultMap>
 
 	/**
 	 * Returns the value of the constructor child.

@@ -38,13 +38,6 @@ interface Select : Statement {
 	fun getResultMap(): GenericAttributeValue<ResultMap>
 
 	/**
-	 * Returns the value of the parameterMap child.
-	 * Attribute parameterMap
-	 * @return the value of the parameterMap child.
-	 */
-	fun getParameterMap(): GenericAttributeValue<String>
-
-	/**
 	 * Returns the value of the useCache child.
 	 * Attribute useCache
 	 * @return the value of the useCache child.
@@ -79,7 +72,9 @@ interface Select : Statement {
 	 * Attribute parameterType
 	 * @return the value of the parameterType child.
 	 */
-	fun getParameterType(): GenericAttributeValue<String>
+	@Attribute("parameterType")
+	@Convert(MyPsiClassConverter::class)
+	fun getParameterType(): GenericAttributeValue<PsiClass>
 
 	/**
 	 * Returns the value of the statementType child.

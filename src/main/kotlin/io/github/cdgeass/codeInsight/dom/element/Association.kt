@@ -3,9 +3,12 @@
 
 package io.github.cdgeass.codeInsight.dom.element
 
-import com.intellij.util.xml.DomElement
-import com.intellij.util.xml.GenericAttributeValue
-import com.intellij.util.xml.Required
+import com.intellij.psi.PsiClass
+import com.intellij.psi.PsiField
+import com.intellij.util.xml.*
+import io.github.cdgeass.codeInsight.dom.converter.MyDomElementConverter
+import io.github.cdgeass.codeInsight.dom.converter.MyPsiClassConverter
+import io.github.cdgeass.codeInsight.dom.converter.MyPsiFieldConverter
 
 /**
  * mybatis-3-mapper.dtd:association interface.
@@ -25,14 +28,18 @@ interface Association : DomElement {
 	 * Attribute resultMap
 	 * @return the value of the resultMap child.
 	 */
-	fun getResultMap(): GenericAttributeValue<String>
+	@Attribute("resultMap")
+	@Convert(MyDomElementConverter::class)
+	fun getResultMap(): GenericAttributeValue<ResultMap>
 
 	/**
 	 * Returns the value of the typeHandler child.
 	 * Attribute typeHandler
 	 * @return the value of the typeHandler child.
 	 */
-	fun getTypeHandler(): GenericAttributeValue<String>
+	@Attribute("typeHandler")
+	@Convert(MyPsiClassConverter::class)
+	fun getTypeHandler(): GenericAttributeValue<PsiClass>
 
 	/**
 	 * Returns the value of the fetchType child.
@@ -60,7 +67,9 @@ interface Association : DomElement {
 	 * Attribute javaType
 	 * @return the value of the javaType child.
 	 */
-	fun getJavaType(): GenericAttributeValue<String>
+	@Attribute("javaType")
+	@Convert(MyPsiClassConverter::class)
+	fun getJavaType(): GenericAttributeValue<PsiClass>
 
 	/**
 	 * Returns the value of the autoMapping child.
@@ -88,7 +97,9 @@ interface Association : DomElement {
 	 * Attribute select
 	 * @return the value of the select child.
 	 */
-	fun getSelect(): GenericAttributeValue<String>
+	@Attribute("select")
+	@Convert(MyDomElementConverter::class)
+	fun getSelect(): GenericAttributeValue<Select>
 
 	/**
 	 * Returns the value of the property child.
@@ -96,7 +107,9 @@ interface Association : DomElement {
 	 * @return the value of the property child.
 	 */
 	@Required
-	fun getProperty(): GenericAttributeValue<String>
+	@Attribute("property")
+	@Convert(MyPsiFieldConverter::class)
+	fun getProperty(): GenericAttributeValue<PsiField>
 
 	/**
 	 * Returns the value of the notNullColumn child.
