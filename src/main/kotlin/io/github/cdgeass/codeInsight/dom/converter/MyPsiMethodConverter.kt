@@ -3,9 +3,12 @@ package io.github.cdgeass.codeInsight.dom.converter
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiReference
-import com.intellij.util.xml.*
-import io.github.cdgeass.codeInsight.dom.element.Mapper
-import io.github.cdgeass.codeInsight.reference.MyPsiElementReference
+import com.intellij.util.xml.ConvertContext
+import com.intellij.util.xml.Converter
+import com.intellij.util.xml.CustomReferenceConverter
+import com.intellij.util.xml.GenericDomValue
+import io.github.cdgeass.codeInsight.reference.MyPsiMethodReference
+import io.github.cdgeass.codeInsight.reference.resolvePsiMethods
 
 /**
  * @author cdgeass
@@ -18,15 +21,16 @@ class MyPsiMethodConverter : Converter<PsiMethod>(), CustomReferenceConverter<Ps
     }
 
     override fun fromString(s: String?, context: ConvertContext?): PsiMethod? {
-        if (s.isNullOrBlank() || context == null) return null
-
-        val mapper = DomUtil.findDomElement(context.referenceXmlElement, Mapper::class.java) ?: return null
-        val psiClass = mapper.getNamespace().value ?: return null
-
-        psiClass.allMethods.forEach { psiMethod ->
-            if (psiMethod.name == s) return psiMethod
+        if (s.isNullOrBlank() || context?.referenceXmlElement == null) {
+            return null
         }
-        return null
+
+        val psiMethods = resolvePsiMethods(context.referenceXmlElement!!)
+        return if (psiMethods.isEmpty()) {
+            null
+        } else {
+            psiMethods[0]
+        }
     }
 
     override fun createReferences(
@@ -38,7 +42,7 @@ class MyPsiMethodConverter : Converter<PsiMethod>(), CustomReferenceConverter<Ps
             return PsiReference.EMPTY_ARRAY
         }
 
-        return arrayOf(MyPsiElementReference(element, value?.value?.let { listOf(it) }))
+        return arrayOf(MyPsiMethodReference(element))
     }
 
 }
