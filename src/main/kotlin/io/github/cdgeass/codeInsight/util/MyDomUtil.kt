@@ -1,6 +1,5 @@
 package io.github.cdgeass.codeInsight.util
 
-import com.intellij.database.util.isNotNullOrEmpty
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
@@ -100,22 +99,4 @@ fun getPsiElement(domElement: DomElement): PsiElement? {
             domElement.xmlElement
         }
     }
-}
-
-fun getParentWithClass(element: PsiElement): DomElement? {
-    val xmlAttribute = PsiTreeUtil.findFirstParent(element) { it is XmlAttribute }?.let { it as XmlAttribute }
-    // TODO attribute name == ”name" IdArg Arg
-    if (xmlAttribute?.name != "property") {
-        return null
-    }
-
-    val xmlTag = PsiTreeUtil.findFirstParent(xmlAttribute) {
-        it is XmlTag &&
-                (it.getAttributeValue("resultType").isNotNullOrEmpty ||
-                        it.getAttributeValue("ofType").isNotNullOrEmpty ||
-                        it.getAttributeValue("resultMap").isNotNullOrEmpty)
-    }?.let { it as XmlTag } ?: return null
-
-    val domManager = DomManager.getDomManager(element.project)
-    return domManager.getDomElement(xmlTag)
 }
