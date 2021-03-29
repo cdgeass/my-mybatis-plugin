@@ -31,8 +31,9 @@ class ExpressionReferenceContributor : PsiReferenceContributor() {
             val references = mutableListOf<PsiReference>()
             var offset: Int
             var index = 0
+            // TODO 处理空格
             while ((expression.indexOf(" ", index)
-                    .also { offset = if (it == -1) expression.length - 1 else it }) != -1 || index == 0
+                    .also { offset = if (it == -1) expression.length else it }) != -1 || index == 0
             ) {
                 var text = expression.substring(index, offset)
                 val matcher = PATTERN.matcher(text)
@@ -47,8 +48,8 @@ class ExpressionReferenceContributor : PsiReferenceContributor() {
                             references.add(
                                 ParamReference(
                                     element,
-                                    TextRange(index + lastIndex, index + lastIndex + i - 1),
-                                    text
+                                    TextRange(index + lastIndex + 1, index + lastIndex + i + 1),
+                                    expression.substring(0, index + lastIndex)
                                 )
                             )
                             lastIndex = i + 1
@@ -58,8 +59,8 @@ class ExpressionReferenceContributor : PsiReferenceContributor() {
                         references.add(
                             ParamReference(
                                 element,
-                                TextRange(index + lastIndex, index + lastIndex + text.length - 1),
-                                expression
+                                TextRange(index + lastIndex + 1, index + text.length + 1),
+                                expression.substring(0, index + lastIndex)
                             )
                         )
                     }
