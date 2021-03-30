@@ -1,5 +1,6 @@
 package io.github.cdgeass.codeInsight.reference
 
+import com.intellij.codeInsight.completion.CompletionUtilCore
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
 import com.intellij.psi.util.PsiTreeUtil
@@ -18,7 +19,7 @@ class ParamReference(
     private val myKey: String = element.text.substring(
         textRange.startOffset,
         textRange.endOffset
-    )
+    ).replace(CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED, "")
 ) : PsiPolyVariantReferenceBase<PsiElement>(element, textRange) {
 
     override fun multiResolve(incompleteCode: Boolean): Array<ResolveResult> {
@@ -26,13 +27,14 @@ class ParamReference(
     }
 
     override fun getVariants(): Array<Any> {
-        return resolveParam().toTypedArray()
+        // TODO lookup
+        return resolveParam(false).toTypedArray()
     }
 
-    private fun resolveParam(): Collection<PsiElement> {
+    private fun resolveParam(strict: Boolean = true): Collection<PsiElement> {
         val paramMap = getParamMap(element)
         if (preExpression.isBlank()) {
-            return paramMap.values
+            return paramMap.filterKeys { if (strict) it == myKey else it.startsWith(myKey) }.values
         }
 
         var paramPsiElement: PsiElement? = null
@@ -40,13 +42,13 @@ class ParamReference(
             paramPsiElement = if (index == 0) {
                 paramMap[param] ?: return emptyList()
             } else {
-                val tempPsiElements = resolvePsiElement(paramPsiElement, param)
+                val tempPsiElements = resolvePsiElement(paramPsiElement, param, strict)
                 if (tempPsiElements.isEmpty()) return emptyList()
                 tempPsiElements[0]
             }
         }
 
-        return resolvePsiElement(paramPsiElement, myKey)
+        return resolvePsiElement(paramPsiElement, myKey, strict)
     }
 
     private fun getParamMap(element: PsiElement): Map<String, PsiClass> {
@@ -80,19 +82,64 @@ class ParamReference(
         return paramMap
     }
 
-    private fun resolvePsiElement(psiElement: PsiElement?, paramName: String): List<PsiElement> {
+    private fun resolvePsiElement(
+        psiElement: PsiElement?,
+        paramName: String,
+        strict: Boolean = true
+    ): List<PsiElement> {
         if (psiElement == null) return emptyList()
 
         if (psiElement is PsiClass) {
             // TODO 方法和参数判断逻辑
-            val fieldResults = psiElement.allFields.filter { it.name.startsWith(paramName) }
+            val results = mutableListOf<PsiElement>()
+
+            // 字段
+            val fieldResults = psiElement.allFields.filter {
+                if (strict) it.name == paramName else it.name.startsWith(paramName)
+            }
             if (fieldResults.isNotEmpty()) {
-                return fieldResults
+                if (!strict) {
+                    results.addAll(fieldResults)
+                } else {
+                    return fieldResults
+                }
             }
 
-            val methodResults = psiElement.allMethods.filter { it.name.startsWith(paramName) }
+            // 方法
+            val methodResults = psiElement.allMethods
+                // 过滤构造方法和带参方法 TODO 可能不需要过滤带参方法
+                .filter { !it.isConstructor && !it.hasParameters() }
+                .filter {
+                    // 过滤 void 方法 TODO 可能不需要过滤
+                    val returnType = it.returnType
+                    if (returnType is PsiPrimitiveType) {
+                        returnType.name != "void"
+                    } else {
+                        true
+                    }
+                }
+                .filter {
+                    if (strict) it.name == paramName else it.name.startsWith(paramName)
+                }
             if (methodResults.isNotEmpty()) {
-                return methodResults
+                if (!strict) {
+                    results.addAll(methodResults)
+                } else {
+                    return methodResults
+                }
+            }
+            return results
+        } else if (psiElement is PsiMethod) {
+            val returnType = psiElement.returnType ?: return emptyList()
+            if (returnType is PsiClassType) {
+                val returnClass = returnType.resolve() ?: return emptyList()
+                return resolvePsiElement(returnClass, paramName, strict)
+            }
+        } else if (psiElement is PsiField) {
+            val fieldType = psiElement.type
+            if (fieldType is PsiClassType) {
+                val fieldClass = fieldType.resolve() ?: return emptyList()
+                return resolvePsiElement(fieldClass, paramName, strict)
             }
         }
 
