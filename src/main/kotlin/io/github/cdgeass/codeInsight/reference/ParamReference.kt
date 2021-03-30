@@ -3,7 +3,6 @@ package io.github.cdgeass.codeInsight.reference
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
 import com.intellij.psi.util.PsiTreeUtil
-import com.intellij.psi.xml.XmlAttributeValue
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.xml.DomManager
 import io.github.cdgeass.codeInsight.dom.element.Statement
@@ -16,9 +15,9 @@ class ParamReference(
     element: PsiElement,
     private val textRange: TextRange,
     private val preExpression: String,
-    private val myKey: String = (element as XmlAttributeValue).value.substring(
-        textRange.startOffset - 1,
-        textRange.endOffset - 1
+    private val myKey: String = element.text.substring(
+        textRange.startOffset,
+        textRange.endOffset
     )
 ) : PsiPolyVariantReferenceBase<PsiElement>(element, textRange) {
 

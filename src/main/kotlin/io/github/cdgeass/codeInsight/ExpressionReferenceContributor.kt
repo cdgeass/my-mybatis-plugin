@@ -27,49 +27,79 @@ class ExpressionReferenceContributor : PsiReferenceContributor() {
 
         override fun getReferencesByElement(element: PsiElement, context: ProcessingContext): Array<PsiReference> {
             val expression = (element as XmlAttributeValue).value
+            val length = expression.length
 
             val references = mutableListOf<PsiReference>()
-            var offset: Int
+
             var index = 0
-            // TODO 处理空格
-            while ((expression.indexOf(" ", index)
-                    .also { offset = if (it == -1) expression.length else it }) != -1 || index == 0
-            ) {
-                var text = expression.substring(index, offset)
-                val matcher = PATTERN.matcher(text)
-                if (matcher.find()) {
-                    // 删除方法调用的括号
-                    text = text.replace("()", "").trim()
-
-                    // 按 . 分割
-                    var lastIndex = index
-                    text.forEachIndexed { i, c ->
-                        if (c == '.') {
-                            references.add(
-                                ParamReference(
-                                    element,
-                                    TextRange(index + lastIndex + 1, index + lastIndex + i + 1),
-                                    expression.substring(0, index + lastIndex)
-                                )
-                            )
-                            lastIndex = i + 1
-                        }
+            var lastIndex = 0
+            while (index < length) {
+                val char = expression[index]
+                if (char == ' ') {
+                    if (index != lastIndex) {
+                        val subExpression = expression.substring(lastIndex, index)
+                        // psiElement TextRange 从 “ 开始 startOffset 需要 +1
+                        references.addAll(convertToReferences(element, subExpression, 1 + lastIndex))
                     }
-                    if (lastIndex != text.length - 1) {
-                        references.add(
-                            ParamReference(
-                                element,
-                                TextRange(index + lastIndex + 1, index + text.length + 1),
-                                expression.substring(0, index + lastIndex)
-                            )
-                        )
+                    // 跳过空格
+                    while (index < length && expression[index] == ' ') {
+                        index++
                     }
+                    lastIndex = index
+                } else {
+                    index++
                 }
-
-                index = offset + 1
+            }
+            if (index != lastIndex) {
+                val subExpression = expression.substring(lastIndex, index)
+                references.addAll(convertToReferences(element, subExpression, 1 + lastIndex))
             }
 
             return references.toTypedArray()
+        }
+
+        private fun convertToReferences(
+            element: PsiElement,
+            expression: String,
+            startOffset: Int
+        ): List<PsiReference> {
+            val matcher = PATTERN.matcher(expression)
+            if (!matcher.find()) return emptyList()
+
+            val references = mutableListOf<ParamReference>()
+
+            val length = expression.length
+            var index = 0
+            var lastIndex = 0
+            while (index < length) {
+                val char = expression[index]
+                if (char == '.') {
+                    if (index != lastIndex) {
+                        references.add(
+                            ParamReference(
+                                element,
+                                TextRange(startOffset + lastIndex, startOffset + index),
+                                expression.substring(0, lastIndex)
+                            )
+                        )
+                    }
+                    index++
+                    lastIndex = index
+                } else {
+                    index++
+                }
+            }
+            if (index != lastIndex) {
+                references.add(
+                    ParamReference(
+                        element,
+                        TextRange(startOffset + lastIndex, startOffset + index),
+                        expression.substring(0, lastIndex)
+                    )
+                )
+            }
+
+            return references
         }
 
     }
