@@ -17,9 +17,20 @@ val PATTERN: Pattern = Pattern.compile("^([a-zA-Z][a-zA-Z0-9]*)(\\.|([a-zA-Z]|[a
 class ExpressionReferenceContributor : PsiReferenceContributor() {
 
     override fun registerReferenceProviders(registrar: PsiReferenceRegistrar) {
+        val expressionReferenceProvider = ExpressionReferenceProvider()
         registrar.registerReferenceProvider(
-            XmlPatterns.xmlAttributeValue().withParent(XmlPatterns.xmlAttribute().withName("test")),
-            ExpressionReferenceProvider()
+            XmlPatterns.xmlAttributeValue().withParent(
+                XmlPatterns.xmlAttribute().withName("test")
+                    .withParent(XmlPatterns.xmlTag().withName("if"))
+            ),
+            expressionReferenceProvider
+        )
+        registrar.registerReferenceProvider(
+            XmlPatterns.xmlAttributeValue().withParent(
+                XmlPatterns.xmlAttribute().withName("collection")
+                    .withParent(XmlPatterns.xmlTag().withName("foreach"))
+            ),
+            expressionReferenceProvider
         )
     }
 

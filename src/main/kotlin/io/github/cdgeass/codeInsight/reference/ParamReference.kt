@@ -8,6 +8,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.PlatformIcons
 import com.intellij.util.xml.DomManager
+import com.jetbrains.rd.util.first
 import io.github.cdgeass.codeInsight.dom.element.Statement
 
 /**
@@ -29,21 +30,11 @@ class ParamReference(
     override fun multiResolve(incompleteCode: Boolean): Array<ResolveResult> {
         val paramMap = getParamMap(element)
         if (preExpression.isBlank()) {
-            return PsiElementResolveResult.createResults(paramMap.filterKeys { it == myKey }.values)
+            return PsiElementResolveResult.createResults(paramMap.filter { it.key == myKey }.values)
         }
 
-        var paramPsiElement: PsiElement? = null
-        preExpression.split(".").filter { it.isNotBlank() }.forEachIndexed { index, param ->
-            paramPsiElement = if (index == 0) {
-                paramMap[param] ?: return emptyArray()
-            } else {
-                val tempPsiElements = resolvePsiElement(paramPsiElement, param, true)
-                if (tempPsiElements.isEmpty()) return emptyArray()
-                tempPsiElements[0]
-            }
-        }
-
-        return PsiElementResolveResult.createResults(resolvePsiElement(paramPsiElement, myKey, true))
+        val paramPsiElement = iterateParam(preExpression, paramMap)
+        return PsiElementResolveResult.createResults(extractFieldAndMethod(paramPsiElement, myKey, true))
     }
 
     override fun getVariants(): Array<Any> {
@@ -70,22 +61,26 @@ class ParamReference(
             }.toTypedArray()
         }
 
-        var paramPsiElement: PsiElement? = null
-        preExpression.split(".").filter { it.isNotBlank() }.forEachIndexed { index, param ->
-            paramPsiElement = if (index == 0) {
-                paramMap[param] ?: return emptyArray()
-            } else {
-                val tempPsiElements = resolvePsiElement(paramPsiElement, param, false)
-                if (tempPsiElements.isEmpty()) return emptyArray()
-                tempPsiElements[0]
-            }
-        }
-
-        return resolvePsiElement(paramPsiElement, myKey, false).toTypedArray()
+        val paramPsiElement: PsiElement? = iterateParam(preExpression, paramMap)
+        return extractFieldAndMethod(paramPsiElement, myKey, false).toTypedArray()
     }
 
     override fun isSoft(): Boolean {
         return true
+    }
+
+    private fun iterateParam(expression: String, paramMap: Map<String, PsiElement>): PsiElement? {
+        var paramPsiElement: PsiElement? = null
+        expression.split(".").filter { it.isNotBlank() }.forEachIndexed { index, param ->
+            paramPsiElement = if (index == 0) {
+                paramMap[param] ?: return null
+            } else {
+                val tempPsiElements = extractFieldAndMethod(paramPsiElement, param, false)
+                if (tempPsiElements.isEmpty()) return null
+                tempPsiElements[0]
+            }
+        }
+        return paramPsiElement
     }
 
     private fun getParamMap(element: PsiElement): Map<String, PsiElement> {
@@ -100,7 +95,56 @@ class ParamReference(
         val statementMethod = statement.getId().value ?: return emptyMap()
         paramMap.putAll(resolveParamName(statementMethod))
 
-        // TODO 查找其他参数
+        // foreach
+        val foreachTag =
+            PsiTreeUtil.findFirstParent(element) { it is XmlTag && (it.name == "foreach") }?.let { it as XmlTag }
+        if (foreachTag != null) {
+            val collectionExpression = foreachTag.getAttributeValue("collection")
+            val itemName = foreachTag.getAttributeValue("item")
+            if (collectionExpression != null && itemName != null) {
+                val split = collectionExpression.split(".")
+                val collectionPsiElement = if (split.size == 1) {
+                    // TODO 参数直接为集合
+                    null
+                } else {
+                    iterateParam(collectionExpression, paramMap)
+                }
+
+                if (collectionPsiElement != null) {
+                    if (collectionPsiElement is PsiField || collectionPsiElement is PsiMethod || collectionPsiElement is PsiParameter) {
+                        val fieldTye = when (collectionPsiElement) {
+                            is PsiField -> {
+                                collectionPsiElement.type
+                            }
+                            is PsiMethod -> {
+                                collectionPsiElement.returnType
+                            }
+                            else -> {
+                                (collectionPsiElement as PsiParameter).type
+                            }
+                        }
+                        if (fieldTye is PsiClassType) {
+                            val fieldClass = fieldTye.resolve()
+                            val genericMap = fieldTye.resolveGenerics().substitutor.substitutionMap
+                            // 参数类型为 Collection
+                            if (fieldClass?.supers?.any { superClass ->
+                                    superClass.qualifiedName == "java.util.Collection"
+                                } == true) {
+                                val genericType = genericMap.first().value
+                                if (genericType is PsiClassType) {
+                                    genericType.resolve()?.let { genericClass ->
+                                        paramMap[itemName] = genericClass
+                                    }
+                                } else if (genericType is PsiArrayType) {
+                                    val psiElementFactory = PsiElementFactory.getInstance(myElement.project)
+                                    paramMap[itemName] = psiElementFactory.createClass("array")
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
         return paramMap
     }
@@ -114,20 +158,20 @@ class ParamReference(
         var hasParamAnnotation = false
         val paramList = method.parameterList
         var index = 0
-        val paramTypeCache = arrayOfNulls<PsiElement>(paramList.parameters.size)
+        val paramClassCache = arrayOfNulls<PsiElement>(paramList.parameters.size)
         for (param in paramList.parameters) {
             val paramPsiType = param.type
             val annotation = param.getAnnotation("org.apache.ibatis.annotations.Param")
 
             // 解析参数类型
-            var paramType: PsiClass? = null
+            var paramClass: PsiClass? = null
             if (paramPsiType is PsiClassType) {
-                paramType = (param.type as PsiClassType).resolve() ?: continue
+                paramClass = (param.type as PsiClassType).resolve() ?: continue
                 // cached
-                paramTypeCache[index] = paramType
+                paramClassCache[index] = paramClass
             }
 
-            if (paramType != null && isSpecialParamType(paramType)) {
+            if (paramClass != null && isSpecialParamType(paramClass)) {
                 continue
             }
 
@@ -148,40 +192,45 @@ class ParamReference(
         if (paramNames.isEmpty()) {
             return emptyMap()
         } else if (!hasParamAnnotation && paramNames.size == 1) {
-            val paramType = paramTypeCache[0]
-            if (paramType is PsiClass) {
-                if (paramType.qualifiedName == "java.util.Collection") {
-                    paramNameMap["collection"] = paramType
-                } else if (paramType.qualifiedName == "java.util.List") {
-                    paramNameMap["list"] = paramType
-                } else {
-                    resolvePsiElement(paramType, "", false).forEach {
-                        val name = when (it) {
-                            is PsiField -> {
-                                it.name
+            val paramClass = paramClassCache[0]
+            if (paramClass is PsiClass) {
+                when (paramClass.qualifiedName) {
+                    "java.util.Collection" -> {
+                        paramNameMap["collection"] = paramClass
+                    }
+                    "java.util.List" -> {
+                        paramNameMap["list"] = paramClass
+                    }
+                    else -> {
+                        extractFieldAndMethod(paramClass, "", false).forEach {
+                            val name = when (it) {
+                                is PsiField -> {
+                                    it.name
+                                }
+                                is PsiMethod -> {
+                                    it.name
+                                }
+                                else -> {
+                                    null
+                                }
                             }
-                            is PsiMethod -> {
-                                it.name
+                            if (name != null) {
+                                paramNameMap[name] = it
                             }
-                            else -> {
-                                null
-                            }
-                        }
-                        if (name != null) {
-                            paramNameMap[name] = it
                         }
                     }
                 }
             } else if (paramList.parameters[0].type is PsiArrayType) {
-                // TODO 数组
+                val psiElementFactory = PsiElementFactory.getInstance(myElement.project)
+                paramNameMap["array"] = psiElementFactory.createClass("array")
             }
         } else {
             var i = 0
             paramNames.forEach { (key, value) ->
-                paramNameMap[value] = paramTypeCache[key]!!
+                paramNameMap[value] = paramClassCache[key]!!
                 val genericParamName = GENERIC_NAME_PREFIX + (++i)
                 if (!paramNames.containsValue(genericParamName)) {
-                    paramNameMap[genericParamName] = paramTypeCache[key]!!
+                    paramNameMap[genericParamName] = paramClassCache[key]!!
                 }
             }
         }
@@ -194,7 +243,7 @@ class ParamReference(
                 paramType.qualifiedName == "org.apache.ibatis.session.ResultHandler"
     }
 
-    private fun resolvePsiElement(
+    private fun extractFieldAndMethod(
         psiElement: PsiElement?,
         paramName: String,
         strict: Boolean = true
@@ -202,6 +251,13 @@ class ParamReference(
         if (psiElement == null) return emptyList()
 
         if (psiElement is PsiClass) {
+            if (psiElement.name == "array") {
+                if (if (strict) "length" == paramName else "length".startsWith(paramName)) {
+                    val psiElementFactory = PsiElementFactory.getInstance(myElement.project)
+                    return listOf(psiElementFactory.createField("length", PsiType.INT))
+                }
+            }
+
             // TODO 方法和参数判断逻辑
             val results = mutableListOf<PsiElement>()
 
@@ -218,6 +274,7 @@ class ParamReference(
             }
 
             // 方法
+            val paramNameWithoutBrackets = paramName.replace("()", "")
             val methodResults = psiElement.allMethods
                 // 过滤构造方法和带参方法 TODO 可能不需要过滤带参方法
                 .filter { !it.isConstructor && !it.hasParameters() }
@@ -231,7 +288,7 @@ class ParamReference(
                     }
                 }
                 .filter {
-                    if (strict) it.name == paramName else it.name.startsWith(paramName)
+                    if (strict) it.name == paramNameWithoutBrackets else it.name.startsWith(paramNameWithoutBrackets)
                 }
             if (methodResults.isNotEmpty()) {
                 if (!strict) {
@@ -245,13 +302,13 @@ class ParamReference(
             val returnType = psiElement.returnType ?: return emptyList()
             if (returnType is PsiClassType) {
                 val returnClass = returnType.resolve() ?: return emptyList()
-                return resolvePsiElement(returnClass, paramName, strict)
+                return extractFieldAndMethod(returnClass, paramName, strict)
             }
         } else if (psiElement is PsiField) {
             val fieldType = psiElement.type
             if (fieldType is PsiClassType) {
                 val fieldClass = fieldType.resolve() ?: return emptyList()
-                return resolvePsiElement(fieldClass, paramName, strict)
+                return extractFieldAndMethod(fieldClass, paramName, strict)
             }
         }
 
