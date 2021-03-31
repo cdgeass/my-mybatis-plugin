@@ -46,6 +46,11 @@ class ExpressionReferenceContributor : PsiReferenceContributor() {
                         index++
                     }
                     lastIndex = index
+                } else if (char == '!') {
+                    index++
+                    if (lastIndex == index - 1) {
+                        lastIndex = index
+                    }
                 } else {
                     index++
                 }
@@ -53,7 +58,7 @@ class ExpressionReferenceContributor : PsiReferenceContributor() {
             if (index != lastIndex) {
                 val subExpression = expression.substring(lastIndex, index)
                 references.addAll(convertToReferences(element, subExpression, 1 + lastIndex))
-            } else if (expression[index - 1] == ' ') {
+            } else if (index == 0 || expression[index - 1] == ' ') {
                 references.add(ParamReference(element, TextRange(index, index), ""))
             }
 
