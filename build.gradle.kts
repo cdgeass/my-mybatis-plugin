@@ -22,7 +22,6 @@ dependencies {
 
 // See https://github.com/JetBrains/gradle-intellij-plugin/
 intellij {
-    type = "IU"
     version = "IU-LATEST-EAP-SNAPSHOT"
     setPlugins("java", "com.intellij.database")
 }
