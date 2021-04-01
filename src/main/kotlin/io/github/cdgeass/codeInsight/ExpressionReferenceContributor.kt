@@ -1,8 +1,10 @@
 package io.github.cdgeass.codeInsight
 
+import com.intellij.patterns.PlatformPatterns
 import com.intellij.patterns.XmlPatterns
 import com.intellij.psi.PsiReferenceContributor
 import com.intellij.psi.PsiReferenceRegistrar
+import com.intellij.psi.xml.XmlTokenType
 
 /**
  * @author cdgeass
@@ -27,5 +29,14 @@ class ExpressionReferenceContributor : PsiReferenceContributor() {
             ),
             expressionReferenceProvider
         )
+        registrar.registerReferenceProvider(
+            XmlPatterns.psiElement().withElementType(XmlTokenType.XML_DATA_CHARACTERS),
+            expressionReferenceProvider
+        )
+        registrar.registerReferenceProvider(
+            PlatformPatterns.psiElement(),
+            expressionReferenceProvider
+        )
     }
+
 }

@@ -19,16 +19,28 @@ class ExpressionReferenceProvider : PsiReferenceProvider() {
     override fun getReferencesByElement(element: PsiElement, context: ProcessingContext): Array<PsiReference> {
         val startOffset = if (element is XmlAttributeValue) 1 else 2
 
-        val expression = if (element is XmlAttributeValue) {
-            element.value
-        } else if (element is XmlToken) {
-            if (!element.text.startsWith("#{")) {
+        val expression = when (element) {
+            is XmlAttributeValue -> {
+                element.value
+            }
+            is XmlToken -> {
+                val text = element.text
+                when {
+                    text.startsWith("#{") -> {
+                        text.removeSurrounding("#{", "}")
+                    }
+                    text.startsWith("\${") -> {
+                        text.removeSurrounding("\${,", "}")
+                    }
+                    else -> {
+                        return emptyArray()
+                    }
+                }
+            }
+            else -> {
                 return emptyArray()
             }
-            element.text.removeSurrounding("#{", "}")
-        } else {
-            null
-        }!!
+        }
         val length = expression.length
 
         val references = mutableListOf<PsiReference>()

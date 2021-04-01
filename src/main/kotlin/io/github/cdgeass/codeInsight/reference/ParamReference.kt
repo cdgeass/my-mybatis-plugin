@@ -1,6 +1,7 @@
 package io.github.cdgeass.codeInsight.reference
 
 import com.intellij.codeInsight.completion.CompletionUtilCore
+import com.intellij.codeInsight.lookup.AutoCompletionPolicy
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.openapi.util.TextRange
 import com.intellij.pom.java.LanguageLevel
@@ -26,7 +27,8 @@ class ParamReference(
     private val myKey: String = element.text.substring(
         textRange.startOffset,
         textRange.endOffset
-    ).replace(CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED, "")
+    ).replace(CompletionUtilCore.DUMMY_IDENTIFIER, "")
+        .replace(CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED, "")
 ) : PsiPolyVariantReferenceBase<PsiElement>(element, textRange) {
 
     override fun multiResolve(incompleteCode: Boolean): Array<ResolveResult> {
@@ -59,7 +61,7 @@ class ParamReference(
                                 null
                             }
                         }
-                    )
+                    ).withAutoCompletionPolicy(AutoCompletionPolicy.SETTINGS_DEPENDENT)
             }.toTypedArray()
         }
 
