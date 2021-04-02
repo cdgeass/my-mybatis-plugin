@@ -24,7 +24,7 @@ class ParamReference(
     element: PsiElement,
     private val textRange: TextRange,
     private val preExpression: String,
-    private val myKey: String = element.text.substring(
+    val myKey: String = element.text.substring(
         textRange.startOffset,
         textRange.endOffset
     ).replace(CompletionUtilCore.DUMMY_IDENTIFIER, "")

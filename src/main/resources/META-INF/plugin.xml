@@ -42,7 +42,7 @@
                                         implementationClass="io.github.cdgeass.codeInsight.daemon.XmlLineMarkerProvider"/>
         <psi.referenceContributor language="XML"
                                   implementation="io.github.cdgeass.codeInsight.ExpressionReferenceContributor"/>
-        <completion.contributor language="GenericSQL"
+        <completion.contributor language="any"
                                 implementationClass="io.github.cdgeass.codeInsight.ParamExpressionCompletionContributor"/>
         <!-- generator -->
         <projectService serviceImplementation="io.github.cdgeass.generator.settings.Settings"/>

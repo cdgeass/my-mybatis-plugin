@@ -16,6 +16,7 @@ import com.intellij.psi.impl.source.tree.injected.InjectedCaret
 import com.intellij.psi.util.elementType
 import com.intellij.psi.xml.XmlFile
 import com.intellij.psi.xml.XmlTokenType
+import com.intellij.sql.dialects.SqlLanguageDialect
 import com.intellij.util.PlatformIcons
 import com.intellij.util.ProcessingContext
 import io.github.cdgeass.codeInsight.reference.ParamReference
@@ -32,7 +33,10 @@ class ParamExpressionCompletionProvider : CompletionProvider<CompletionParameter
         result: CompletionResultSet
     ) {
         val position = parameters.position
-        if (position.prevSibling.text != "#{" && position.prevSibling.text != "\${") {
+        if (position.language !is SqlLanguageDialect) {
+            return
+        }
+        if (position.prevSibling?.text != "#{" && position.prevSibling?.text != "\${") {
             return
         }
 
@@ -58,17 +62,15 @@ class ParamExpressionCompletionProvider : CompletionProvider<CompletionParameter
         }
 
         val expression = element.text.substring(2).substringBeforeLast("}")
-        val reference: ParamReference
-        if (expression.contains(".")) {
+        val reference = if (expression.contains(".")) {
             val subExpression = expression.substringBeforeLast(".")
-            reference =
-                ParamReference(element, TextRange(3 + subExpression.length, 2 + expression.length), subExpression)
+            ParamReference(element, TextRange(3 + subExpression.length, 2 + expression.length), subExpression)
         } else {
-            reference = ParamReference(element, TextRange(2, 2 + expression.length), "")
+            ParamReference(element, TextRange(2, 2 + expression.length), "")
         }
         val variants = reference.variants
         if (variants.isNotEmpty()) {
-            val noPrefixResult = result.withPrefixMatcher("")
+            val noPrefixResult = result.withPrefixMatcher(reference.myKey)
             variants.forEach {
                 if (it is LookupElement) {
                     noPrefixResult.addElement(it)

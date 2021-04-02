@@ -60,7 +60,7 @@ fun format(text: String): List<String> {
                 }
                 if (last != null) {
                     last!!.value.right = parametersStr
-                    val parameters = last!!.value.right.split(",").map { it.trim() }
+                    val parameters = last!!.value.right.split(", ").map { it.trim() }
                     val sql = format(last!!.value.left, parameters)
                     sqlList.add(sql)
                 }
