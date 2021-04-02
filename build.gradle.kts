@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "io.github.cdgeass"
-version = "1.3.0"
+version = "2.0.0"
 
 repositories {
     mavenCentral()
@@ -37,9 +37,18 @@ tasks.getByName<org.jetbrains.intellij.tasks.PatchPluginXmlTask>("patchPluginXml
     sinceBuild(202)
     changeNotes(
         """
-        1.3.0</br>
+        2.0.0</br>
         <ul>
-            <li>add MyBatis Generator</li>
+            <li>rewrite with Kotlin</li>
+            <li>add localization support</li>
+            <li>improve log formatter ui</li>
+            <li>improve xml code completion and navigation</li>
+        </ul>
+        <ul>
+            <li>使用Kotlin重写</li>
+            <li>添加本地化</li>
+            <li>改进日志格式化ui</li>
+            <li>改进Xml代码补全和跳转</li>
         </ul>
         """
     )

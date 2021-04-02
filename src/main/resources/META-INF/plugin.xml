@@ -7,13 +7,21 @@
 
     <a href="https://github.com/cdgeass/my-mybatis-plugin">Github</a> | <a href="https://github.com/cdgeass/my-mybatis-plugin/issues">Issues</a><br>
     <br>
-    a plugin to help you to use mybatis in IDEA<br>
+    a plugin to help you to use MyBatis in IDEA<br>
     <br>
     <b>Features</b>
     <ul>
-        <li>format the log that print by mybatis to display or copy to clipboard</li>
-        <li>navigation between dao and xml</li>
+        <li>format MyBatis log</li>
+        <li>navigation between dao interface and MyBatsi xml</li>
+        <li>code completion in mybatis xml</li>
+        <li>MyBatis generator</li>
     </ul>
+    <b>功能</b>
+    <ul>
+        <li>格式化MyBatis log</li>
+        <li>接口和MyBatis xml之间的代码跳转</li>
+        <li>MyBatis xml中的代码补全</li>
+        <li>MyBatis generator</li>
     ]]></description>
 
     <!-- please see https://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
