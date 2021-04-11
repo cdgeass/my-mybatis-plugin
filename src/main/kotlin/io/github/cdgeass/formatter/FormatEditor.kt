@@ -7,6 +7,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.colors.EditorColorsManager
 import com.intellij.openapi.editor.colors.EditorFontType
 import com.intellij.openapi.editor.colors.TextAttributesKey
+import com.intellij.openapi.editor.markup.TextAttributes
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.codeStyle.CodeStyleManager
@@ -21,9 +22,12 @@ import java.awt.Dimension
  * @author cdgeass
  * @since 2021-03-09
  */
-val SEPARATOR_TEXT_ATTRIBUTES_KEY = TextAttributesKey.createTextAttributesKey("MY_MYBATIS::MYBATIS_LOG_SEPARATOR")
-val TEXT_ATTRIBUTES_KEY_1 = TextAttributesKey.createTextAttributesKey("MY_MYBATIS::MYBATIS_LOG_TEXT_1")
-val TEXT_ATTRIBUTES_KEY_2 = TextAttributesKey.createTextAttributesKey("MY_MYBATIS::MYBATIS_LOG_TEXT_2")
+val SEPARATOR_TEXT_ATTRIBUTES_KEY: TextAttributes =
+    TextAttributesKey.createTextAttributesKey("MY_MYBATIS::MYBATIS_LOG_SEPARATOR").defaultAttributes
+val TEXT_ATTRIBUTES_KEY_1: TextAttributes =
+    TextAttributesKey.createTextAttributesKey("MY_MYBATIS::MYBATIS_LOG_TEXT_1").defaultAttributes
+val TEXT_ATTRIBUTES_KEY_2: TextAttributes =
+    TextAttributesKey.createTextAttributesKey("MY_MYBATIS::MYBATIS_LOG_TEXT_2").defaultAttributes
 
 const val SEPARATOR_LINE = "-- -----------------------------------"
 const val LINE_SEPARATOR = "\n"

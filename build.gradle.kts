@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "io.github.cdgeass"
-version = "2.0.0"
+version = "2.0.0.201"
 
 repositories {
     mavenCentral()
@@ -22,7 +22,7 @@ dependencies {
 
 // See https://github.com/JetBrains/gradle-intellij-plugin/
 intellij {
-    version = "IU-LATEST-EAP-SNAPSHOT"
+    version = "IU-2020.1"
     setPlugins("java", "com.intellij.database")
 }
 configure<JavaPluginConvention> {
@@ -34,7 +34,8 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach 
     }
 }
 tasks.getByName<org.jetbrains.intellij.tasks.PatchPluginXmlTask>("patchPluginXml") {
-    sinceBuild(202)
+    sinceBuild(201)
+    untilBuild(201)
     changeNotes(
         """
         2.0.0</br>
