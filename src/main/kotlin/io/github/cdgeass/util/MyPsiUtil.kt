@@ -13,6 +13,7 @@ import com.jetbrains.rd.util.first
 fun resolveGeneric(psiType: PsiType): PsiClass? {
     if (psiType is PsiClassType) {
         val substitutionMap = psiType.resolveGenerics().substitutor.substitutionMap
+        if (substitutionMap.isEmpty()) return null
         val genericType = substitutionMap.first().value
         if (genericType is PsiClassType) {
             return genericType.resolve()

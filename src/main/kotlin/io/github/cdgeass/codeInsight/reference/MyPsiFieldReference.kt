@@ -1,6 +1,5 @@
 package io.github.cdgeass.codeInsight.reference
 
-import com.intellij.database.util.isNotNullOrEmpty
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiField
@@ -65,11 +64,11 @@ private fun getParentWithJavaType(element: PsiElement): DomElement? {
     // 查找外层带有 type 的 xmlTag
     val xmlTag = PsiTreeUtil.findFirstParent(ownerTag) {
         it is XmlTag &&
-                (it.getAttributeValue("resultType").isNotNullOrEmpty ||
-                        it.getAttributeValue("ofType").isNotNullOrEmpty ||
-                        it.getAttributeValue("javaType").isNotNullOrEmpty ||
-                        it.getAttributeValue("type").isNotNullOrEmpty ||
-                        it.getAttributeValue("resultMap").isNotNullOrEmpty)
+                (!it.getAttributeValue("resultType").isNullOrBlank() ||
+                        !it.getAttributeValue("ofType").isNullOrBlank() ||
+                        !it.getAttributeValue("javaType").isNullOrBlank() ||
+                        !it.getAttributeValue("type").isNullOrBlank() ||
+                        !it.getAttributeValue("resultMap").isNullOrBlank())
     }?.let { it as XmlTag } ?: return null
 
     val domManager = DomManager.getDomManager(element.project)

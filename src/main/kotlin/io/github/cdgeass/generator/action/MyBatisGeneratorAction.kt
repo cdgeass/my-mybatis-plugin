@@ -16,7 +16,6 @@ import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleManager
-import com.intellij.openapi.module.ModuleUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.ui.SelectFromListDialog
@@ -257,7 +256,7 @@ class MyBatisGeneratorAction : AnAction() {
         val javaModelGenerator = JavaModelGenerator.getInstance(project)
         return JavaModelGeneratorConfiguration()
             .apply {
-                targetProject = ModuleUtil.getModuleDirPath(module) + propertiesComponent.getValue(
+                targetProject = project.basePath!! + propertiesComponent.getValue(
                     SOURCE_DIR,
                     SOURCE_DIR_DEFAULT_VALUE
                 )
@@ -282,7 +281,7 @@ class MyBatisGeneratorAction : AnAction() {
         val sqlMapGenerator = SqlMapGenerator.getInstance(project)
         return SqlMapGeneratorConfiguration()
             .apply {
-                targetProject = ModuleUtil.getModuleDirPath(module) + propertiesComponent.getValue(
+                targetProject = project.basePath!! + propertiesComponent.getValue(
                     RESOURCES_DIR,
                     RESOURCES_DIR_DEFAULT_VALUE
                 )
@@ -310,7 +309,7 @@ class MyBatisGeneratorAction : AnAction() {
         val javaClientGenerator = JavaClientGenerator.getInstance(project)
         return JavaClientGeneratorConfiguration()
             .apply {
-                targetProject = ModuleUtil.getModuleDirPath(module) + propertiesComponent.getValue(
+                targetProject = project.basePath!! + propertiesComponent.getValue(
                     SOURCE_DIR,
                     SOURCE_DIR_DEFAULT_VALUE
                 )

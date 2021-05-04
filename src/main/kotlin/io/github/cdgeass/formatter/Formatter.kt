@@ -82,7 +82,7 @@ fun format(text: String): List<String> {
 }
 
 /**
- * 替换 log 中的 ？, 并使用 jsqlparser 进行格式化
+ * 替换 log 中的 ？
  */
 private fun format(preparing: String, parametersWithType: List<String>): String {
     var preparing = preparing
