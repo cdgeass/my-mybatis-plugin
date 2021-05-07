@@ -258,7 +258,7 @@ class ParamReference(
             } else {
                 val tempPsiElements = extractFieldAndMethod(paramPsiElement, param, false)
                 if (tempPsiElements.isEmpty()) return null
-                tempPsiElements[0]
+                tempPsiElements.first()
             }
         }
         return paramPsiElement
@@ -268,32 +268,33 @@ class ParamReference(
         psiElement: PsiElement?,
         paramName: String,
         strict: Boolean = true
-    ): List<PsiElement> {
+    ): Collection<PsiElement> {
         if (psiElement == null) return emptyList()
 
         if (psiElement is PsiClass) {
-            // TODO 方法和参数判断逻辑
-            val results = mutableListOf<PsiElement>()
+            val results = mutableMapOf<String, PsiElement>()
 
             // 字段
-            val fieldResults = psiElement.allFields.filter {
+            val fields = psiElement.allFields.filter {
                 if (strict) it.name == paramName else it.name.startsWith(paramName)
             }
-            if (fieldResults.isNotEmpty()) {
+            if (fields.isNotEmpty()) {
                 if (!strict) {
-                    results.addAll(fieldResults)
+                    fields.forEach { filed ->
+                        results[filed.name] = filed
+                    }
                 } else {
-                    return fieldResults
+                    return fields
                 }
             }
 
             // 方法
             val paramNameWithoutBrackets = paramName.replace("()", "")
-            val methodResults = psiElement.allMethods
-                // 过滤构造方法和带参方法 TODO 可能不需要过滤带参方法
+            val methods = psiElement.allMethods
+                // 过滤构造方法和带参方法
                 .filter { !it.isConstructor && !it.hasParameters() }
                 .filter {
-                    // 过滤 void 方法 TODO 可能不需要过滤
+                    // 过滤 void 方法
                     val returnType = it.returnType
                     if (returnType is PsiPrimitiveType) {
                         returnType.name != "void"
@@ -302,16 +303,20 @@ class ParamReference(
                     }
                 }
                 .filter {
-                    if (strict) it.name == paramNameWithoutBrackets else it.name.startsWith(paramNameWithoutBrackets)
+                    val name = methodName(it)
+                    if (strict) name == paramNameWithoutBrackets else name.startsWith(paramNameWithoutBrackets)
                 }
-            if (methodResults.isNotEmpty()) {
+            if (methods.isNotEmpty()) {
                 if (!strict) {
-                    results.addAll(methodResults)
+                    methods.forEach { method ->
+                        val name = methodName(method)
+                        results.putIfAbsent(name, method)
+                    }
                 } else {
-                    return methodResults
+                    return methods
                 }
             }
-            return results
+            return results.values
         } else if (psiElement is PsiMethod) {
             val returnType = psiElement.returnType ?: return emptyList()
             if (returnType is PsiClassType) {
@@ -327,6 +332,28 @@ class ParamReference(
         }
 
         return emptyList()
+    }
+
+    private fun methodName(method: PsiMethod): String {
+        var name = method.name
+
+        name = when {
+            name.startsWith("is") -> {
+                name.substringAfter("is")
+            }
+            name.startsWith("get") -> {
+                name.substringAfter("get")
+            }
+            else -> {
+                name
+            }
+        }
+
+        return if (name.length == 1) {
+            name.toLowerCase()
+        } else {
+            name[0].toLowerCase() + name.substring(1)
+        }
     }
 
 }
