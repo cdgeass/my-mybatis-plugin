@@ -5,6 +5,7 @@ import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
 import com.intellij.openapi.project.Project
+import io.github.cdgeass.generator.settings.state.SettingsState
 
 /**
  * @author cdgeass
@@ -25,6 +26,18 @@ class Settings : PersistentStateComponent<SettingsState> {
         get() = state.enableLombok
         set(value) {
             state.enableLombok = value
+        }
+
+    var sourceDir: String
+        get() = state.sourceDir!!
+        set(value) {
+            state.sourceDir = value
+        }
+
+    var resourcesDir: String
+        get() = state.resourcesDir!!
+        set(value) {
+            state.resourcesDir = value
         }
 
     companion object Factory {

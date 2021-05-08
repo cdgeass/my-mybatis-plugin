@@ -1,4 +1,4 @@
-package io.github.cdgeass.generator.settings
+package io.github.cdgeass.generator.settings.state
 
 import com.intellij.openapi.components.BaseState
 
@@ -9,5 +9,9 @@ import com.intellij.openapi.components.BaseState
 class SettingsState : BaseState() {
 
     var enableLombok by property(true)
+
+    var sourceDir by string("/src/main/java")
+
+    var resourcesDir by string("/src/main/resources")
 
 }

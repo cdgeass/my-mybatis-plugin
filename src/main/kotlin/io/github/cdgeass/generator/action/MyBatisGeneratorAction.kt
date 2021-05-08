@@ -177,7 +177,7 @@ class MyBatisGeneratorAction : AnAction() {
 
         val context = buildContext(project, dataSource)
             .apply {
-                jdbcConnectionConfiguration = buildJdbcConnectionConfiguration(dataSource)
+                jdbcConnectionConfiguration = buildJdbcConnectionConfiguration(project, dataSource)
                 javaTypeResolverConfiguration = buildJavaTypeResolverConfiguration(project)
                 javaModelGeneratorConfiguration = buildJavaModelGeneratorConfiguration(project, schema)
                 sqlMapGeneratorConfiguration = buildSqlMapGeneratorConfiguration(project, schema)
@@ -206,15 +206,18 @@ class MyBatisGeneratorAction : AnAction() {
             }
     }
 
-    private fun buildJdbcConnectionConfiguration(dataSource: LocalDataSource): JDBCConnectionConfiguration {
+    private fun buildJdbcConnectionConfiguration(
+        project: Project,
+        dataSource: LocalDataSource
+    ): JDBCConnectionConfiguration {
         val password: String
         val credentialAttributes = CredentialAttributes(generateServiceName("my-mybatis", dataSource.url!!))
         val credentials = PasswordSafe.instance.get(credentialAttributes)
         if (credentials?.getPasswordAsString() != null) {
             password = credentials.getPasswordAsString()!!
         } else {
-            password = Messages.showInputDialog(
-                PluginBundle.message("generator.datasource.password.input.title", dataSource.name),
+            password = Messages.showPasswordDialog(
+                project, PluginBundle.message("generator.datasource.password.input.title", dataSource.name),
                 PluginBundle.message("generator.title"), AllIcons.Actions.Commit
             )!!
             PasswordSafe.instance.setPassword(credentialAttributes, password)
@@ -366,12 +369,20 @@ class MyBatisGeneratorAction : AnAction() {
 
     private fun buildPlugins(project: Project): List<PluginConfiguration> {
         val settings = Settings.getInstance(project)
+        val commentGenerator = CommentGenerator.getInstance(project)
 
         val plugins = mutableListOf<PluginConfiguration>()
         if (settings.enableLombok) {
             plugins.add(
                 PluginConfiguration().apply {
                     configurationType = "io.github.cdgeass.generator.plugin.LombokDataAnnotationPlugin"
+                }
+            )
+        }
+        if (commentGenerator.suppressAllComments()) {
+            plugins.add(
+                PluginConfiguration().apply {
+                    configurationType = "org.mybatis.generator.plugins.UnmergeableXmlMappersPlugin"
                 }
             )
         }

@@ -15,8 +15,16 @@ class SettingsConfigurable(project: Project) : BoundConfigurable("MyBatis Genera
 
     override fun createPanel(): DialogPanel {
         return panel {
-            row {
-                checkBox("EnableLombok", settings::enableLombok)
+            row("Source Folder") {
+                textField(settings::sourceDir)
+            }
+            row("Resources Folder") {
+                textField(settings::resourcesDir)
+            }
+            titledRow("Plugins") {
+                row {
+                    checkBox("EnableLombok", settings::enableLombok)
+                }
             }
         }
     }

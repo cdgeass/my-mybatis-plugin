@@ -1,4 +1,4 @@
-package io.github.cdgeass.generator.settings
+package io.github.cdgeass.generator.settings.state
 
 import com.intellij.openapi.components.BaseState
 
@@ -7,8 +7,6 @@ import com.intellij.openapi.components.BaseState
  * @since 2021-02-18
  */
 class TableState : BaseState() {
-
-    var properties by map<String, String>()
 
     var enableInsert by property(true)
 
@@ -25,5 +23,18 @@ class TableState : BaseState() {
     var enableCountByExample by property(false)
 
     var enableUpdateByExample by property(false)
+
+    var propertiesMap by map<String, String>()
+
+    var properties: MutableMap<String, String>
+        get() {
+            if (propertiesMap.isEmpty()) {
+                return mutableMapOf()
+            }
+            return propertiesMap
+        }
+        set(value) {
+            this.propertiesMap = value
+        }
 
 }
