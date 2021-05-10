@@ -22,12 +22,6 @@ class Settings : PersistentStateComponent<SettingsState> {
         this.state = state
     }
 
-    var enableLombok: Boolean
-        get() = state.enableLombok
-        set(value) {
-            state.enableLombok = value
-        }
-
     var sourceDir: String
         get() = state.sourceDir!!
         set(value) {
@@ -38,6 +32,18 @@ class Settings : PersistentStateComponent<SettingsState> {
         get() = state.resourcesDir!!
         set(value) {
             state.resourcesDir = value
+        }
+
+    var schemaPackages: MutableMap<String, Map<String, String>>
+        get() = state.schemaPackages
+        set(value) {
+            state.schemaPackages = value
+        }
+
+    var enableLombok: Boolean
+        get() = state.enableLombok
+        set(value) {
+            state.enableLombok = value
         }
 
     companion object Factory {

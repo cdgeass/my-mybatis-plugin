@@ -8,10 +8,12 @@ import com.intellij.openapi.components.BaseState
  */
 class SettingsState : BaseState() {
 
-    var enableLombok by property(true)
-
     var sourceDir by string("/src/main/java")
 
     var resourcesDir by string("/src/main/resources")
+
+    var schemaPackages by map<String, Map<String, String>>()
+
+    var enableLombok by property(true)
 
 }

@@ -11,17 +11,17 @@ import com.intellij.database.view.DatabaseView
 import com.intellij.icons.AllIcons
 import com.intellij.ide.passwordSafe.PasswordSafe
 import com.intellij.ide.util.PackageChooserDialog
-import com.intellij.ide.util.PropertiesComponent
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.ui.SelectFromListDialog
+import com.intellij.psi.PsiPackage
 import io.github.cdgeass.PluginBundle
 import io.github.cdgeass.generator.settings.*
-import org.apache.commons.lang3.tuple.MutablePair
 import org.codehaus.plexus.util.StringUtils
 import org.mybatis.generator.api.MyBatisGenerator
 import org.mybatis.generator.config.*
@@ -48,18 +48,6 @@ class MyBatisGeneratorAction : AnAction() {
         }
     }
 
-    companion object {
-        private const val CLIENT_MODULE_PREFIX = "MYBATIS_GENERATOR_CLIENT_MODULE_"
-        private const val CLIENT_PACKAGE_PREFIX = "MYBATIS_GENERATOR_CLIENT_PACKAGE_"
-        private const val MODEL_MODULE_PREFIX = "MYBATIS_GENERATOR_MODEL_MODULE_"
-        private const val MODEL_PACKAGE_PREFIX = "MYBATIS_GENERATOR_MODEL_PACKAGE_"
-
-        private const val SOURCE_DIR = "MYBATIS_GENERATOR_SOURCE_DIR"
-        private const val SOURCE_DIR_DEFAULT_VALUE = "/src/main/java"
-        private const val RESOURCES_DIR = "MYBATIS_GENERATOR_RESOURCES_DIR"
-        private const val RESOURCES_DIR_DEFAULT_VALUE = "/src/main/resources"
-    }
-
     /**
      * 检查是否选择表对应Schema已经进行过生成
      * 若未进行过则要求选择对应的Module已经Package
@@ -71,94 +59,77 @@ class MyBatisGeneratorAction : AnAction() {
         val moduleManager = ModuleManager.getInstance(project)
         val modules = moduleManager.modules
 
-        val computeModule = { modulePair: MutablePair<String?, Module?>,
-                              title: String ->
-            if (modulePair.left == null) {
-                if (modules.size == 1) {
-                    modulePair.right = modules[0]
-                } else {
-                    val selectFromListDialog = SelectFromListDialog(
-                        project,
-                        modules,
-                        { (it as Module).name },
-                        title,
-                        ListSelectionModel.SINGLE_SELECTION
-                    )
-                    selectFromListDialog.show()
-                    val selectedModules = selectFromListDialog.selection
-                    if (selectedModules.isEmpty()) {
-                        Messages.showErrorDialog(
-                            PluginBundle.message("generator.module.selector.noModule"),
-                            PluginBundle.message("generator.title")
-                        )
-                        throw RuntimeException()
-                    }
-                    modulePair.right = (selectedModules[0] as Module)
-                }
-                modulePair.left = modulePair.right!!.name
-            } else {
-                modulePair.right = moduleManager.findModuleByName(modulePair.left!!)!!
-            }
-        }
+        val settings = Settings.getInstance(project)
+        val schemaPackages = settings.schemaPackages
 
-        val propertiesComponent = PropertiesComponent.getInstance(project)
         for (selectedTable in selectedTables) {
             val schema = DasUtil.getSchema(selectedTable)
+            val modelAndClientPackage = schemaPackages[schema]
 
-            // 选择client的生成路径
-            val clientModulePair: MutablePair<String?, Module?> = MutablePair(
-                propertiesComponent.getValue(CLIENT_MODULE_PREFIX + schema),
-                null
+            val modelPackage = modelAndClientPackage?.keys?.first() ?: selectModuleAndPackage(
+                modules,
+                PluginBundle.message("generator.module.selector.client.title")
             )
-            computeModule(clientModulePair, PluginBundle.message("generator.module.selector.client.title"))
 
-            if (propertiesComponent.getValue(CLIENT_PACKAGE_PREFIX + schema)?.isNotBlank() != true) {
-                val selectedPackage = PackageChooserDialog(
-                    PluginBundle.message("generator.package.selector.client.title"),
-                    clientModulePair.right!!
-                )
-                    .apply { show() }
-                    .selectedPackage
-                    .qualifiedName
-
-                if (selectedPackage.isBlank()) {
-                    Messages.showErrorDialog(
-                        PluginBundle.message("generator.package.selector.client.noPackage"),
-                        PluginBundle.message("generator.title")
-                    )
-                    throw RuntimeException()
-                }
-                propertiesComponent.setValue(CLIENT_PACKAGE_PREFIX + schema, selectedPackage)
-            }
-            propertiesComponent.setValue(CLIENT_MODULE_PREFIX + schema, clientModulePair.left!!)
-
-            // 选择model的生成路径
-            val modelModulePair: MutablePair<String?, Module?> = MutablePair(
-                propertiesComponent.getValue(MODEL_MODULE_PREFIX + schema),
-                null
+            val clientPackage = modelAndClientPackage?.keys?.first() ?: selectModuleAndPackage(
+                modules,
+                PluginBundle.message("generator.module.selector.model.title")
             )
-            computeModule(modelModulePair, PluginBundle.message("generator.module.selector.model.title"))
 
-            if (propertiesComponent.getValue(MODEL_PACKAGE_PREFIX + schema)?.isNotBlank() != true) {
-                val selectedPackage = PackageChooserDialog(
-                    PluginBundle.message("generator.package.selector.model.title"),
-                    modelModulePair.right!!
-                )
-                    .apply { show() }
-                    .selectedPackage
-                    .qualifiedName
-
-                if (selectedPackage.isBlank()) {
-                    Messages.showErrorDialog(
-                        PluginBundle.message("generator.package.selector.model.noPackage"),
-                        PluginBundle.message("generator.title")
-                    )
-                    throw RuntimeException()
-                }
-                propertiesComponent.setValue(MODEL_PACKAGE_PREFIX + schema, selectedPackage)
-            }
-            propertiesComponent.setValue(MODEL_MODULE_PREFIX + schema, modelModulePair.left!!)
+            schemaPackages[schema] = mapOf(Pair(modelPackage, clientPackage))
         }
+        settings.schemaPackages = schemaPackages
+    }
+
+    private fun selectModuleAndPackage(modules: Array<Module>, title: String): String {
+        val module = selectModule(modules, title)
+        if (module != null) {
+            val psiPackage = selectPackage(module, title)
+            if (psiPackage != null) {
+                return module.name + ":" + psiPackage.qualifiedName
+            }
+        }
+        throw RuntimeException()
+    }
+
+    private fun selectModule(modules: Array<Module>, title: String): Module? {
+        if (modules.size == 1) {
+            return modules[0]
+        } else {
+            val selectedModules = SelectFromListDialog(
+                null,
+                modules,
+                { (it as Module).name },
+                title,
+                ListSelectionModel.SINGLE_SELECTION
+            ).apply { show() }.selection
+
+            if (selectedModules.isEmpty()) {
+                Messages.showErrorDialog(
+                    PluginBundle.message("generator.module.selector.noModule"),
+                    PluginBundle.message("generator.title")
+                )
+            } else {
+                return selectedModules[0] as Module
+            }
+        }
+        return null
+    }
+
+    private fun selectPackage(module: Module, title: String): PsiPackage? {
+        return PackageChooserDialog(title, module).apply { show() }.selectedPackage
+    }
+
+    private fun getModulePathAndPackage(moduleAndPackage: String, project: Project): Pair<String, String> {
+        val split = moduleAndPackage.split(":")
+
+        val moduleName = split[0]
+        val moduleManager = ModuleManager.getInstance(project)
+        val module = moduleManager.findModuleByName(moduleName)!!
+
+        val moduleRootManager = ModuleRootManager.getInstance(module)
+        val contentRoot = moduleRootManager.contentRootUrls[0].substringAfter("file://")
+        return Pair(contentRoot, split[1])
     }
 
     private fun generateTable(
@@ -249,21 +220,14 @@ class MyBatisGeneratorAction : AnAction() {
         project: Project,
         schema: String
     ): JavaModelGeneratorConfiguration {
-        val propertiesComponent = PropertiesComponent.getInstance(project)
-        val module = ModuleManager.getInstance(project).findModuleByName(
-            propertiesComponent.getValue(
-                MODEL_MODULE_PREFIX + schema
-            )!!
-        )!!
+        val settings = Settings.getInstance(project)
+        val moduleAndPackage = getModulePathAndPackage(settings.schemaPackages[schema]!!.keys.first(), project)
 
         val javaModelGenerator = JavaModelGenerator.getInstance(project)
         return JavaModelGeneratorConfiguration()
             .apply {
-                targetProject = project.basePath!! + propertiesComponent.getValue(
-                    SOURCE_DIR,
-                    SOURCE_DIR_DEFAULT_VALUE
-                )
-                targetPackage = propertiesComponent.getValue(MODEL_PACKAGE_PREFIX + schema)!!
+                targetProject = moduleAndPackage.first + settings.sourceDir
+                targetPackage = moduleAndPackage.second
                 javaModelGenerator.properties.forEach { (property, value) ->
                     addProperty(
                         property,
@@ -273,22 +237,18 @@ class MyBatisGeneratorAction : AnAction() {
             }
     }
 
-    private fun buildSqlMapGeneratorConfiguration(project: Project, schema: String): SqlMapGeneratorConfiguration {
-        val propertiesComponent = PropertiesComponent.getInstance(project)
-        val module = ModuleManager.getInstance(project).findModuleByName(
-            propertiesComponent.getValue(
-                CLIENT_MODULE_PREFIX + schema
-            )!!
-        )!!
+    private fun buildSqlMapGeneratorConfiguration(
+        project: Project,
+        schema: String
+    ): SqlMapGeneratorConfiguration {
+        val settings = Settings.getInstance(project)
+        val moduleAndPackage = getModulePathAndPackage(settings.schemaPackages[schema]!!.values.first(), project)
 
         val sqlMapGenerator = SqlMapGenerator.getInstance(project)
         return SqlMapGeneratorConfiguration()
             .apply {
-                targetProject = project.basePath!! + propertiesComponent.getValue(
-                    RESOURCES_DIR,
-                    RESOURCES_DIR_DEFAULT_VALUE
-                )
-                targetPackage = propertiesComponent.getValue(CLIENT_PACKAGE_PREFIX + schema)
+                targetProject = moduleAndPackage.first + settings.resourcesDir
+                targetPackage = moduleAndPackage.second
                 sqlMapGenerator.properties.forEach { (property, value) ->
                     addProperty(
                         property,
@@ -302,21 +262,14 @@ class MyBatisGeneratorAction : AnAction() {
         project: Project,
         schema: String
     ): JavaClientGeneratorConfiguration {
-        val propertiesComponent = PropertiesComponent.getInstance(project)
-        val module = ModuleManager.getInstance(project).findModuleByName(
-            propertiesComponent.getValue(
-                CLIENT_MODULE_PREFIX + schema
-            )!!
-        )!!
+        val settings = Settings.getInstance(project)
+        val moduleAndPackage = getModulePathAndPackage(settings.schemaPackages[schema]!!.values.first(), project)
 
         val javaClientGenerator = JavaClientGenerator.getInstance(project)
         return JavaClientGeneratorConfiguration()
             .apply {
-                targetProject = project.basePath!! + propertiesComponent.getValue(
-                    SOURCE_DIR,
-                    SOURCE_DIR_DEFAULT_VALUE
-                )
-                targetPackage = propertiesComponent.getValue(CLIENT_PACKAGE_PREFIX + schema)
+                targetProject = moduleAndPackage.first + settings.sourceDir
+                targetPackage = moduleAndPackage.second
                 configurationType = javaClientGenerator.type
                 javaClientGenerator.properties.forEach { (property, value) ->
                     addProperty(

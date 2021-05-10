@@ -12,15 +12,19 @@ import org.mybatis.generator.api.ProgressCallback
 class GenerateProgressCallback : ProgressCallback {
 
     override fun introspectionStarted(totalTasks: Int) {
+        print("")
     }
 
     override fun generationStarted(totalTasks: Int) {
+        print("")
     }
 
     override fun saveStarted(totalTasks: Int) {
+        print("")
     }
 
     override fun startTask(taskName: String?) {
+        print("")
     }
 
     override fun done() {
@@ -29,6 +33,7 @@ class GenerateProgressCallback : ProgressCallback {
     }
 
     override fun checkCancel() {
+        print("")
     }
 
 }
