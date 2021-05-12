@@ -25,7 +25,7 @@ import io.github.cdgeass.codeInsight.reference.ParamReference
  * @author cdgeass
  * @since 2021/4/1
  */
-class ParamExpressionCompletionProvider : CompletionProvider<CompletionParameters>() {
+class ExpressionCompletionProvider : CompletionProvider<CompletionParameters>() {
 
     override fun addCompletions(
         parameters: CompletionParameters,

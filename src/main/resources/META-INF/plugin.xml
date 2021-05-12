@@ -51,7 +51,7 @@
         <psi.referenceContributor language="XML"
                                   implementation="io.github.cdgeass.codeInsight.ExpressionReferenceContributor"/>
         <completion.contributor language="any"
-                                implementationClass="io.github.cdgeass.codeInsight.ParamExpressionCompletionContributor"/>
+                                implementationClass="io.github.cdgeass.codeInsight.ExpressionCompletionContributor"/>
         <!-- generator -->
         <projectService serviceImplementation="io.github.cdgeass.generator.settings.Settings"/>
         <projectService serviceImplementation="io.github.cdgeass.generator.settings.Context"/>

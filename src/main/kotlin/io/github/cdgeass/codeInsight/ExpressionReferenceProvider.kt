@@ -27,10 +27,18 @@ class ExpressionReferenceProvider : PsiReferenceProvider() {
                 val text = element.text
                 when {
                     text.startsWith("#{") -> {
-                        text.removeSurrounding("#{", "}")
+                        if (text.endsWith("},")) {
+                            text.removeSurrounding("#{", "},")
+                        } else {
+                            text.removeSurrounding("#{", "}")
+                        }
                     }
                     text.startsWith("\${") -> {
-                        text.removeSurrounding("\${,", "}")
+                        if (text.endsWith("},")) {
+                            text.removeSurrounding("\${,", "},")
+                        } else {
+                            text.removeSurrounding("\${,", "}")
+                        }
                     }
                     else -> {
                         return emptyArray()
