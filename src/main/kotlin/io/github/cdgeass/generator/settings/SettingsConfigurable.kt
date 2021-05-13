@@ -66,7 +66,7 @@ class SettingsConfigurable(project: Project) : BoundConfigurable("MyBatis Genera
                         mapOf(
                             Pair(
                                 tableModel.getValueAt(row, 1) as String,
-                                tableModel.getValueAt(row, 1) as String
+                                tableModel.getValueAt(row, 2) as String
                             )
                         )
                 }

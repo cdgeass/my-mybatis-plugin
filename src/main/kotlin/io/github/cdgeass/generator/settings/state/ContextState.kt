@@ -17,7 +17,9 @@ class ContextState : BaseState() {
     var properties: MutableMap<String, String>
         get() {
             if (propertiesMap.isEmpty()) {
-                return mutableMapOf()
+                return mutableMapOf(
+                    Pair("javaFileEncoding", "UTF-8")
+                )
             }
             return propertiesMap
         }

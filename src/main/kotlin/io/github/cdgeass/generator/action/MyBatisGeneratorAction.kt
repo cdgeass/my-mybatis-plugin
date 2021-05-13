@@ -86,7 +86,7 @@ class MyBatisGeneratorAction : AnAction() {
                 PluginBundle.message("generator.module.selector.client.title")
             )
 
-            val clientPackage = modelAndClientPackage?.keys?.first() ?: selectModuleAndPackage(
+            val clientPackage = modelAndClientPackage?.values?.first() ?: selectModuleAndPackage(
                 modules,
                 PluginBundle.message("generator.module.selector.model.title")
             )
