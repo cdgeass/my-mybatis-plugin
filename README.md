@@ -1,5 +1,7 @@
 # my-mybatis plugin
+<!-- Plugin description -->
 This is a plugin to help you to use mybatis in Intellij IDEA.
+<!-- Plugin description end -->
 
 ## Features
 
