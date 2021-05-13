@@ -5,7 +5,19 @@ import com.intellij.codeInsight.lookup.AutoCompletionPolicy
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.openapi.util.TextRange
 import com.intellij.pom.java.LanguageLevel
-import com.intellij.psi.*
+import com.intellij.psi.PsiArrayType
+import com.intellij.psi.PsiClass
+import com.intellij.psi.PsiClassType
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiElementFactory
+import com.intellij.psi.PsiElementResolveResult
+import com.intellij.psi.PsiField
+import com.intellij.psi.PsiMethod
+import com.intellij.psi.PsiParameter
+import com.intellij.psi.PsiPolyVariantReferenceBase
+import com.intellij.psi.PsiPrimitiveType
+import com.intellij.psi.PsiType
+import com.intellij.psi.ResolveResult
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.PlatformIcons
@@ -223,7 +235,8 @@ class ParamReference(
                             // 参数类型为 Collection
                             if (fieldClass?.supers?.any { superClass ->
                                     superClass.qualifiedName == "java.util.Collection"
-                                } == true) {
+                                } == true
+                            ) {
                                 val genericType = genericMap.first().value
                                 if (genericType is PsiClassType) {
                                     genericType.resolve()?.let { genericClass ->
@@ -355,5 +368,4 @@ class ParamReference(
             name[0].toLowerCase() + name.substring(1)
         }
     }
-
 }

@@ -13,20 +13,19 @@ import com.intellij.util.xml.Required
  */
 interface Bind : DomElement {
 
-	/**
-	 * Returns the value of the name child.
-	 * Attribute name
-	 * @return the value of the name child.
-	 */
-	@Required
-	fun getName(): GenericAttributeValue<String>
+    /**
+     * Returns the value of the name child.
+     * Attribute name
+     * @return the value of the name child.
+     */
+    @Required
+    fun getName(): GenericAttributeValue<String>
 
-	/**
-	 * Returns the value of the value child.
-	 * Attribute value
-	 * @return the value of the value child.
-	 */
-	@Required
-	fun getValue(): GenericAttributeValue<String>
-
+    /**
+     * Returns the value of the value child.
+     * Attribute value
+     * @return the value of the value child.
+     */
+    @Required
+    fun getValue(): GenericAttributeValue<String>
 }

@@ -8,7 +8,7 @@ import io.github.cdgeass.generator.ui.PropertiesTable
 
 /**
  * @author cdgeass
- * @since  2021-01-26
+ * @since 2021-01-26
  */
 class TableConfigurable(project: Project) : BoundConfigurable("Table") {
 

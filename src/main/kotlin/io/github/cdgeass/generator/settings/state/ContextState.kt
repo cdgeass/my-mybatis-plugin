@@ -4,7 +4,7 @@ import com.intellij.openapi.components.BaseState
 
 /**
  * @author cdgeass
- * @since  2021-01-26
+ * @since 2021-01-26
  */
 class ContextState : BaseState() {
 
@@ -24,6 +24,4 @@ class ContextState : BaseState() {
         set(value) {
             this.propertiesMap = value
         }
-
 }
-

@@ -72,5 +72,4 @@ class FormatToolWindowFactory : ToolWindowFactory, DumbAware {
             false
         )
     }
-
 }

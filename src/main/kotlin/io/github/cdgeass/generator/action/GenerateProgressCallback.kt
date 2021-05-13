@@ -35,5 +35,4 @@ class GenerateProgressCallback : ProgressCallback {
     override fun checkCancel() {
         print("")
     }
-
 }

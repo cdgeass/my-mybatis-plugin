@@ -39,5 +39,4 @@ class JavaClientGenerator : PersistentStateComponent<JavaClientGeneratorState> {
             return ServiceManager.getService(project, JavaClientGenerator::class.java)
         }
     }
-
 }

@@ -3,7 +3,11 @@
 
 package io.github.cdgeass.codeInsight.dom.element
 
-import com.intellij.util.xml.*
+import com.intellij.util.xml.Attribute
+import com.intellij.util.xml.Convert
+import com.intellij.util.xml.DomElement
+import com.intellij.util.xml.GenericAttributeValue
+import com.intellij.util.xml.Required
 import io.github.cdgeass.codeInsight.dom.converter.MyDomElementConverter
 
 /**
@@ -12,14 +16,13 @@ import io.github.cdgeass.codeInsight.dom.converter.MyDomElementConverter
  */
 interface CacheRef : DomElement {
 
-	/**
-	 * Returns the value of the namespace child.
-	 * Attribute namespace
-	 * @return the value of the namespace child.
-	 */
-	@Required
-	@Attribute("namespace")
-	@Convert(MyDomElementConverter::class)
-	fun getNamespace(): GenericAttributeValue<Cache>
-
+    /**
+     * Returns the value of the namespace child.
+     * Attribute namespace
+     * @return the value of the namespace child.
+     */
+    @Required
+    @Attribute("namespace")
+    @Convert(MyDomElementConverter::class)
+    fun getNamespace(): GenericAttributeValue<Cache>
 }

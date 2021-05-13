@@ -2,7 +2,12 @@ package io.github.cdgeass.codeInsight.dom.element
 
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiPackage
-import com.intellij.util.xml.*
+import com.intellij.util.xml.Convert
+import com.intellij.util.xml.DomElement
+import com.intellij.util.xml.GenericAttributeValue
+import com.intellij.util.xml.PsiPackageConverter
+import com.intellij.util.xml.SubTag
+import com.intellij.util.xml.SubTagList
 import io.github.cdgeass.codeInsight.dom.converter.MyPsiClassConverter
 
 /**

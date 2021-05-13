@@ -20,5 +20,4 @@ class PluginBundle : DynamicBundle(BUNDLE) {
             } else ""
         }
     }
-
 }

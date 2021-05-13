@@ -36,5 +36,4 @@ class TableState : BaseState() {
         set(value) {
             this.propertiesMap = value
         }
-
 }

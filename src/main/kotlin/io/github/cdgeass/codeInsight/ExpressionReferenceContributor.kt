@@ -33,5 +33,4 @@ class ExpressionReferenceContributor : PsiReferenceContributor() {
             expressionReferenceProvider
         )
     }
-
 }

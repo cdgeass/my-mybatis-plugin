@@ -12,30 +12,29 @@ import com.intellij.util.xml.SubTagList
  */
 interface Constructor : DomElement {
 
-	/**
-	 * Returns the list of idArg children.
-	 * @return the list of idArg children.
-	 */
-	@SubTagList("idArg")
-	fun getIdArgs(): List<IdArg>
+    /**
+     * Returns the list of idArg children.
+     * @return the list of idArg children.
+     */
+    @SubTagList("idArg")
+    fun getIdArgs(): List<IdArg>
 
-	/**
-	 * Adds new child to the list of idArg children.
-	 * @return created child
-	 */
-	@SubTagList("idArg")
-	fun addIdArg(): IdArg
+    /**
+     * Adds new child to the list of idArg children.
+     * @return created child
+     */
+    @SubTagList("idArg")
+    fun addIdArg(): IdArg
 
-	/**
-	 * Returns the list of arg children.
-	 * @return the list of arg children.
-	 */
-	fun getArgs(): List<Arg>
+    /**
+     * Returns the list of arg children.
+     * @return the list of arg children.
+     */
+    fun getArgs(): List<Arg>
 
-	/**
-	 * Adds new child to the list of arg children.
-	 * @return created child
-	 */
-	fun addArg(): Arg
-
+    /**
+     * Adds new child to the list of arg children.
+     * @return created child
+     */
+    fun addArg(): Arg
 }

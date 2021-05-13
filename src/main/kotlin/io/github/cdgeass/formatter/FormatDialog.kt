@@ -16,7 +16,7 @@ import javax.swing.JComponent
 
 /**
  * @author cdgeass
- * @since  2021-03-09
+ * @since 2021-03-09
  */
 class FormatDialog(
     private val project: Project,
@@ -60,5 +60,4 @@ class FormatDialog(
             }
         }
     }
-
 }

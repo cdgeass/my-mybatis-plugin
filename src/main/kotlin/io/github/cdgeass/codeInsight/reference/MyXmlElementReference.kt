@@ -15,11 +15,11 @@ class MyXmlElementReference(element: PsiElement) : PsiPolyVariantReferenceBase<P
 
     override fun multiResolve(incompleteCode: Boolean): Array<ResolveResult> {
         return PsiElementResolveResult.createResults(
-            resolveElementReferences(myElement).mapNotNull { getPsiElement(it) })
+            resolveElementReferences(myElement).mapNotNull { getPsiElement(it) }
+        )
     }
 
     override fun getVariants(): Array<Any> {
         return resolveElementReferences(myElement, true).mapNotNull { getPsiElement(it) }.toTypedArray()
     }
-
 }

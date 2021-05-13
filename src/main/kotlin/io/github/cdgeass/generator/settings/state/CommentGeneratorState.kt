@@ -23,5 +23,4 @@ class CommentGeneratorState : BaseState() {
         set(value) {
             this.propertiesMap = value
         }
-
 }

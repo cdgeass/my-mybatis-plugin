@@ -20,5 +20,4 @@ class SqlMapGeneratorState : BaseState() {
         set(value) {
             this.propertiesMap = value
         }
-
 }

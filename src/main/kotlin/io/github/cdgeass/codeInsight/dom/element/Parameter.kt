@@ -13,54 +13,53 @@ import com.intellij.util.xml.Required
  */
 interface Parameter : DomElement {
 
-	/**
-	 * Returns the value of the resultMap child.
-	 * Attribute resultMap
-	 * @return the value of the resultMap child.
-	 */
-	fun getResultMap(): GenericAttributeValue<String>
+    /**
+     * Returns the value of the resultMap child.
+     * Attribute resultMap
+     * @return the value of the resultMap child.
+     */
+    fun getResultMap(): GenericAttributeValue<String>
 
-	/**
-	 * Returns the value of the jdbcType child.
-	 * Attribute jdbcType
-	 * @return the value of the jdbcType child.
-	 */
-	fun getJdbcType(): GenericAttributeValue<String>
+    /**
+     * Returns the value of the jdbcType child.
+     * Attribute jdbcType
+     * @return the value of the jdbcType child.
+     */
+    fun getJdbcType(): GenericAttributeValue<String>
 
-	/**
-	 * Returns the value of the property child.
-	 * Attribute property
-	 * @return the value of the property child.
-	 */
-	@Required
-	fun getProperty(): GenericAttributeValue<String>
+    /**
+     * Returns the value of the property child.
+     * Attribute property
+     * @return the value of the property child.
+     */
+    @Required
+    fun getProperty(): GenericAttributeValue<String>
 
-	/**
-	 * Returns the value of the typeHandler child.
-	 * Attribute typeHandler
-	 * @return the value of the typeHandler child.
-	 */
-	fun getTypeHandler(): GenericAttributeValue<String>
+    /**
+     * Returns the value of the typeHandler child.
+     * Attribute typeHandler
+     * @return the value of the typeHandler child.
+     */
+    fun getTypeHandler(): GenericAttributeValue<String>
 
-	/**
-	 * Returns the value of the scale child.
-	 * Attribute scale
-	 * @return the value of the scale child.
-	 */
-	fun getScale(): GenericAttributeValue<String>
+    /**
+     * Returns the value of the scale child.
+     * Attribute scale
+     * @return the value of the scale child.
+     */
+    fun getScale(): GenericAttributeValue<String>
 
-	/**
-	 * Returns the value of the mode child.
-	 * Attribute mode
-	 * @return the value of the mode child.
-	 */
-	fun getMode(): GenericAttributeValue<String>
+    /**
+     * Returns the value of the mode child.
+     * Attribute mode
+     * @return the value of the mode child.
+     */
+    fun getMode(): GenericAttributeValue<String>
 
-	/**
-	 * Returns the value of the javaType child.
-	 * Attribute javaType
-	 * @return the value of the javaType child.
-	 */
-	fun getJavaType(): GenericAttributeValue<String>
-
+    /**
+     * Returns the value of the javaType child.
+     * Attribute javaType
+     * @return the value of the javaType child.
+     */
+    fun getJavaType(): GenericAttributeValue<String>
 }

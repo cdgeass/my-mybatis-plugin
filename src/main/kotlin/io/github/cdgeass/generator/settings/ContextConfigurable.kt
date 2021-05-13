@@ -9,7 +9,7 @@ import javax.swing.DefaultComboBoxModel
 
 /**
  * @author cdgeass
- * @since  2021-01-26
+ * @since 2021-01-26
  */
 class ContextConfigurable(project: Project) : BoundConfigurable("Context") {
 

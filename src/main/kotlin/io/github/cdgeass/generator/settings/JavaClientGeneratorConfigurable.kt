@@ -9,7 +9,7 @@ import javax.swing.DefaultComboBoxModel
 
 /**
  * @author cdgeass
- * @since  2021-01-26
+ * @since 2021-01-26
  */
 class JavaClientGeneratorConfigurable(project: Project) : BoundConfigurable("JavaClientGenerator") {
 
@@ -43,5 +43,4 @@ class JavaClientGeneratorConfigurable(project: Project) : BoundConfigurable("Jav
             }
         }
     }
-
 }

@@ -118,5 +118,4 @@ class ClientLineMarkerProvider : RelatedItemLineMarkerProvider() {
             .setTargets(targets)
             .createLineMarkerInfo(element)
     }
-
 }

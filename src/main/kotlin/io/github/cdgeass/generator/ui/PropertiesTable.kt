@@ -28,13 +28,14 @@ class PropertiesTable(
     init {
         if (prop.get().isNotEmpty()) {
             (tableViewModel as PropertiesTableModel).addRows(
-                prop.get().map { (property, value) -> MutablePair.of(property, value) })
+                prop.get().map { (property, value) -> MutablePair.of(property, value) }
+            )
         }
     }
 
     override fun onTableChanged(e: TableModelEvent) {
         super.onTableChanged(e)
-        prop.set(tableViewModel.items.associateBy({it.left}, {it.right}) as MutableMap<String, String>)
+        prop.set(tableViewModel.items.associateBy({ it.left }, { it.right }) as MutableMap<String, String>)
     }
 
     fun withToolbarDecorator(): JPanel {
@@ -50,7 +51,6 @@ class PropertiesTable(
             }
             .createPanel()
     }
-
 }
 
 class PropertiesTableModel(
@@ -112,8 +112,8 @@ class PropertyColumnInfo(
 
     override fun getEditor(item: MutablePair<String, String>): TableCellEditor {
         val tempProperties = properties.keys.filter { !usedProperties.contains(it) }
-                .toMutableList().apply { add(0, item.left) }
-                .toTypedArray()
+            .toMutableList().apply { add(0, item.left) }
+            .toTypedArray()
         return DefaultCellEditor(ComboBox(tempProperties))
     }
 }

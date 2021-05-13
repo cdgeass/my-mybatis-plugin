@@ -33,7 +33,6 @@ class MyPsiClassReference(
     override fun resolve(): PsiElement? {
         return resolvePsiClass(myElement)
     }
-
 }
 
 fun resolvePsiClass(element: PsiElement): PsiClass? {

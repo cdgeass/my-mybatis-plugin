@@ -9,7 +9,7 @@ import io.github.cdgeass.generator.settings.state.ContextState
 
 /**
  * @author cdgeass
- * @since  2021-01-26
+ * @since 2021-01-26
  */
 @State(name = "Context", storages = [(Storage("io.github.cdgeass.my-mybatis.MyBatisGenerator"))])
 class Context : PersistentStateComponent<ContextState> {

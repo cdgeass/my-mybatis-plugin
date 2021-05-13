@@ -27,109 +27,108 @@ import com.intellij.util.xml.SubTagList
  */
 interface Mapper : DomElement {
 
-	/**
-	 * Returns the value of the namespace child.
-	 * Attribute namespace
-	 * @return the value of the namespace child.
-	 */
-	fun getNamespace(): GenericAttributeValue<PsiClass>
+    /**
+     * Returns the value of the namespace child.
+     * Attribute namespace
+     * @return the value of the namespace child.
+     */
+    fun getNamespace(): GenericAttributeValue<PsiClass>
 
-	/**
-	 * Returns the list of cache-ref children.
-	 * @return the list of cache-ref children.
-	 */
-	fun getCacheRefs(): List<CacheRef>
+    /**
+     * Returns the list of cache-ref children.
+     * @return the list of cache-ref children.
+     */
+    fun getCacheRefs(): List<CacheRef>
 
-	/**
-	 * Adds new child to the list of cache-ref children.
-	 * @return created child
-	 */
-	fun addCacheRef(): CacheRef
+    /**
+     * Adds new child to the list of cache-ref children.
+     * @return created child
+     */
+    fun addCacheRef(): CacheRef
 
-	/**
-	 * Returns the list of cache children.
-	 * @return the list of cache children.
-	 */
-	fun getCaches(): List<Cache>
+    /**
+     * Returns the list of cache children.
+     * @return the list of cache children.
+     */
+    fun getCaches(): List<Cache>
 
-	/**
-	 * Adds new child to the list of cache children.
-	 * @return created child
-	 */
-	fun addCache(): Cache
+    /**
+     * Adds new child to the list of cache children.
+     * @return created child
+     */
+    fun addCache(): Cache
 
-	/**
-	 * Returns the list of resultMap children.
-	 * @return the list of resultMap children.
-	 */
-	@SubTagList("resultMap")
-	fun getResultMaps(): List<ResultMap>
+    /**
+     * Returns the list of resultMap children.
+     * @return the list of resultMap children.
+     */
+    @SubTagList("resultMap")
+    fun getResultMaps(): List<ResultMap>
 
-	/**
-	 * Adds new child to the list of resultMap children.
-	 * @return created child
-	 */
-	@SubTagList("resultMap")
-	fun addResultMap(): ResultMap
+    /**
+     * Adds new child to the list of resultMap children.
+     * @return created child
+     */
+    @SubTagList("resultMap")
+    fun addResultMap(): ResultMap
 
-	/**
-	 * Returns the list of sql children.
-	 * @return the list of sql children.
-	 */
-	fun getSqls(): List<Sql>
+    /**
+     * Returns the list of sql children.
+     * @return the list of sql children.
+     */
+    fun getSqls(): List<Sql>
 
-	/**
-	 * Adds new child to the list of sql children.
-	 * @return created child
-	 */
-	fun addSql(): Sql
+    /**
+     * Adds new child to the list of sql children.
+     * @return created child
+     */
+    fun addSql(): Sql
 
-	/**
-	 * Returns the list of insert children.
-	 * @return the list of insert children.
-	 */
-	fun getInserts(): List<Insert>
+    /**
+     * Returns the list of insert children.
+     * @return the list of insert children.
+     */
+    fun getInserts(): List<Insert>
 
-	/**
-	 * Adds new child to the list of insert children.
-	 * @return created child
-	 */
-	fun addInsert(): Insert
+    /**
+     * Adds new child to the list of insert children.
+     * @return created child
+     */
+    fun addInsert(): Insert
 
-	/**
-	 * Returns the list of update children.
-	 * @return the list of update children.
-	 */
-	fun getUpdates(): List<Update>
+    /**
+     * Returns the list of update children.
+     * @return the list of update children.
+     */
+    fun getUpdates(): List<Update>
 
-	/**
-	 * Adds new child to the list of update children.
-	 * @return created child
-	 */
-	fun addUpdate(): Update
+    /**
+     * Adds new child to the list of update children.
+     * @return created child
+     */
+    fun addUpdate(): Update
 
-	/**
-	 * Returns the list of delete children.
-	 * @return the list of delete children.
-	 */
-	fun getDeletes(): List<Delete>
+    /**
+     * Returns the list of delete children.
+     * @return the list of delete children.
+     */
+    fun getDeletes(): List<Delete>
 
-	/**
-	 * Adds new child to the list of delete children.
-	 * @return created child
-	 */
-	fun addDelete(): Delete
+    /**
+     * Adds new child to the list of delete children.
+     * @return created child
+     */
+    fun addDelete(): Delete
 
-	/**
-	 * Returns the list of select children.
-	 * @return the list of select children.
-	 */
-	fun getSelects(): List<Select>
+    /**
+     * Returns the list of select children.
+     * @return the list of select children.
+     */
+    fun getSelects(): List<Select>
 
-	/**
-	 * Adds new child to the list of select children.
-	 * @return created child
-	 */
-	fun addSelect(): Select
-
+    /**
+     * Adds new child to the list of select children.
+     * @return created child
+     */
+    fun addSelect(): Select
 }

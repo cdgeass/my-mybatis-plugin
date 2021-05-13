@@ -11,22 +11,21 @@ import com.intellij.util.xml.DomElement
  */
 interface Choose : DomElement {
 
-	/**
-	 * Returns the list of when children.
-	 * @return the list of when children.
-	 */
-	fun getWhens(): List<When>
+    /**
+     * Returns the list of when children.
+     * @return the list of when children.
+     */
+    fun getWhens(): List<When>
 
-	/**
-	 * Adds new child to the list of when children.
-	 * @return created child
-	 */
-	fun addWhen(): When
+    /**
+     * Adds new child to the list of when children.
+     * @return created child
+     */
+    fun addWhen(): When
 
-	/**
-	 * Returns the value of the otherwise child.
-	 * @return the value of the otherwise child.
-	 */
-	fun getOtherwise(): Otherwise
-
+    /**
+     * Returns the value of the otherwise child.
+     * @return the value of the otherwise child.
+     */
+    fun getOtherwise(): Otherwise
 }

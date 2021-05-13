@@ -20,5 +20,4 @@ class JavaTypeResolverState : BaseState() {
         set(value) {
             this.propertiesMap = value
         }
-
 }

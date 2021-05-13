@@ -16,7 +16,6 @@ import com.intellij.ui.LanguageTextField
 import org.apache.commons.lang.StringUtils
 import java.awt.Dimension
 
-
 /**
  * @author cdgeass
  * @since 2021-03-09

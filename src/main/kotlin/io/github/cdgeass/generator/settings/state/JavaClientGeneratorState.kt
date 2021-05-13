@@ -22,5 +22,4 @@ class JavaClientGeneratorState : BaseState() {
         set(value) {
             this.propertiesMap = value
         }
-
 }

@@ -44,5 +44,4 @@ class MyPsiMethodConverter : Converter<PsiMethod>(), CustomReferenceConverter<Ps
 
         return arrayOf(MyPsiMethodReference(element))
     }
-
 }

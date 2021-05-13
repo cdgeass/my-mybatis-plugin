@@ -9,7 +9,7 @@ import org.mybatis.generator.api.dom.java.TopLevelClass
 
 /**
  * @author cdgeass
- * @since  2020-12-25
+ * @since 2020-12-25
  */
 class LombokDataAnnotationPlugin : PluginAdapter() {
 
@@ -18,8 +18,8 @@ class LombokDataAnnotationPlugin : PluginAdapter() {
     }
 
     override fun modelBaseRecordClassGenerated(
-            topLevelClass: TopLevelClass,
-            introspectedTable: IntrospectedTable
+        topLevelClass: TopLevelClass,
+        introspectedTable: IntrospectedTable
     ): Boolean {
         addLombokDataAnnotation(topLevelClass)
 
@@ -27,8 +27,8 @@ class LombokDataAnnotationPlugin : PluginAdapter() {
     }
 
     override fun modelPrimaryKeyClassGenerated(
-            topLevelClass: TopLevelClass,
-            introspectedTable: IntrospectedTable
+        topLevelClass: TopLevelClass,
+        introspectedTable: IntrospectedTable
     ): Boolean {
         addLombokDataAnnotation(topLevelClass)
 
@@ -36,8 +36,8 @@ class LombokDataAnnotationPlugin : PluginAdapter() {
     }
 
     override fun modelRecordWithBLOBsClassGenerated(
-            topLevelClass: TopLevelClass,
-            introspectedTable: IntrospectedTable
+        topLevelClass: TopLevelClass,
+        introspectedTable: IntrospectedTable
     ): Boolean {
         addLombokDataAnnotation(topLevelClass)
 
@@ -50,21 +50,21 @@ class LombokDataAnnotationPlugin : PluginAdapter() {
     }
 
     override fun modelGetterMethodGenerated(
-            method: Method,
-            topLevelClass: TopLevelClass,
-            introspectedColumn: IntrospectedColumn,
-            introspectedTable: IntrospectedTable,
-            modelClassType: Plugin.ModelClassType
+        method: Method,
+        topLevelClass: TopLevelClass,
+        introspectedColumn: IntrospectedColumn,
+        introspectedTable: IntrospectedTable,
+        modelClassType: Plugin.ModelClassType
     ): Boolean {
         return false
     }
 
     override fun modelSetterMethodGenerated(
-            method: Method,
-            topLevelClass: TopLevelClass,
-            introspectedColumn: IntrospectedColumn,
-            introspectedTable: IntrospectedTable,
-            modelClassType: Plugin.ModelClassType
+        method: Method,
+        topLevelClass: TopLevelClass,
+        introspectedColumn: IntrospectedColumn,
+        introspectedTable: IntrospectedTable,
+        modelClassType: Plugin.ModelClassType
     ): Boolean {
         return false
     }

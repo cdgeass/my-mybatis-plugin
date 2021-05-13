@@ -9,7 +9,7 @@ import io.github.cdgeass.generator.settings.state.SettingsState
 
 /**
  * @author cdgeass
- * @since  2020-09-25
+ * @since 2020-09-25
  */
 @State(name = "Settings", storages = [Storage("io.github.cdgeass.my-mybatis.MyBatisGenerator")])
 class Settings : PersistentStateComponent<SettingsState> {
@@ -51,5 +51,4 @@ class Settings : PersistentStateComponent<SettingsState> {
             return ServiceManager.getService(project, Settings::class.java)
         }
     }
-
 }

@@ -33,5 +33,4 @@ class JavaModelGenerator : PersistentStateComponent<JavaModelGeneratorState> {
             return ServiceManager.getService(project, JavaModelGenerator::class.java)
         }
     }
-
 }

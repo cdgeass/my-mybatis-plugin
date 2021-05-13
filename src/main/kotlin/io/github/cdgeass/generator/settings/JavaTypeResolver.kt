@@ -33,5 +33,4 @@ class JavaTypeResolver : PersistentStateComponent<JavaTypeResolverState> {
             return ServiceManager.getService(project, JavaTypeResolver::class.java)
         }
     }
-
 }

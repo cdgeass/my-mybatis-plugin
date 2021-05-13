@@ -81,5 +81,4 @@ class Table : PersistentStateComponent<TableState> {
             return ServiceManager.getService(project, Table::class.java)
         }
     }
-
 }

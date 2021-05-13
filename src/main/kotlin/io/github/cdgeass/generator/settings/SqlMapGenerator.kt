@@ -33,5 +33,4 @@ class SqlMapGenerator : PersistentStateComponent<SqlMapGeneratorState> {
             return ServiceManager.getService(project, SqlMapGenerator::class.java)
         }
     }
-
 }

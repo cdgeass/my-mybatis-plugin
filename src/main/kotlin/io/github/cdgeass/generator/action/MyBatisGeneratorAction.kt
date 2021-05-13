@@ -21,17 +21,32 @@ import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.ui.SelectFromListDialog
 import com.intellij.psi.PsiPackage
 import io.github.cdgeass.PluginBundle
-import io.github.cdgeass.generator.settings.*
+import io.github.cdgeass.generator.settings.CommentGenerator
+import io.github.cdgeass.generator.settings.JavaClientGenerator
+import io.github.cdgeass.generator.settings.JavaModelGenerator
+import io.github.cdgeass.generator.settings.JavaTypeResolver
+import io.github.cdgeass.generator.settings.Settings
+import io.github.cdgeass.generator.settings.SqlMapGenerator
+import io.github.cdgeass.generator.settings.Table
 import org.codehaus.plexus.util.StringUtils
 import org.mybatis.generator.api.MyBatisGenerator
-import org.mybatis.generator.config.*
+import org.mybatis.generator.config.CommentGeneratorConfiguration
+import org.mybatis.generator.config.Configuration
 import org.mybatis.generator.config.Context
+import org.mybatis.generator.config.JDBCConnectionConfiguration
+import org.mybatis.generator.config.JavaClientGeneratorConfiguration
+import org.mybatis.generator.config.JavaModelGeneratorConfiguration
+import org.mybatis.generator.config.JavaTypeResolverConfiguration
+import org.mybatis.generator.config.ModelType
+import org.mybatis.generator.config.PluginConfiguration
+import org.mybatis.generator.config.SqlMapGeneratorConfiguration
+import org.mybatis.generator.config.TableConfiguration
 import org.mybatis.generator.internal.DefaultShellCallback
 import javax.swing.ListSelectionModel
 
 /**
  * @author cdgeass
- * @since  2020-09-24
+ * @since 2020-09-24
  */
 class MyBatisGeneratorAction : AnAction() {
 

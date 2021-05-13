@@ -2,7 +2,11 @@ package io.github.cdgeass.codeInsight.dom.converter
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
-import com.intellij.util.xml.*
+import com.intellij.util.xml.ConvertContext
+import com.intellij.util.xml.Converter
+import com.intellij.util.xml.CustomReferenceConverter
+import com.intellij.util.xml.DomElement
+import com.intellij.util.xml.GenericDomValue
 import io.github.cdgeass.codeInsight.reference.MyXmlElementReference
 import io.github.cdgeass.codeInsight.util.resolveElementReferences
 
@@ -36,5 +40,4 @@ class MyDomElementConverter : Converter<DomElement>(), CustomReferenceConverter<
 
         return arrayOf(MyXmlElementReference(element))
     }
-
 }

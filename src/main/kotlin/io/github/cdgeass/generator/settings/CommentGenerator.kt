@@ -37,5 +37,4 @@ class CommentGenerator : PersistentStateComponent<CommentGeneratorState> {
             return ServiceManager.getService(project, CommentGenerator::class.java)
         }
     }
-
 }

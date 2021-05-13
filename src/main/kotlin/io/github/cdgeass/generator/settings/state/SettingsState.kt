@@ -15,5 +15,4 @@ class SettingsState : BaseState() {
     var schemaPackages by map<String, Map<String, String>>()
 
     var enableLombok by property(true)
-
 }

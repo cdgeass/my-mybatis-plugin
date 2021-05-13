@@ -4,7 +4,6 @@ import com.intellij.openapi.options.BoundConfigurable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogPanel
 import com.intellij.ui.ToolbarDecorator
-import com.intellij.ui.layout.noteRowInTheDialog
 import com.intellij.ui.layout.panel
 import com.intellij.ui.table.JBTable
 import io.github.cdgeass.PluginBundle
@@ -13,7 +12,7 @@ import javax.swing.table.DefaultTableModel
 
 /**
  * @author cdgeass
- * @since  2020-09-25
+ * @since 2020-09-25
  */
 class SettingsConfigurable(project: Project) : BoundConfigurable("MyBatis Generator") {
 
@@ -86,5 +85,4 @@ class SettingsConfigurable(project: Project) : BoundConfigurable("MyBatis Genera
             }
             .createPanel()
     }
-
 }

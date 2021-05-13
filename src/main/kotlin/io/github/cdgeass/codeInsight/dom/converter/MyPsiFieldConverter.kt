@@ -43,6 +43,4 @@ class MyPsiFieldConverter : Converter<PsiField>(), CustomReferenceConverter<PsiF
 
         return arrayOf(MyPsiFieldReference(element))
     }
-
-
 }

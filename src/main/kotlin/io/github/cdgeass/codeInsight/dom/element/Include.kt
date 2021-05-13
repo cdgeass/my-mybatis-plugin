@@ -3,7 +3,11 @@
 
 package io.github.cdgeass.codeInsight.dom.element
 
-import com.intellij.util.xml.*
+import com.intellij.util.xml.Attribute
+import com.intellij.util.xml.Convert
+import com.intellij.util.xml.DomElement
+import com.intellij.util.xml.GenericAttributeValue
+import com.intellij.util.xml.Required
 import io.github.cdgeass.codeInsight.dom.converter.MyDomElementConverter
 
 /**
@@ -16,26 +20,25 @@ import io.github.cdgeass.codeInsight.dom.converter.MyDomElementConverter
  */
 interface Include : DomElement {
 
-	/**
-	 * Returns the value of the refid child.
-	 * Attribute refid
-	 * @return the value of the refid child.
-	 */
-	@Required
-	@Attribute("refid")
-	@Convert(MyDomElementConverter::class)
-	fun getRefid(): GenericAttributeValue<Sql>
+    /**
+     * Returns the value of the refid child.
+     * Attribute refid
+     * @return the value of the refid child.
+     */
+    @Required
+    @Attribute("refid")
+    @Convert(MyDomElementConverter::class)
+    fun getRefid(): GenericAttributeValue<Sql>
 
-	/**
-	 * Returns the list of property children.
-	 * @return the list of property children.
-	 */
-	fun getProperties(): List<Property>
+    /**
+     * Returns the list of property children.
+     * @return the list of property children.
+     */
+    fun getProperties(): List<Property>
 
-	/**
-	 * Adds new child to the list of property children.
-	 * @return created child
-	 */
-	fun addProperty(): Property
-
+    /**
+     * Adds new child to the list of property children.
+     * @return created child
+     */
+    fun addProperty(): Property
 }

@@ -20,5 +20,4 @@ class JavaModelGeneratorState : BaseState() {
         set(value) {
             this.propertiesMap = value
         }
-
 }
