@@ -52,15 +52,57 @@ class MyBatisGeneratorAction : AnAction() {
 
     override fun actionPerformed(e: AnActionEvent) {
         val selectedTables = DatabaseView.getSelectedElements(e.dataContext, DbTable::class.java)
-        generateTable(e.project!!, selectedTables)
+        if (selectedTables.isEmpty()) {
+            return
+        }
+
+        generateTables(e.project!!, selectedTables)
     }
 
-    private fun generateTable(project: Project, selectedTables: Set<DbTable>) {
+    private fun generateTables(project: Project, selectedTables: Set<DbTable>) {
         computeModuleAndPackage(project, selectedTables)
 
-        for (selectedTable in selectedTables) {
-            generateTable(project, selectedTable)
+        val dataSourceMap = selectedTables.groupBy { DbImplUtil.getLocalDataSource(it.dataSource) }
+        val configuration = Configuration()
+        dataSourceMap.forEach { (dataSource, dbTables) ->
+            for (classPathElement in dataSource.classpathElements) {
+                for (classesRootUrl in classPathElement.classesRootUrls) {
+                    configuration.addClasspathEntry(StringUtils.replace(classesRootUrl, "file://", ""))
+                }
+            }
+
+            val schemaMap = dbTables.groupBy { DasUtil.getSchema(it) }
+            schemaMap.forEach { (schema, schemaDbTables) ->
+                val context = buildContext(project, dataSource)
+                    .apply {
+                        jdbcConnectionConfiguration = buildJdbcConnectionConfiguration(project, dataSource)
+                        javaTypeResolverConfiguration = buildJavaTypeResolverConfiguration(project)
+                        commentGeneratorConfiguration = buildCommentGeneratorConfiguration(project)
+                        buildPlugins(project).forEach { addPluginConfiguration(it) }
+
+                        javaModelGeneratorConfiguration = buildJavaModelGeneratorConfiguration(project, schema)
+                        sqlMapGeneratorConfiguration = buildSqlMapGeneratorConfiguration(project, schema)
+                        javaClientGeneratorConfiguration = buildJavaClientGeneratorConfiguration(project, schema)
+
+                        schemaDbTables.forEach { schemaDbTable ->
+                            addTableConfiguration(
+                                buildTableConfiguration(
+                                    project,
+                                    this,
+                                    schemaDbTable
+                                )
+                            )
+                        }
+                    }
+
+                configuration.addContext(context)
+            }
         }
+
+        val warnings = mutableListOf<String>()
+        val myBatisGenerator = MyBatisGenerator(configuration, DefaultShellCallback(true), warnings)
+
+        myBatisGenerator.generate(GenerateProgressCallback())
     }
 
     /**
@@ -145,41 +187,6 @@ class MyBatisGeneratorAction : AnAction() {
         val moduleRootManager = ModuleRootManager.getInstance(module)
         val contentRoot = moduleRootManager.contentRootUrls[0].substringAfter("file://")
         return Pair(contentRoot, split[1])
-    }
-
-    private fun generateTable(
-        project: Project,
-        selectedTable: DbTable
-    ) {
-        val schema = DasUtil.getSchema(selectedTable)
-        val dataSource = DbImplUtil.getLocalDataSource(selectedTable.dataSource)
-
-        val configuration = Configuration()
-        for (classPathElement in dataSource.classpathElements) {
-            for (classesRootUrl in classPathElement.classesRootUrls) {
-                configuration.addClasspathEntry(StringUtils.replace(classesRootUrl, "file://", ""))
-            }
-        }
-
-        val context = buildContext(project, dataSource)
-            .apply {
-                jdbcConnectionConfiguration = buildJdbcConnectionConfiguration(project, dataSource)
-                javaTypeResolverConfiguration = buildJavaTypeResolverConfiguration(project)
-                javaModelGeneratorConfiguration = buildJavaModelGeneratorConfiguration(project, schema)
-                sqlMapGeneratorConfiguration = buildSqlMapGeneratorConfiguration(project, schema)
-                javaClientGeneratorConfiguration = buildJavaClientGeneratorConfiguration(project, schema)
-                commentGeneratorConfiguration = buildCommentGeneratorConfiguration(project)
-
-                addTableConfiguration(buildTableConfiguration(project, this, selectedTable))
-                buildPlugins(project).forEach { addPluginConfiguration(it) }
-            }
-
-        configuration.addContext(context)
-
-        val warnings = mutableListOf<String>()
-        val myBatisGenerator = MyBatisGenerator(configuration, DefaultShellCallback(true), warnings)
-
-        myBatisGenerator.generate(GenerateProgressCallback())
     }
 
     private fun buildContext(project: Project, dataSource: LocalDataSource): Context {

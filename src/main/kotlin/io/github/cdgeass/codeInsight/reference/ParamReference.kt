@@ -87,7 +87,7 @@ class ParamReference(
 
     private fun isSpecialParamType(paramType: PsiClass): Boolean {
         return paramType.qualifiedName == "org.apache.ibatis.session.RowBounds" ||
-                paramType.qualifiedName == "org.apache.ibatis.session.ResultHandler"
+            paramType.qualifiedName == "org.apache.ibatis.session.ResultHandler"
     }
 
     /**
