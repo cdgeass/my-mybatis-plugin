@@ -2,7 +2,21 @@
 
 # My-MyBatis Plugin Changelog
 
-## [Unreleased]
+## [2.0.1]
+
+### Changed
+
+- Compatible with 2021.2
+- Improve MyBatis Generator
+- Remove duplicate method and field in xml code completion
+- 适配 2021.2
+- 改进 MyBatis Generator
+- 删除 xml 代码提示中字段和方法的重复项
+
+### Fixed
+
+- Fix reference in sql
+- 修复 sql 中的代码跳转
 
 ## [2.0.0]
 
