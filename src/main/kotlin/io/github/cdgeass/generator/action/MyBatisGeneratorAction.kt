@@ -7,18 +7,20 @@ import com.intellij.database.dataSource.LocalDataSource
 import com.intellij.database.psi.DbTable
 import com.intellij.database.util.DasUtil
 import com.intellij.database.util.DbImplUtil
-import com.intellij.database.view.DatabaseView
+import com.intellij.database.view.getSelectedDbElements
 import com.intellij.icons.AllIcons
 import com.intellij.ide.passwordSafe.PasswordSafe
 import com.intellij.ide.util.PackageChooserDialog
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.ui.SelectFromListDialog
 import com.intellij.psi.PsiPackage
+import com.intellij.util.containers.JBIterable
 import io.github.cdgeass.PluginBundle
 import io.github.cdgeass.generator.settings.CommentGenerator
 import io.github.cdgeass.generator.settings.JavaClientGenerator
@@ -50,15 +52,15 @@ import javax.swing.ListSelectionModel
 class MyBatisGeneratorAction : AnAction() {
 
     override fun actionPerformed(e: AnActionEvent) {
-        val selectedTables = DatabaseView.getSelectedElements(e.dataContext, DbTable::class.java)
-        if (selectedTables.isEmpty()) {
+        val selectedTables = e.dataContext.getSelectedDbElements(DbTable::class.java)
+        if (selectedTables.isEmpty) {
             return
         }
 
         generateTables(e.project!!, selectedTables)
     }
 
-    private fun generateTables(project: Project, selectedTables: Set<DbTable>) {
+    private fun generateTables(project: Project, selectedTables: JBIterable<DbTable>) {
         computeModuleAndPackage(project, selectedTables)
 
         val dataSourceMap = selectedTables.groupBy { DbImplUtil.getLocalDataSource(it.dataSource) }
@@ -110,12 +112,12 @@ class MyBatisGeneratorAction : AnAction() {
      */
     private fun computeModuleAndPackage(
         project: Project,
-        selectedTables: Set<DbTable>
+        selectedTables: JBIterable<DbTable>
     ) {
         val moduleManager = ModuleManager.getInstance(project)
         val modules = moduleManager.modules
 
-        val settings = Settings.getInstance(project)
+        val settings = project.getService(Settings::class.java)
         val schemaPackages = settings.schemaPackages
 
         for (selectedTable in selectedTables) {
@@ -166,7 +168,7 @@ class MyBatisGeneratorAction : AnAction() {
                     PluginBundle.message("generator.title")
                 )
             } else {
-                return selectedModules[0]
+                return selectedModules[0] as Module
             }
         }
         return null
@@ -189,7 +191,7 @@ class MyBatisGeneratorAction : AnAction() {
     }
 
     private fun buildContext(project: Project, dataSource: LocalDataSource): Context {
-        val context = io.github.cdgeass.generator.settings.Context.getInstance(project)
+        val context = project.getService(io.github.cdgeass.generator.settings.Context::class.java)
         return Context(ModelType.getModelType(context.defaultModelType))
             .apply {
                 id = dataSource.name
@@ -205,7 +207,7 @@ class MyBatisGeneratorAction : AnAction() {
         val password: String
         val credentialAttributes = CredentialAttributes(generateServiceName("my-mybatis", dataSource.url!!))
         val credentials = PasswordSafe.instance.get(credentialAttributes)
-        if (credentials.getPasswordAsString() != null) {
+        if (credentials?.getPasswordAsString() != null) {
             password = credentials.getPasswordAsString()!!
         } else {
             password = Messages.showPasswordDialog(
@@ -225,7 +227,7 @@ class MyBatisGeneratorAction : AnAction() {
     }
 
     private fun buildJavaTypeResolverConfiguration(project: Project): JavaTypeResolverConfiguration {
-        val javaTypeResolver = JavaTypeResolver.getInstance(project)
+        val javaTypeResolver = project.getService(JavaTypeResolver::class.java)
         return JavaTypeResolverConfiguration()
             .apply {
                 javaTypeResolver.properties.forEach { (property, value) ->
@@ -241,10 +243,10 @@ class MyBatisGeneratorAction : AnAction() {
         project: Project,
         schema: String
     ): JavaModelGeneratorConfiguration {
-        val settings = Settings.getInstance(project)
+        val settings = project.getService(Settings::class.java)
         val moduleAndPackage = getModulePathAndPackage(settings.schemaPackages[schema]!!.keys.first(), project)
 
-        val javaModelGenerator = JavaModelGenerator.getInstance(project)
+        val javaModelGenerator = project.getService(JavaModelGenerator::class.java)
         return JavaModelGeneratorConfiguration()
             .apply {
                 targetProject = moduleAndPackage.first + settings.sourceDir
@@ -262,10 +264,10 @@ class MyBatisGeneratorAction : AnAction() {
         project: Project,
         schema: String
     ): SqlMapGeneratorConfiguration {
-        val settings = Settings.getInstance(project)
+        val settings = project.getService(Settings::class.java)
         val moduleAndPackage = getModulePathAndPackage(settings.schemaPackages[schema]!!.values.first(), project)
 
-        val sqlMapGenerator = SqlMapGenerator.getInstance(project)
+        val sqlMapGenerator = project.getService(SqlMapGenerator::class.java)
         return SqlMapGeneratorConfiguration()
             .apply {
                 targetProject = moduleAndPackage.first + settings.resourcesDir
@@ -283,10 +285,10 @@ class MyBatisGeneratorAction : AnAction() {
         project: Project,
         schema: String
     ): JavaClientGeneratorConfiguration {
-        val settings = Settings.getInstance(project)
+        val settings = project.getService(Settings::class.java)
         val moduleAndPackage = getModulePathAndPackage(settings.schemaPackages[schema]!!.values.first(), project)
 
-        val javaClientGenerator = JavaClientGenerator.getInstance(project)
+        val javaClientGenerator = project.getService(JavaClientGenerator::class.java)
         return JavaClientGeneratorConfiguration()
             .apply {
                 targetProject = moduleAndPackage.first + settings.sourceDir
@@ -306,8 +308,8 @@ class MyBatisGeneratorAction : AnAction() {
         context: Context,
         selectedTable: DbTable
     ): TableConfiguration {
-        val settings = Settings.getInstance(project)
-        val table = Table.getInstance(project)
+        val settings = project.getService(Settings::class.java)
+        val table = project.getService(Table::class.java)
         return TableConfiguration(context)
             .apply {
                 schema = DasUtil.getSchema(selectedTable)
@@ -350,7 +352,7 @@ class MyBatisGeneratorAction : AnAction() {
     }
 
     private fun buildCommentGeneratorConfiguration(project: Project): CommentGeneratorConfiguration {
-        val commentGenerator = CommentGenerator.getInstance(project)
+        val commentGenerator = project.getService(CommentGenerator::class.java)
         return CommentGeneratorConfiguration()
             .apply {
                 commentGenerator.properties.forEach { (property, value) ->
@@ -362,8 +364,8 @@ class MyBatisGeneratorAction : AnAction() {
     }
 
     private fun buildPlugins(project: Project): List<PluginConfiguration> {
-        val settings = Settings.getInstance(project)
-        val commentGenerator = CommentGenerator.getInstance(project)
+        val settings = project.getService(Settings::class.java)
+        val commentGenerator = project.getService(CommentGenerator::class.java)
 
         val plugins = mutableListOf<PluginConfiguration>()
         if (settings.enableLombok) {

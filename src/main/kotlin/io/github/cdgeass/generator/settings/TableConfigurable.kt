@@ -31,7 +31,7 @@ class TableConfigurable(project: Project) : BoundConfigurable("Table") {
         )
     }
 
-    private var table = Table.getInstance(project)
+    private var table = project.getService(Table::class.java)
 
     override fun createPanel(): DialogPanel {
         return panel {

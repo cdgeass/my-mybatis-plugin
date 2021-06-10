@@ -1,10 +1,8 @@
 package io.github.cdgeass.generator.settings
 
 import com.intellij.openapi.components.PersistentStateComponent
-import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
-import com.intellij.openapi.project.Project
 import io.github.cdgeass.generator.settings.state.JavaClientGeneratorState
 
 /**
@@ -33,10 +31,4 @@ class JavaClientGenerator : PersistentStateComponent<JavaClientGeneratorState> {
         set(value) {
             state.properties = value
         }
-
-    companion object {
-        fun getInstance(project: Project): JavaClientGenerator {
-            return ServiceManager.getService(project, JavaClientGenerator::class.java)
-        }
-    }
 }

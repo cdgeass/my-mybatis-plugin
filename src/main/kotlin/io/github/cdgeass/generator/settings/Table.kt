@@ -1,10 +1,8 @@
 package io.github.cdgeass.generator.settings
 
 import com.intellij.openapi.components.PersistentStateComponent
-import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
-import com.intellij.openapi.project.Project
 import io.github.cdgeass.generator.settings.state.TableState
 
 /**
@@ -75,10 +73,4 @@ class Table : PersistentStateComponent<TableState> {
         set(value) {
             state.enableUpdateByExample = value
         }
-
-    companion object {
-        fun getInstance(project: Project): Table {
-            return ServiceManager.getService(project, Table::class.java)
-        }
-    }
 }

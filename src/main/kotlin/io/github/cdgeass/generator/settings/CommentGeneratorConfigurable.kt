@@ -21,7 +21,7 @@ class CommentGeneratorConfigurable(project: Project) : BoundConfigurable("Commen
         )
     }
 
-    private var commentGenerator = CommentGenerator.getInstance(project)
+    private var commentGenerator = project.getService(CommentGenerator::class.java)
 
     override fun createPanel(): DialogPanel {
         return panel {

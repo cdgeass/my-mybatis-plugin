@@ -16,7 +16,7 @@ import javax.swing.table.DefaultTableModel
  */
 class SettingsConfigurable(project: Project) : BoundConfigurable("MyBatis Generator") {
 
-    private val settings = Settings.getInstance(project)
+    private val settings = project.getService(Settings::class.java)
 
     override fun createPanel(): DialogPanel {
         return panel {

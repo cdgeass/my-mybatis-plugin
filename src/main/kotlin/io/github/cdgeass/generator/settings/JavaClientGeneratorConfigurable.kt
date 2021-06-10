@@ -24,20 +24,20 @@ class JavaClientGeneratorConfigurable(project: Project) : BoundConfigurable("Jav
         )
     }
 
-    private var javaClient = JavaClientGenerator.getInstance(project)
+    private var javaClientGenerator = project.getService(JavaClientGenerator::class.java)
 
     override fun createPanel(): DialogPanel {
         return panel {
             row("Type:") {
                 comboBox(
                     DefaultComboBoxModel(TYPE),
-                    javaClient::type
+                    javaClientGenerator::type
                 )
             }
             row {
                 panel(
                     "Properties:",
-                    PropertiesTable(PROPERTIES, javaClient::properties).withToolbarDecorator(),
+                    PropertiesTable(PROPERTIES, javaClientGenerator::properties).withToolbarDecorator(),
                     false
                 )
             }

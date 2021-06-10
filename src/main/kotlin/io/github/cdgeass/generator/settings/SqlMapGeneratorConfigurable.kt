@@ -18,7 +18,7 @@ class SqlMapGeneratorConfigurable(project: Project) : BoundConfigurable("SqlMapG
         )
     }
 
-    private var sqlMapGenerator = SqlMapGenerator.getInstance(project)
+    private var sqlMapGenerator = project.getService(SqlMapGenerator::class.java)
 
     override fun createPanel(): DialogPanel {
         return panel {

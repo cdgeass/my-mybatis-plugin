@@ -28,7 +28,7 @@ class ContextConfigurable(project: Project) : BoundConfigurable("Context") {
         )
     }
 
-    private val context = Context.getInstance(project)
+    private val context = project.getService(Context::class.java)
 
     override fun createPanel(): DialogPanel {
         return panel {

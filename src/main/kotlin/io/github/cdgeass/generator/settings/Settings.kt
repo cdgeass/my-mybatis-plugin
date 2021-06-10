@@ -1,10 +1,8 @@
 package io.github.cdgeass.generator.settings
 
 import com.intellij.openapi.components.PersistentStateComponent
-import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
-import com.intellij.openapi.project.Project
 import io.github.cdgeass.generator.settings.state.SettingsState
 
 /**
@@ -57,10 +55,4 @@ class Settings : PersistentStateComponent<SettingsState> {
         set(value) {
             state.enableLombok = value
         }
-
-    companion object Factory {
-        fun getInstance(project: Project): Settings {
-            return ServiceManager.getService(project, Settings::class.java)
-        }
-    }
 }

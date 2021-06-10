@@ -24,7 +24,7 @@ class JavaModelGeneratorConfigurable(project: Project) : BoundConfigurable("Java
         )
     }
 
-    private var javaModelGenerator = JavaModelGenerator.getInstance(project)
+    private var javaModelGenerator = project.getService(JavaModelGenerator::class.java)
 
     override fun createPanel(): DialogPanel {
         return panel {

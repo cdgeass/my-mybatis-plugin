@@ -19,7 +19,7 @@ class JavaTypeResolverConfigurable(project: Project) : BoundConfigurable("JavaTy
         )
     }
 
-    private val javaTypeResolver = JavaTypeResolver.getInstance(project)
+    private val javaTypeResolver = project.getService(JavaTypeResolver::class.java)
 
     override fun createPanel(): DialogPanel {
         return panel {
