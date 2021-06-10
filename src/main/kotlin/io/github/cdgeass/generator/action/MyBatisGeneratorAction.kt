@@ -13,7 +13,6 @@ import com.intellij.ide.passwordSafe.PasswordSafe
 import com.intellij.ide.util.PackageChooserDialog
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
-import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ModuleRootManager
@@ -167,7 +166,7 @@ class MyBatisGeneratorAction : AnAction() {
                     PluginBundle.message("generator.title")
                 )
             } else {
-                return selectedModules[0] as Module
+                return selectedModules[0]
             }
         }
         return null
@@ -206,7 +205,7 @@ class MyBatisGeneratorAction : AnAction() {
         val password: String
         val credentialAttributes = CredentialAttributes(generateServiceName("my-mybatis", dataSource.url!!))
         val credentials = PasswordSafe.instance.get(credentialAttributes)
-        if (credentials?.getPasswordAsString() != null) {
+        if (credentials.getPasswordAsString() != null) {
             password = credentials.getPasswordAsString()!!
         } else {
             password = Messages.showPasswordDialog(
@@ -307,12 +306,32 @@ class MyBatisGeneratorAction : AnAction() {
         context: Context,
         selectedTable: DbTable
     ): TableConfiguration {
+        val settings = Settings.getInstance(project)
         val table = Table.getInstance(project)
         return TableConfiguration(context)
             .apply {
                 schema = DasUtil.getSchema(selectedTable)
                 tableName = selectedTable.name
-                domainObjectName = CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, selectedTable.name)
+                domainObjectName = if (settings.modelNamePattern.isBlank()) {
+                    CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, selectedTable.name)
+                } else {
+                    settings.modelNamePattern.format(
+                        CaseFormat.LOWER_UNDERSCORE.to(
+                            CaseFormat.UPPER_CAMEL,
+                            selectedTable.name
+                        )
+                    )
+                }
+                mapperName = if (settings.clientNamePattern.isBlank()) {
+                    CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, selectedTable.name) + "Mapper"
+                } else {
+                    settings.clientNamePattern.format(
+                        CaseFormat.LOWER_UNDERSCORE.to(
+                            CaseFormat.UPPER_CAMEL,
+                            selectedTable.name
+                        )
+                    )
+                }
                 // insert
                 isInsertStatementEnabled = table.enableInsert
                 // select

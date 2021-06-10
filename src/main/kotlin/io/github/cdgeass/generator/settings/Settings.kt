@@ -40,6 +40,18 @@ class Settings : PersistentStateComponent<SettingsState> {
             state.schemaPackages = value
         }
 
+    var modelNamePattern: String
+        get() = state.modelNamePattern ?: ""
+        set(value) {
+            state.modelNamePattern = value
+        }
+
+    var clientNamePattern: String
+        get() = state.clientNamePattern ?: ""
+        set(value) {
+            state.clientNamePattern = value
+        }
+
     var enableLombok: Boolean
         get() = state.enableLombok
         set(value) {

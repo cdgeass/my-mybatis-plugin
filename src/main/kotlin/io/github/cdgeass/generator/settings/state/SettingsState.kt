@@ -14,5 +14,9 @@ class SettingsState : BaseState() {
 
     var schemaPackages by map<String, Map<String, String>>()
 
+    var modelNamePattern by string("")
+
+    var clientNamePattern by string("")
+
     var enableLombok by property(true)
 }

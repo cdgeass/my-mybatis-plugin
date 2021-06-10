@@ -27,6 +27,12 @@ class SettingsConfigurable(project: Project) : BoundConfigurable("MyBatis Genera
                 row(PluginBundle.message("generator.settings.resourcesFolder")) {
                     textField(settings::resourcesDir)
                 }
+                row(PluginBundle.message("generator.settings.modelNamePattern")) {
+                    textField(settings::modelNamePattern)
+                }
+                row(PluginBundle.message("generator.settings.clientNamePattern")) {
+                    textField(settings::clientNamePattern)
+                }
             }
             titledRow(PluginBundle.message("generator.settings.schemaPackage")) {
                 row {
