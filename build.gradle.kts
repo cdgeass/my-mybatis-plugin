@@ -50,7 +50,10 @@ intellij {
 
 changelog {
     version = properties("pluginVersion")
-    groups = emptyList()
+    itemPrefix = "-"
+    keepUnreleasedSection = true
+    unreleasedTerm = "[Unreleased]"
+    groups = listOf("Added", "Changed", "Fixed")
 }
 
 // Configure detekt plugin.
