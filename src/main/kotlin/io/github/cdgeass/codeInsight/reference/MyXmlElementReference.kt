@@ -22,4 +22,8 @@ class MyXmlElementReference(element: PsiElement) : PsiPolyVariantReferenceBase<P
     override fun getVariants(): Array<Any> {
         return resolveElementReferences(myElement, true).mapNotNull { getPsiElement(it) }.toTypedArray()
     }
+
+    override fun isSoft(): Boolean {
+        return true
+    }
 }
