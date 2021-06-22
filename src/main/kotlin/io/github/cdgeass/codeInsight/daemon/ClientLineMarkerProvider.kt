@@ -49,6 +49,13 @@ class ClientLineMarkerProvider : RelatedItemLineMarkerProvider() {
         result.add(lineMarkerInfo)
     }
 
+    private fun isMapper(element: PsiElement): Boolean {
+        return element is XmlToken &&
+                element.prevSibling.elementType == XmlTokenType.XML_START_TAG_START &&
+                element.parent is XmlTag &&
+                element.text == "mapper"
+    }
+
     /**
      * 接口
      */
@@ -61,12 +68,8 @@ class ClientLineMarkerProvider : RelatedItemLineMarkerProvider() {
             XmlPsiUtil.processXmlElementChildren(
                 xmlFile,
                 { psiElement ->
-                    if (psiElement is XmlToken &&
-                        psiElement.prevSibling.elementType == XmlTokenType.XML_START_TAG_START &&
-                        psiElement.parent is XmlTag &&
-                        psiElement.text == "mapper"
-                    ) {
-                        xmlTokens.add(psiElement)
+                    if (isMapper(psiElement)) {
+                        xmlTokens.add(psiElement as XmlToken)
                     }
                     true
                 },
@@ -83,6 +86,13 @@ class ClientLineMarkerProvider : RelatedItemLineMarkerProvider() {
             .createLineMarkerInfo(element)
     }
 
+    private fun isStatement(element: PsiIdentifier, psiElement: PsiElement): Boolean {
+        return psiElement is XmlToken &&
+                psiElement.prevSibling.elementType == XmlTokenType.XML_START_TAG_START &&
+                psiElement.parent is XmlTag &&
+                (psiElement.parent as XmlTag).getAttributeValue("id") == element.text
+    }
+
     /**
      * 方法
      */
@@ -97,12 +107,8 @@ class ClientLineMarkerProvider : RelatedItemLineMarkerProvider() {
             XmlPsiUtil.processXmlElementChildren(
                 xmlFile,
                 { psiElement ->
-                    if (psiElement is XmlToken &&
-                        psiElement.prevSibling.elementType == XmlTokenType.XML_START_TAG_START &&
-                        psiElement.parent is XmlTag &&
-                        (psiElement.parent as XmlTag).getAttributeValue("id") == element.text
-                    ) {
-                        xmlTokens.add(psiElement)
+                    if (isStatement(element, psiElement)) {
+                        xmlTokens.add(psiElement as XmlToken)
                     }
                     true
                 },

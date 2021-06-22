@@ -29,7 +29,7 @@ class MyXmlNamespaceIndex : ScalarIndexExtension<String>() {
     override fun getIndexer(): DataIndexer<String, Void, FileContent> {
         return DataIndexer<String, Void, FileContent> {
             val namespace = getNamespace(it)
-            if (namespace != null) {
+            if (namespace?.isNotBlank() == true) {
                 mapOf(Pair(namespace, null))
             } else {
                 emptyMap<String, Void>()

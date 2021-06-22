@@ -25,6 +25,7 @@ import com.intellij.util.xml.DomManager
 import com.jetbrains.rd.util.first
 import io.github.cdgeass.codeInsight.dom.element.Statement
 import io.github.cdgeass.util.resolveGeneric
+import java.util.*
 
 /**
  * @author cdgeass
@@ -363,9 +364,9 @@ class ParamReference(
         }
 
         return if (name.length == 1) {
-            name.toLowerCase()
+            name.lowercase(Locale.getDefault())
         } else {
-            name[0].toLowerCase() + name.substring(1)
+            name[0].lowercaseChar() + name.substring(1)
         }
     }
 }
