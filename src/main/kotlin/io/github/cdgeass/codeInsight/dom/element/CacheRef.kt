@@ -3,12 +3,7 @@
 
 package io.github.cdgeass.codeInsight.dom.element
 
-import com.intellij.util.xml.Attribute
-import com.intellij.util.xml.Convert
-import com.intellij.util.xml.DomElement
-import com.intellij.util.xml.GenericAttributeValue
-import com.intellij.util.xml.Required
-import io.github.cdgeass.codeInsight.dom.converter.MyDomElementConverter
+import com.intellij.util.xml.*
 
 /**
  * mybatis-3-mapper.dtd:cache-ref interface.
@@ -23,6 +18,6 @@ interface CacheRef : DomElement {
      */
     @Required
     @Attribute("namespace")
-    @Convert(MyDomElementConverter::class)
+    @Resolve(Cache::class)
     fun getNamespace(): GenericAttributeValue<Cache>
 }

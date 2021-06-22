@@ -9,6 +9,7 @@ import com.intellij.psi.xml.XmlAttributeValue
 import com.intellij.util.xml.DomManager
 import io.github.cdgeass.codeInsight.dom.element.Configuration
 import io.github.cdgeass.codeInsight.util.findByNamespace
+import java.util.*
 
 /**
  * @author cdgeass
@@ -43,7 +44,7 @@ fun resolvePsiClass(element: PsiElement): PsiClass? {
     var name = element.value
 
     // 限定名
-    name = MYBATIS_SHORT_TYPE_NAME_MAP[name.toLowerCase()] ?: name
+    name = MYBATIS_SHORT_TYPE_NAME_MAP[name.lowercase(Locale.getDefault())] ?: name
     val psiClass = JavaPsiFacade.getInstance(project).findClass(name, GlobalSearchScope.allScope(project))
     if (psiClass != null) {
         return psiClass

@@ -7,7 +7,7 @@ import com.intellij.psi.PsiClass
 import com.intellij.util.xml.Attribute
 import com.intellij.util.xml.Convert
 import com.intellij.util.xml.GenericAttributeValue
-import io.github.cdgeass.codeInsight.dom.converter.MyDomElementConverter
+import com.intellij.util.xml.Resolve
 import io.github.cdgeass.codeInsight.dom.converter.MyPsiClassConverter
 
 /**
@@ -34,7 +34,7 @@ interface Select : Statement {
      * @return the value of the resultMap child.
      */
     @Attribute("resultMap")
-    @Convert(MyDomElementConverter::class)
+    @Resolve(ResultMap::class)
     fun getResultMap(): GenericAttributeValue<ResultMap>
 
     /**

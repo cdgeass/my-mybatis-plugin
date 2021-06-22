@@ -8,7 +8,7 @@ plugins {
     // Java support
     id("java")
     // Kotlin support
-    id("org.jetbrains.kotlin.jvm") version "1.5.10"
+    id("org.jetbrains.kotlin.jvm") version "1.5.20"
     // gradle-intellij-plugin - read more: https://github.com/JetBrains/gradle-intellij-plugin
     id("org.jetbrains.intellij") version "1.0"
     // gradle-changelog-plugin - read more: https://github.com/JetBrains/gradle-changelog-plugin
@@ -31,7 +31,7 @@ dependencies {
 
     testImplementation("junit", "junit", "4.12")
 
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.5.10")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:1.5.20")
 
     implementation("org.mybatis.generator:mybatis-generator-core:1.4.0")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
