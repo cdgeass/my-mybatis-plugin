@@ -10,6 +10,7 @@ import com.intellij.util.xml.Convert
 import com.intellij.util.xml.DomElement
 import com.intellij.util.xml.GenericAttributeValue
 import com.intellij.util.xml.Resolve
+import io.github.cdgeass.codeInsight.dom.converter.MyDomResolveConverter
 import io.github.cdgeass.codeInsight.dom.converter.MyPsiClassConverter
 import io.github.cdgeass.codeInsight.dom.converter.MyPsiFieldConverter
 
@@ -25,7 +26,7 @@ interface Arg : DomElement {
      * @return the value of the select child.
      */
     @Attribute("select")
-    @Resolve(Select::class)
+    @Convert(MyDomResolveConverter::class)
     fun getSelect(): GenericAttributeValue<Select>
 
     /**
@@ -43,7 +44,7 @@ interface Arg : DomElement {
      * @return the value of the resultMap child.
      */
     @Attribute("resultMap")
-    @Resolve(ResultMap::class)
+    @Convert(MyDomResolveConverter::class)
     fun getResultMap(): GenericAttributeValue<ResultMap>
 
     /**

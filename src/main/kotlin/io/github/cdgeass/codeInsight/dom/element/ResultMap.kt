@@ -9,6 +9,7 @@ import com.intellij.util.xml.Convert
 import com.intellij.util.xml.GenericAttributeValue
 import com.intellij.util.xml.Required
 import com.intellij.util.xml.Resolve
+import io.github.cdgeass.codeInsight.dom.converter.MyDomResolveConverter
 import io.github.cdgeass.codeInsight.dom.converter.MyPsiClassConverter
 
 /**
@@ -40,7 +41,7 @@ interface ResultMap : WithIdDomElement {
      * @return the value of the extends child.
      */
     @Attribute("extends")
-    @Resolve(ResultMap::class)
+    @Convert(MyDomResolveConverter::class)
     fun getExtends(): GenericAttributeValue<ResultMap>
 
     /**

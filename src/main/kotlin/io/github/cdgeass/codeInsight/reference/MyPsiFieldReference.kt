@@ -63,13 +63,13 @@ private fun getParentWithJavaType(element: PsiElement): DomElement? {
     // 查找外层带有 type 的 xmlTag
     val xmlTag = PsiTreeUtil.findFirstParent(ownerTag) {
         it is XmlTag &&
-                (
-                        !it.getAttributeValue("resultType").isNullOrBlank() ||
-                                !it.getAttributeValue("ofType").isNullOrBlank() ||
-                                !it.getAttributeValue("javaType").isNullOrBlank() ||
-                                !it.getAttributeValue("type").isNullOrBlank() ||
-                                !it.getAttributeValue("resultMap").isNullOrBlank()
-                        )
+            (
+                !it.getAttributeValue("resultType").isNullOrBlank() ||
+                    !it.getAttributeValue("ofType").isNullOrBlank() ||
+                    !it.getAttributeValue("javaType").isNullOrBlank() ||
+                    !it.getAttributeValue("type").isNullOrBlank() ||
+                    !it.getAttributeValue("resultMap").isNullOrBlank()
+                )
     }?.let { it as XmlTag } ?: return null
 
     val domManager = DomManager.getDomManager(element.project)

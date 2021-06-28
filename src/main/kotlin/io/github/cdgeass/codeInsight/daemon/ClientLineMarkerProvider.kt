@@ -51,9 +51,9 @@ class ClientLineMarkerProvider : RelatedItemLineMarkerProvider() {
 
     private fun isMapper(element: PsiElement): Boolean {
         return element is XmlToken &&
-                element.prevSibling.elementType == XmlTokenType.XML_START_TAG_START &&
-                element.parent is XmlTag &&
-                element.text == "mapper"
+            element.prevSibling.elementType == XmlTokenType.XML_START_TAG_START &&
+            element.parent is XmlTag &&
+            element.text == "mapper"
     }
 
     /**
@@ -88,9 +88,9 @@ class ClientLineMarkerProvider : RelatedItemLineMarkerProvider() {
 
     private fun isStatement(element: PsiIdentifier, psiElement: PsiElement): Boolean {
         return psiElement is XmlToken &&
-                psiElement.prevSibling.elementType == XmlTokenType.XML_START_TAG_START &&
-                psiElement.parent is XmlTag &&
-                (psiElement.parent as XmlTag).getAttributeValue("id") == element.text
+            psiElement.prevSibling.elementType == XmlTokenType.XML_START_TAG_START &&
+            psiElement.parent is XmlTag &&
+            (psiElement.parent as XmlTag).getAttributeValue("id") == element.text
     }
 
     /**

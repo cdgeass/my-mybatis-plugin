@@ -235,8 +235,8 @@ class ParamReference(
                             val genericMap = fieldTye.resolveGenerics().substitutor.substitutionMap
                             // 参数类型为 Collection
                             if (fieldClass?.supers?.any { superClass ->
-                                    superClass.qualifiedName == "java.util.Collection"
-                                } == true
+                                superClass.qualifiedName == "java.util.Collection"
+                            } == true
                             ) {
                                 val genericType = genericMap.first().value
                                 if (genericType is PsiClassType) {

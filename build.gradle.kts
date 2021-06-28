@@ -31,7 +31,7 @@ dependencies {
 
     testImplementation("junit", "junit", "4.12")
 
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:1.5.20")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.5.20")
 
     implementation("org.mybatis.generator:mybatis-generator-core:1.4.0")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
@@ -112,9 +112,5 @@ tasks {
         dependsOn("patchChangelog")
         token.set(System.getenv("ORG_GRADLE_PROJECT_intellijPublishToken"))
         channels.set(listOf(properties("pluginVersion").split('-').getOrElse(1) { "default" }.split(".").first()))
-    }
-
-    test {
-        systemProperty("idea.home.path", "D:\\Document\\intellij-community")
     }
 }

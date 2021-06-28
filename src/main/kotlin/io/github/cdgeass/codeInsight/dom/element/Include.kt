@@ -4,6 +4,7 @@
 package io.github.cdgeass.codeInsight.dom.element
 
 import com.intellij.util.xml.*
+import io.github.cdgeass.codeInsight.dom.converter.MyDomResolveConverter
 
 /**
  * mybatis-3-mapper.dtd:include interface.
@@ -22,7 +23,7 @@ interface Include : DomElement {
      */
     @Required
     @Attribute("refid")
-    @Resolve(Sql::class)
+    @Convert(MyDomResolveConverter::class)
     fun getRefid(): GenericAttributeValue<Sql>
 
     /**

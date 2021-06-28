@@ -5,6 +5,7 @@ package io.github.cdgeass.codeInsight.dom.element
 
 import com.intellij.psi.PsiClass
 import com.intellij.util.xml.*
+import io.github.cdgeass.codeInsight.dom.converter.MyDomResolveConverter
 import io.github.cdgeass.codeInsight.dom.converter.MyPsiClassConverter
 
 /**
@@ -28,7 +29,7 @@ interface Case : DomElement {
      * @return the value of the resultMap child.
      */
     @Attribute("resultMap")
-    @Resolve(ResultMap::class)
+    @Convert(MyDomResolveConverter::class)
     fun getResultMap(): GenericAttributeValue<ResultMap>
 
     /**
