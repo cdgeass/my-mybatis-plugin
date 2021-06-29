@@ -7,7 +7,7 @@ import com.intellij.database.dataSource.LocalDataSource
 import com.intellij.database.psi.DbTable
 import com.intellij.database.util.DasUtil
 import com.intellij.database.util.DbImplUtil
-import com.intellij.database.view.getSelectedDbElements
+import com.intellij.database.view.DatabaseView
 import com.intellij.icons.AllIcons
 import com.intellij.ide.passwordSafe.PasswordSafe
 import com.intellij.ide.util.PackageChooserDialog
@@ -20,7 +20,6 @@ import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.ui.SelectFromListDialog
 import com.intellij.psi.PsiPackage
-import com.intellij.util.containers.JBIterable
 import io.github.cdgeass.PluginBundle
 import io.github.cdgeass.generator.settings.CommentGenerator
 import io.github.cdgeass.generator.settings.JavaClientGenerator
@@ -52,15 +51,15 @@ import javax.swing.ListSelectionModel
 class MyBatisGeneratorAction : AnAction() {
 
     override fun actionPerformed(e: AnActionEvent) {
-        val selectedTables = e.dataContext.getSelectedDbElements(DbTable::class.java)
-        if (selectedTables.isEmpty) {
+        val selectedTables = DatabaseView.getSelectedElements(e.dataContext, DbTable::class.java)
+        if (selectedTables.isEmpty()) {
             return
         }
 
         generateTables(e.project!!, selectedTables)
     }
 
-    private fun generateTables(project: Project, selectedTables: JBIterable<DbTable>) {
+    private fun generateTables(project: Project, selectedTables: Set<DbTable>) {
         computeModuleAndPackage(project, selectedTables)
 
         val dataSourceMap = selectedTables.groupBy { DbImplUtil.getLocalDataSource(it.dataSource) }
@@ -112,7 +111,7 @@ class MyBatisGeneratorAction : AnAction() {
      */
     private fun computeModuleAndPackage(
         project: Project,
-        selectedTables: JBIterable<DbTable>
+        selectedTables: Set<DbTable>
     ) {
         val moduleManager = ModuleManager.getInstance(project)
         val modules = moduleManager.modules
