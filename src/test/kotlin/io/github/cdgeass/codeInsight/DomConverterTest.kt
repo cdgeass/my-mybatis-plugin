@@ -13,7 +13,7 @@ class DomConverterTest : BasePlatformTestCase() {
         return "src/test/testData/domConverter"
     }
 
-    fun testDomConverter() {
+    fun testReference() {
         val reference = myFixture.getReferenceAtCaretPositionWithAssertion("DomConverter.xml")
         assertNotNull(reference)
 
@@ -22,7 +22,7 @@ class DomConverterTest : BasePlatformTestCase() {
         assertEquals("BaseResultMap", (psiElement as XmlTag).getAttributeValue("id"))
     }
 
-    fun testDomConverterWithNamespace() {
+    fun testReferenceWithNamespace() {
         val reference = myFixture.getReferenceAtCaretPositionWithAssertion("DomConverterWithNamespace2.xml", "DomConverterWithNamespace1.xml")
         assertNotNull(reference)
 

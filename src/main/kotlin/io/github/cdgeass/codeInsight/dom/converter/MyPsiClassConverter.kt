@@ -107,7 +107,8 @@ class MyPsiClassConverter : Converter<PsiClass>(), CustomReferenceConverter<PsiC
     }
 
     private fun getReferences(psiClass: PsiClass, str: String, element: PsiElement): Array<JavaClassReference> {
-        return object : JavaClassReferenceSet(str, element, 1, false, JavaClassReferenceProvider()) {
+        return object :
+            JavaClassReferenceSet(str, element, 1, false, JavaClassReferenceProvider().apply { isSoft = true }) {
             override fun createReference(
                 refIndex: Int,
                 subRefText: String,

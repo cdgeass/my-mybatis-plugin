@@ -13,7 +13,7 @@ import com.intellij.psi.infos.ClassCandidateInfo
  * @since 2021-06-29
  */
 class MyJavaClassReference(
-    referenceSet: JavaClassReferenceSet?,
+    referenceSet: JavaClassReferenceSet,
     range: TextRange?,
     index: Int,
     val text: String?,
@@ -24,7 +24,7 @@ class MyJavaClassReference(
     override fun advancedResolve(incompleteCode: Boolean): JavaResolveResult {
         return if (text?.contains(".") != true) {
             val psiElement = element
-            ClassCandidateInfo(psiClass, PsiSubstitutor.EMPTY, false, psiElement);
+            ClassCandidateInfo(psiClass, PsiSubstitutor.EMPTY, false, psiElement)
         } else {
             super.advancedResolve(incompleteCode)
         }
