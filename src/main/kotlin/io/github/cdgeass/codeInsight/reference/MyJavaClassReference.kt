@@ -23,8 +23,7 @@ class MyJavaClassReference(
 
     override fun advancedResolve(incompleteCode: Boolean): JavaResolveResult {
         return if (text?.contains(".") != true) {
-            val psiElement = element
-            ClassCandidateInfo(psiClass, PsiSubstitutor.EMPTY, false, psiElement)
+            ClassCandidateInfo(psiClass, PsiSubstitutor.EMPTY, false, element)
         } else {
             super.advancedResolve(incompleteCode)
         }

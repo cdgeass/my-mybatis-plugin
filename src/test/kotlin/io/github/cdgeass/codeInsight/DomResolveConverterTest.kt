@@ -7,14 +7,14 @@ import com.intellij.testFramework.fixtures.BasePlatformTestCase
  * @author cdgeass
  * @since 2021-06-22
  */
-class DomConverterTest : BasePlatformTestCase() {
+class DomResolveConverterTest : BasePlatformTestCase() {
 
     override fun getTestDataPath(): String {
-        return "src/test/testData/domConverter"
+        return "src/test/testData/domResolveConverter"
     }
 
     fun testReference() {
-        val reference = myFixture.getReferenceAtCaretPositionWithAssertion("DomConverter.xml")
+        val reference = myFixture.getReferenceAtCaretPositionWithAssertion("DomResolveConverter.xml")
         assertNotNull(reference)
 
         val psiElement = reference.resolve()
@@ -23,7 +23,7 @@ class DomConverterTest : BasePlatformTestCase() {
     }
 
     fun testReferenceWithNamespace() {
-        val reference = myFixture.getReferenceAtCaretPositionWithAssertion("DomConverterWithNamespace2.xml", "DomConverterWithNamespace1.xml")
+        val reference = myFixture.getReferenceAtCaretPositionWithAssertion("DomResolveConverterWithNamespace2.xml", "DomResolveConverterWithNamespace1.xml")
         assertNotNull(reference)
 
         val psiElement = reference.resolve()
