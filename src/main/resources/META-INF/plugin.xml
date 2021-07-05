@@ -32,8 +32,14 @@
         <completion.contributor language="any"
                                 implementationClass="io.github.cdgeass.codeInsight.ExpressionCompletionContributor"/>
         <!-- inspection -->
-<!--        <localInspection language="JAVA"-->
-<!--                         implementationClass="io.github.cdgeass.inspection.MapperMethodInspection"/>-->
+        <localInspection language="JAVA"
+                         displayName="INVALID_BOUND_STATEMENT"
+                         groupPath="Java"
+                         groupBundle="messages.MyMyBatisBundle"
+                         groupKey="inspection.invalidBoundStatement"
+                         enabledByDefault="true"
+                         level="ERROR"
+                         implementationClass="io.github.cdgeass.inspection.InvalidBoundStatementInspection"/>
         <!-- generator -->
         <projectService serviceImplementation="io.github.cdgeass.generator.settings.Settings"/>
         <projectService serviceImplementation="io.github.cdgeass.generator.settings.Context"/>

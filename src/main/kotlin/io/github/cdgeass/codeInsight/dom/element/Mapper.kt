@@ -7,6 +7,7 @@ import com.intellij.psi.PsiClass
 import com.intellij.util.xml.DomElement
 import com.intellij.util.xml.GenericAttributeValue
 import com.intellij.util.xml.SubTagList
+import com.intellij.util.xml.SubTagsList
 
 /**
  * mybatis-3-mapper.dtd:mapper interface.
@@ -131,4 +132,7 @@ interface Mapper : DomElement {
      * @return created child
      */
     fun addSelect(): Select
+
+    @SubTagsList(value = ["select", "update", "delete", "insert"])
+    fun getStatements(): List<Statement>
 }
