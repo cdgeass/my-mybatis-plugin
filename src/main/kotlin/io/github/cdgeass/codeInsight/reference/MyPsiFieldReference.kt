@@ -1,11 +1,7 @@
 package io.github.cdgeass.codeInsight.reference
 
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiField
-import com.intellij.psi.PsiMethod
-import com.intellij.psi.PsiReferenceBase
+import com.intellij.psi.*
 import com.intellij.psi.impl.light.LightMethodBuilder
-import java.util.*
 
 /**
  * @author cdgeass
@@ -26,7 +22,26 @@ class MyPsiFieldReference(
                 element.navigationElement == myField
             }
             is PsiMethod -> {
-                isGetter(element, myField)
+                isGetter(element, myField) || isSetter(element, myField)
+            }
+            else -> {
+                false
+            }
+        }
+    }
+
+    private fun isSetter(method: PsiMethod, field: PsiField): Boolean {
+        if (method.parameterList.isEmpty) {
+            return false
+        }
+        if (method.returnType != PsiType.VOID) {
+            return false
+        }
+        val methodName = method.name
+        val fieldName = field.name
+        return when {
+            methodName.startsWith("set") -> {
+                substring(methodName, 3) == fieldName
             }
             else -> {
                 false
@@ -45,15 +60,40 @@ class MyPsiFieldReference(
         val fieldName = field.name
         return when {
             methodName.startsWith("is") -> {
-                methodName.substring(2).lowercase(Locale.getDefault()) == fieldName
+                substring(methodName, 2) == fieldName
             }
             methodName.startsWith("get") -> {
-                methodName.substring(3).lowercase(Locale.getDefault()) == fieldName
+                substring(methodName, 3) == fieldName
             }
             else -> {
                 false
             }
         }
+    }
+
+    private fun substring(str: String, length: Int): String {
+        val substring = str.substring(length)
+        val firstChar = substring[0]
+        return substring.replaceFirst(firstChar, firstChar.lowercase()[0])
+    }
+
+    override fun handleElementRename(newElementName: String): PsiElement {
+        return super.handleElementRename(
+            when {
+                newElementName.startsWith("is") -> {
+                    substring(newElementName, 2)
+                }
+                newElementName.startsWith("get") -> {
+                    substring(newElementName, 3)
+                }
+                newElementName.startsWith("set") -> {
+                    substring(newElementName, 3)
+                }
+                else -> {
+                    newElementName
+                }
+            }
+        )
     }
 
     override fun isSoft(): Boolean {
