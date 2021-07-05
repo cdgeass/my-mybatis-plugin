@@ -11,28 +11,20 @@ import io.github.cdgeass.codeInsight.dom.element.Mapper
  * @author cdgeass
  * @since 2021/3/26
  */
-class MyPsiMethodReference(element: PsiElement) : PsiReferenceBase<PsiElement>(element) {
+class MyPsiMethodReference(
+    element: PsiElement,
+    private val myMethod: PsiMethod
+) : PsiReferenceBase<PsiElement>(element) {
 
-    override fun resolve(): PsiElement? {
-        val psiMethods = resolvePsiMethods(element)
-        return if (psiMethods.isEmpty()) {
-            null
-        } else {
-            psiMethods[0]
-        }
+    override fun resolve(): PsiElement {
+        return myMethod
     }
 
-    override fun getVariants(): Array<Any> {
-        return resolvePsiMethods(myElement, true).toTypedArray()
+    override fun isReferenceTo(element: PsiElement): Boolean {
+        return element == myElement
     }
-}
 
-fun resolvePsiMethods(element: PsiElement, ignored: Boolean = false): List<PsiMethod> {
-    if (element !is XmlAttributeValue) return emptyList()
-
-    val mapper = DomUtil.findDomElement(element, Mapper::class.java) ?: return emptyList()
-    val psiClass = mapper.getNamespace().value ?: return emptyList()
-
-    val name = element.value
-    return psiClass.allMethods.filter { ignored || it.name == name }
+    override fun isSoft(): Boolean {
+        return true
+    }
 }

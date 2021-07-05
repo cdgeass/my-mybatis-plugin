@@ -3,12 +3,10 @@ package io.github.cdgeass.codeInsight.dom.converter
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiReference
-import com.intellij.util.xml.ConvertContext
-import com.intellij.util.xml.Converter
-import com.intellij.util.xml.CustomReferenceConverter
-import com.intellij.util.xml.GenericDomValue
+import com.intellij.psi.xml.XmlAttributeValue
+import com.intellij.util.xml.*
+import io.github.cdgeass.codeInsight.dom.element.Mapper
 import io.github.cdgeass.codeInsight.reference.MyPsiMethodReference
-import io.github.cdgeass.codeInsight.reference.resolvePsiMethods
 
 /**
  * @author cdgeass
@@ -38,10 +36,20 @@ class MyPsiMethodConverter : Converter<PsiMethod>(), CustomReferenceConverter<Ps
         element: PsiElement?,
         context: ConvertContext?
     ): Array<PsiReference> {
-        if (element == null) {
+        if (element == null || value?.value == null) {
             return PsiReference.EMPTY_ARRAY
         }
 
-        return arrayOf(MyPsiMethodReference(element))
+        return arrayOf(MyPsiMethodReference(element, value.value!!))
+    }
+
+    private fun resolvePsiMethods(element: PsiElement, ignored: Boolean = false): List<PsiMethod> {
+        if (element !is XmlAttributeValue) return emptyList()
+
+        val mapper = DomUtil.findDomElement(element, Mapper::class.java) ?: return emptyList()
+        val psiClass = mapper.getNamespace().value ?: return emptyList()
+
+        val name = element.value
+        return psiClass.allMethods.filter { ignored || it.name == name }
     }
 }
