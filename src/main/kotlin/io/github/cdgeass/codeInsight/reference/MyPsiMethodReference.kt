@@ -3,9 +3,6 @@ package io.github.cdgeass.codeInsight.reference
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiReferenceBase
-import com.intellij.psi.xml.XmlAttributeValue
-import com.intellij.util.xml.DomUtil
-import io.github.cdgeass.codeInsight.dom.element.Mapper
 
 /**
  * @author cdgeass

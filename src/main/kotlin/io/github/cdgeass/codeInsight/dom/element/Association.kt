@@ -10,7 +10,6 @@ import com.intellij.util.xml.Convert
 import com.intellij.util.xml.DomElement
 import com.intellij.util.xml.GenericAttributeValue
 import com.intellij.util.xml.Required
-import com.intellij.util.xml.Resolve
 import io.github.cdgeass.codeInsight.dom.converter.MyDomResolveConverter
 import io.github.cdgeass.codeInsight.dom.converter.MyPsiClassConverter
 import io.github.cdgeass.codeInsight.dom.converter.MyPsiFieldConverter

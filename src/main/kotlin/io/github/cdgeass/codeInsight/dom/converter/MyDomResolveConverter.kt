@@ -5,7 +5,14 @@ import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.containers.SoftFactoryMap
-import com.intellij.util.xml.*
+import com.intellij.util.xml.ConvertContext
+import com.intellij.util.xml.DomElement
+import com.intellij.util.xml.DomFileDescription
+import com.intellij.util.xml.DomManager
+import com.intellij.util.xml.DomUtil
+import com.intellij.util.xml.ElementPresentationManager
+import com.intellij.util.xml.GenericDomValue
+import com.intellij.util.xml.ResolvingConverter
 import io.github.cdgeass.codeInsight.dom.description.MergingMapperDescription
 import io.github.cdgeass.codeInsight.dom.element.Mapper
 import io.github.cdgeass.codeInsight.util.findByNamespace
@@ -24,29 +31,31 @@ class MyDomResolveConverter : ResolvingConverter<DomElement>() {
                 val domManager = scope?.manager ?: throw AssertionError("Null DomManager for " + scope!!.javaClass)
                 val project = domManager.project
                 return CachedValuesManager.getManager(project)
-                    .createCachedValue(object : CachedValueProvider<Map<Pair<Type, String>, DomElement>> {
-                        override fun compute(): CachedValueProvider.Result<Map<Pair<Type, String>, DomElement>> {
-                            val map = mutableMapOf<Pair<Type, String>, DomElement>()
-                            visitDomElement(scope, map)
-                            return CachedValueProvider.Result(map, PsiModificationTracker.MODIFICATION_COUNT)
-                        }
+                    .createCachedValue(
+                        object : CachedValueProvider<Map<Pair<Type, String>, DomElement>> {
+                            override fun compute(): CachedValueProvider.Result<Map<Pair<Type, String>, DomElement>> {
+                                val map = mutableMapOf<Pair<Type, String>, DomElement>()
+                                visitDomElement(scope, map)
+                                return CachedValueProvider.Result(map, PsiModificationTracker.MODIFICATION_COUNT)
+                            }
 
-                        private fun visitDomElement(
-                            element: DomElement,
-                            map: MutableMap<Pair<Type, String>, DomElement>
-                        ) {
-                            val name = ElementPresentationManager.getElementName(element)
-                            val type = element.domElementType
-                            val key = Pair(type, name ?: "")
-                            if (name != null && !map.containsKey(key)) {
-                                map[key] = element
-                            } else {
-                                for (child in DomUtil.getDefinedChildren(element, true, true)) {
-                                    visitDomElement(child, map)
+                            private fun visitDomElement(
+                                element: DomElement,
+                                map: MutableMap<Pair<Type, String>, DomElement>
+                            ) {
+                                val name = ElementPresentationManager.getElementName(element)
+                                val type = element.domElementType
+                                val key = Pair(type, name ?: "")
+                                if (name != null && !map.containsKey(key)) {
+                                    map[key] = element
+                                } else {
+                                    for (child in DomUtil.getDefinedChildren(element, true, true))
+                                        visitDomElement(child, map)
                                 }
                             }
-                        }
-                    }, false)
+                        },
+                        false
+                    )
             }
         }
 

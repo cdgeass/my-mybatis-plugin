@@ -9,11 +9,15 @@ import com.intellij.psi.impl.source.resolve.reference.impl.providers.JavaClassRe
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.JavaClassReferenceSet
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.xml.XmlAttributeValue
-import com.intellij.util.xml.*
+import com.intellij.util.xml.ConvertContext
+import com.intellij.util.xml.Converter
+import com.intellij.util.xml.CustomReferenceConverter
+import com.intellij.util.xml.DomManager
+import com.intellij.util.xml.GenericDomValue
 import io.github.cdgeass.codeInsight.dom.element.Configuration
 import io.github.cdgeass.codeInsight.reference.MyJavaClassReference
 import io.github.cdgeass.codeInsight.util.findByNamespace
-import java.util.*
+import java.util.Locale
 
 /**
  * @author cdgeass

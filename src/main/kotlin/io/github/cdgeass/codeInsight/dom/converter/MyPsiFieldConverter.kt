@@ -1,11 +1,19 @@
 package io.github.cdgeass.codeInsight.dom.converter
 
-import com.intellij.psi.*
+import com.intellij.psi.PsiClass
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiField
+import com.intellij.psi.PsiReference
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlAttributeValue
 import com.intellij.psi.xml.XmlTag
-import com.intellij.util.xml.*
+import com.intellij.util.xml.ConvertContext
+import com.intellij.util.xml.Converter
+import com.intellij.util.xml.CustomReferenceConverter
+import com.intellij.util.xml.DomElement
+import com.intellij.util.xml.DomManager
+import com.intellij.util.xml.GenericDomValue
 import io.github.cdgeass.codeInsight.dom.element.Association
 import io.github.cdgeass.codeInsight.dom.element.Case
 import io.github.cdgeass.codeInsight.dom.element.Collection
@@ -74,13 +82,13 @@ class MyPsiFieldConverter : Converter<PsiField>(), CustomReferenceConverter<PsiF
         // 查找外层带有 type 的 xmlTag
         val xmlTag = PsiTreeUtil.findFirstParent(ownerTag) {
             it is XmlTag &&
-                    (
-                            !it.getAttributeValue("resultType").isNullOrBlank() ||
-                                    !it.getAttributeValue("ofType").isNullOrBlank() ||
-                                    !it.getAttributeValue("javaType").isNullOrBlank() ||
-                                    !it.getAttributeValue("type").isNullOrBlank() ||
-                                    !it.getAttributeValue("resultMap").isNullOrBlank()
-                            )
+                (
+                    !it.getAttributeValue("resultType").isNullOrBlank() ||
+                        !it.getAttributeValue("ofType").isNullOrBlank() ||
+                        !it.getAttributeValue("javaType").isNullOrBlank() ||
+                        !it.getAttributeValue("type").isNullOrBlank() ||
+                        !it.getAttributeValue("resultMap").isNullOrBlank()
+                    )
         }?.let { it as XmlTag } ?: return null
 
         val domManager = DomManager.getDomManager(element.project)

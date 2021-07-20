@@ -4,7 +4,11 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiReference
 import com.intellij.psi.xml.XmlAttributeValue
-import com.intellij.util.xml.*
+import com.intellij.util.xml.ConvertContext
+import com.intellij.util.xml.Converter
+import com.intellij.util.xml.CustomReferenceConverter
+import com.intellij.util.xml.DomUtil
+import com.intellij.util.xml.GenericDomValue
 import io.github.cdgeass.codeInsight.dom.element.Mapper
 import io.github.cdgeass.codeInsight.reference.MyPsiMethodReference
 

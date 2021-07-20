@@ -25,7 +25,7 @@ import com.intellij.util.xml.DomManager
 import com.jetbrains.rd.util.first
 import io.github.cdgeass.codeInsight.dom.element.Statement
 import io.github.cdgeass.util.resolveGeneric
-import java.util.*
+import java.util.Locale
 
 /**
  * @author cdgeass

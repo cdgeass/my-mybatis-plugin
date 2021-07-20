@@ -35,5 +35,4 @@ class JavaClassConverterTest : BasePlatformTestCase() {
         val usages = myFixture.testFindUsages("JavaClassConverterUsages.java", "JavaClassConverterUsages.xml")
         assertNotEmpty(usages)
     }
-
 }
