@@ -22,4 +22,5 @@ interface Statement : DomElement {
     @NameValue
     @Convert(MyPsiMethodConverter::class)
     fun getId(): GenericAttributeValue<PsiMethod>
+
 }

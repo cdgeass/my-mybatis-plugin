@@ -1,18 +1,13 @@
 package io.github.cdgeass.inspection
 
 import com.intellij.codeInspection.*
-import com.intellij.configurationStore.stateToElement
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiMethod
-import com.intellij.psi.SmartPointerManager
-import com.intellij.psi.SmartPsiElementPointer
-import com.intellij.psi.search.searches.ReferencesSearch
+import com.intellij.psi.*
 import com.intellij.psi.xml.XmlFile
 import com.intellij.util.xml.DomManager
-import com.intellij.xml.util.XmlUtil
 import io.github.cdgeass.PluginBundle
 import io.github.cdgeass.codeInsight.dom.element.Mapper
-import io.github.cdgeass.codeInsight.reference.MyPsiMethodReference
+import io.github.cdgeass.codeInsight.dom.element.Select
 import io.github.cdgeass.codeInsight.util.findByNamespace
 
 /**
@@ -51,7 +46,7 @@ class InvalidBoundStatementInspection : AbstractBaseJavaLocalInspectionTool() {
         }
 
         val quickFixArray =
-            xmlFiles.map { AddStatementFix(method.project, it, statementName = method.name) }.toTypedArray()
+            xmlFiles.map { AddStatementFix(method.project, it, method) }.toTypedArray()
 
         return arrayOf(
             manager.createProblemDescriptor(
@@ -69,11 +64,14 @@ class InvalidBoundStatementInspection : AbstractBaseJavaLocalInspectionTool() {
 class AddStatementFix(
     project: Project,
     xmlFile: XmlFile,
-    private val statementName: String
+    method: PsiMethod,
 ) : LocalQuickFix {
 
     private val myXmlFile: SmartPsiElementPointer<XmlFile> = SmartPointerManager.getInstance(project)
         .createSmartPsiElementPointer(xmlFile)
+
+    private val myMethod: SmartPsiElementPointer<PsiMethod> = SmartPointerManager.getInstance(project)
+        .createSmartPsiElementPointer(method)
 
     override fun getName(): String {
         return "Add statement in ${myXmlFile.element?.name ?: ""}"
@@ -92,13 +90,16 @@ class AddStatementFix(
             return
         }
 
+        val statementName = myMethod.element?.name ?: ""
         when {
             statementName.startsWith("select") -> {
                 val select = mapper.addSelect()
+                addReturnType(select)
                 select.getId().stringValue = statementName
             }
             statementName.startsWith("find") -> {
                 val select = mapper.addSelect()
+                addReturnType(select)
                 select.getId().stringValue = statementName
             }
             statementName.startsWith("insert") -> {
@@ -115,7 +116,45 @@ class AddStatementFix(
             }
             else -> {
                 val select = mapper.addSelect()
+                addReturnType(select)
                 select.getId().stringValue = statementName
+            }
+        }
+    }
+
+    private fun addReturnType(select: Select) {
+        val returnType = myMethod.element?.returnType
+        if (returnType == null || returnType == PsiType.VOID || returnType == PsiType.NULL) {
+            return
+        }
+
+        val namespace = myXmlFile.element?.rootTag?.getAttributeValue("namespace") ?: return
+        val xmlFiles = findByNamespace(namespace, myXmlFile.project)
+
+        val domManager = DomManager.getDomManager(myXmlFile.project)
+        val mappers = xmlFiles.mapNotNull { it.rootTag }.map { domManager.getDomElement(it) as Mapper }
+
+        if (returnType is PsiClassType) {
+            val returnClass = returnType.resolve()
+            if (returnClass != null) {
+                mappers.forEach { mapper ->
+                    mapper.getResultMaps().forEach { rm ->
+                        if (rm.getType().value == returnClass) {
+                            select.getResultMap().value = rm
+                            return
+                        }
+                    }
+                }
+                select.getResultType().stringValue = returnClass.qualifiedName
+            }
+        } else if (returnType is PsiPrimitiveType) {
+            select.getResultType().stringValue = returnType.boxedTypeName
+        } else if (returnType is PsiArrayType) {
+            val componentType = returnType.componentType
+            if (componentType is PsiClassType) {
+                select.getResultType().stringValue = componentType.resolve()?.qualifiedName
+            } else if (componentType is PsiPrimitiveType) {
+                select.getResultType().stringValue = componentType.boxedTypeName
             }
         }
     }
