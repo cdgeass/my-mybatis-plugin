@@ -1,4 +1,11 @@
 # my-mybatis plugin
+
+![License](https://img.shields.io/github/license/cdgeass/my-mybatis-plugin)
+![Build](https://img.shields.io/github/workflow/status/cdgeass/my-mybatis-plugin/Intellij%20Idea%20plugin%20CI%20with%20Gradle)
+![IDEA](https://img.shields.io/badge/dynamic/json?label=IDEA&query=%24%5B0%5D.compatibleVersions.IDEA&url=https%3A%2F%2Fplugins.jetbrains.com%2Fapi%2Fplugins%2F14297%2Fupdates%3Fchannel%3D%26size%3D8)
+![Version](https://img.shields.io/jetbrains/plugin/v/14297)
+![Downloads](https://img.shields.io/jetbrains/plugin/d/14297)
+
 <!-- Plugin description -->
 This is a plugin to help you to use mybatis in Intellij IDEA.
 <!-- Plugin description end -->
