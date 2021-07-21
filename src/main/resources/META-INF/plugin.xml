@@ -10,6 +10,8 @@
     <depends>com.intellij.java</depends>
     <depends>com.intellij.database</depends>
 
+    <resource-bundle>messages.MyMyBatisBundle</resource-bundle>
+
     <extensions defaultExtensionNs="com.intellij">
         <!-- Add your extensions here -->
         <additionalTextAttributes scheme="Default" file="colorScheme/editor.xml"/>
@@ -33,10 +35,9 @@
                                 implementationClass="io.github.cdgeass.codeInsight.ExpressionCompletionContributor"/>
         <!-- inspection -->
         <localInspection language="JAVA"
-                         displayName="INVALID_BOUND_STATEMENT"
-                         groupPath="Java"
-                         groupBundle="messages.MyMyBatisBundle"
-                         groupKey="inspection.invalidBoundStatement"
+                         key="inspection.invalidBoundStatement"
+                         groupPath="MyBatis"
+                         groupKey="inspection.mapper"
                          enabledByDefault="true"
                          level="ERROR"
                          implementationClass="io.github.cdgeass.inspection.InvalidBoundStatementInspection"/>
