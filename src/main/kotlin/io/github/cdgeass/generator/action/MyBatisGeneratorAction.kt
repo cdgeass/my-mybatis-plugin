@@ -102,7 +102,7 @@ class MyBatisGeneratorAction : AnAction() {
         val warnings = mutableListOf<String>()
         val myBatisGenerator = MyBatisGenerator(configuration, DefaultShellCallback(true), warnings)
 
-        myBatisGenerator.generate(GenerateProgressCallback())
+        myBatisGenerator.generate(GenerateProgressCallback(warnings))
     }
 
     /**
@@ -174,7 +174,11 @@ class MyBatisGeneratorAction : AnAction() {
     }
 
     private fun selectPackage(module: Module, title: String): PsiPackage? {
-        return PackageChooserDialog(title, module).apply { show() }.selectedPackage
+        return PackageChooserDialog(title, module)
+            .apply {
+                show()
+            }
+            .selectedPackage
     }
 
     private fun getModulePathAndPackage(moduleAndPackage: String, project: Project): Pair<String, String> {

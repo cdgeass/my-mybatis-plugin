@@ -9,7 +9,9 @@ import org.mybatis.generator.api.ProgressCallback
  * @author cdgeass
  * @since 2021-03-04
  */
-class GenerateProgressCallback : ProgressCallback {
+class GenerateProgressCallback(
+    private val warnings: List<String>
+) : ProgressCallback {
 
     override fun introspectionStarted(totalTasks: Int) {
         print("")
@@ -29,7 +31,11 @@ class GenerateProgressCallback : ProgressCallback {
 
     override fun done() {
         VirtualFileManager.getInstance().syncRefresh()
-        Messages.showInfoMessage(PluginBundle.message("generator.success"), PluginBundle.message("generator.title"))
+        if (warnings.isEmpty()) {
+            Messages.showInfoMessage(PluginBundle.message("generator.success"), PluginBundle.message("generator.title"))
+        } else {
+            Messages.showInfoMessage(warnings.joinToString("\n"), PluginBundle.message("generator.title"))
+        }
     }
 
     override fun checkCancel() {
