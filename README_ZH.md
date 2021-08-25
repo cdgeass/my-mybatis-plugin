@@ -6,30 +6,28 @@
 ![Version](https://img.shields.io/jetbrains/plugin/v/14297)
 ![Downloads](https://img.shields.io/jetbrains/plugin/d/14297)
 
-[中文说明](/README_ZH.md)
-
 <!-- Plugin description -->
-This is a plugin to help you to use mybatis in Intellij IDEA. It provides some features to help you code and debug:
-1. Format MyBatis log
-2. Code jump
-3. Code completion
+这是一个帮助你在 IDEA 中使用 MyBatis 的插件。提供了多种功能来帮助你编写 xml 以及进行调试:
+1. 格式化 MyBatis 日志
+2. 代码跳转
+3. 代码补全
 <!-- Plugin description end -->
 
-## Features
+## 功能
 
-- Format MyBatis log
-    - in the console  
-    ![](gif/console_format.gif)  
-    - in the tool window  
-    ![](gif/toolwindow-format.gif)
+- 格式化 MyBatis 日志
+    - 在控制台中  
+      ![](gif/console_format.gif)  
+    - 在 tool window 中  
+      ![](gif/toolwindow-format.gif)
 
-- Code jump
-    - jump between the interface and xml  
+- 代码跳转
+    - 在代码和 xml tag 间跳转 
     ![](gif/code_jump_java.gif)
-    - jump between xml tag  
+    - 在 xml 中跳转 
     ![](gif/code_jump_xml_tag.gif)
     
-- Code completion  
+- 代码补全 
 ![](gif/completion.gif)
 
 ## Installation
