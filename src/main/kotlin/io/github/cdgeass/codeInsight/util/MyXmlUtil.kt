@@ -13,7 +13,7 @@ import io.github.cdgeass.codeInsight.MyXmlNamespaceIndex
  */
 fun findByNamespace(namespace: String, project: Project): Collection<XmlFile> {
     val files = FileBasedIndex.getInstance()
-        .getContainingFiles(MyXmlNamespaceIndex.NAME, namespace, GlobalSearchScope.projectScope(project))
+        .getContainingFiles(MyXmlNamespaceIndex.NAME, namespace, GlobalSearchScope.allScope(project))
 
     val psiManager = PsiManager.getInstance(project)
     return files.mapNotNull { virtualFile ->
