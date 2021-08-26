@@ -84,11 +84,11 @@ class AddStatementFix(
         .createSmartPsiElementPointer(method)
 
     override fun getName(): String {
-        return "Add statement in ${myXmlFile.element?.name ?: ""}"
+        return PluginBundle.message("inspection.addStatementIn", myXmlFile.element?.name ?: "")
     }
 
     override fun getFamilyName(): String {
-        return "Add statement"
+        return PluginBundle.message("inspection.addStatement")
     }
 
     override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
@@ -101,35 +101,32 @@ class AddStatementFix(
         }
 
         val statementName = myMethod.element?.name ?: ""
-        when {
+        val statement = when {
             statementName.startsWith("select") -> {
-                val select = mapper.addSelect()
-                addReturnType(select)
-                select.getId().stringValue = statementName
+                mapper.addSelect().apply {
+                    addReturnType(this)
+                }
             }
             statementName.startsWith("find") -> {
-                val select = mapper.addSelect()
-                addReturnType(select)
-                select.getId().stringValue = statementName
+                mapper.addSelect().apply {
+                    addReturnType(this)
+                }
             }
             statementName.startsWith("insert") -> {
-                val insert = mapper.addInsert()
-                insert.getId().stringValue = statementName
+                mapper.addInsert()
             }
             statementName.startsWith("delete") -> {
-                val delete = mapper.addDelete()
-                delete.getId().stringValue = statementName
+                mapper.addDelete()
             }
             statementName.startsWith("update") -> {
-                val update = mapper.addUpdate()
-                update.getId().stringValue = statementName
+                mapper.addUpdate()
             }
             else -> {
-                val select = mapper.addSelect()
-                addReturnType(select)
-                select.getId().stringValue = statementName
+                mapper.addSelect()
             }
         }
+        statement.getId().stringValue = statementName
+        statement.xmlTag?.value?.text = "\n"
     }
 
     private fun addReturnType(select: Select) {
