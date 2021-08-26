@@ -17,26 +17,29 @@
 
 - 格式化 MyBatis 日志
     - 在控制台中  
-      ![](gif/console_format.gif)  
+      ![](https://raw.githubusercontent.com/cdgeass/pictures/main/20210826144131.gif)
     - 在 tool window 中  
-      ![](gif/toolwindow-format.gif)
+      ![](https://raw.githubusercontent.com/cdgeass/pictures/main/20210826145049.gif)
 
 - 代码跳转
-    - 在代码和 xml tag 间跳转 
-    ![](gif/code_jump_java.gif)
-    - 在 xml 中跳转 
-    ![](gif/code_jump_xml_tag.gif)
+    - 在代码和 xml tag 间跳转
+      ![](https://raw.githubusercontent.com/cdgeass/pictures/main/20210826145727.gif)
+    - 在 xml 中跳转
+      ![](https://raw.githubusercontent.com/cdgeass/pictures/main/20210826150434.gif)
     
-- 代码补全 
-![](gif/completion.gif)
+- 代码补全
+  ![](https://raw.githubusercontent.com/cdgeass/pictures/main/20210826152811.gif)
 
-## Installation
-- Using IDE built-in plugin system on Windows:
+- MyBatis Generator
+  ![](https://raw.githubusercontent.com/cdgeass/pictures/main/20210826153821.gif)
+
+## 安装
+- 在 Windows 上使用 IDEA 内的插件系统:
     - <kbd>File</kbd> > <kbd>Settings</kbd> > <kbd>Plugins</kbd> > <kbd>Browse repositories...</kbd> > <kbd>Search for "my-mybatis"</kbd> > <kbd>Install Plugin</kbd>
-- Using IDE built-in plugin system on MacOs:
+- 在 MacOs 上使用 IDEA 内的插件系统:
   - <kbd>Preferences</kbd> > <kbd>Settings</kbd> > <kbd>Plugins</kbd> > <kbd>Browse repositories...</kbd> > <kbd>Search for "my-mybatis"</kbd> > <kbd>Install Plugin</kbd>
-- Manually:
-  - Download the [latest release](https://github.com/cdgeass/my-mybatis-plugin/releases/latest) and install it manually using <kbd>Preferences</kbd> > <kbd>Plugins</kbd> > <kbd>Install plugin from disk...</kbd>
+- 手动:
+  - 下载 [最新版本](https://github.com/cdgeass/my-mybatis-plugin/releases/latest) 并手动安装 <kbd>Preferences</kbd> > <kbd>Plugins</kbd> > <kbd>Install plugin from disk...</kbd>
 
 ## License
 

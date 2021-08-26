@@ -19,18 +19,21 @@ This is a plugin to help you to use mybatis in Intellij IDEA. It provides some f
 
 - Format MyBatis log
     - in the console  
-    ![](gif/console_format.gif)  
+     ![](https://raw.githubusercontent.com/cdgeass/pictures/main/20210826144131.gif)
     - in the tool window  
-    ![](gif/toolwindow-format.gif)
+     ![](https://raw.githubusercontent.com/cdgeass/pictures/main/20210826145049.gif)
 
 - Code jump
     - jump between the interface and xml  
-    ![](gif/code_jump_java.gif)
+      ![](https://raw.githubusercontent.com/cdgeass/pictures/main/20210826145727.gif)
     - jump between xml tag  
-    ![](gif/code_jump_xml_tag.gif)
-    
+      ![](https://raw.githubusercontent.com/cdgeass/pictures/main/20210826150434.gif)
+
 - Code completion  
-![](gif/completion.gif)
+  ![](https://raw.githubusercontent.com/cdgeass/pictures/main/20210826152811.gif)
+
+- MyBatis Generator
+  ![](https://raw.githubusercontent.com/cdgeass/pictures/main/20210826153821.gif)
 
 ## Installation
 - Using IDE built-in plugin system on Windows:
