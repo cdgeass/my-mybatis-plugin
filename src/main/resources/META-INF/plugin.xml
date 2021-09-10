@@ -26,6 +26,8 @@
         <dom.fileMetaData implementation="io.github.cdgeass.codeInsight.dom.description.MergingMapperDescription"
                           rootTagName="mapper"/>
         <codeInsight.lineMarkerProvider language="JAVA"
+                                        implementationClass="io.github.cdgeass.codeInsight.daemon.EntityLineMarkProvider"/>
+        <codeInsight.lineMarkerProvider language="JAVA"
                                         implementationClass="io.github.cdgeass.codeInsight.daemon.ClientLineMarkerProvider"/>
         <codeInsight.lineMarkerProvider language="XML"
                                         implementationClass="io.github.cdgeass.codeInsight.daemon.XmlLineMarkerProvider"/>
