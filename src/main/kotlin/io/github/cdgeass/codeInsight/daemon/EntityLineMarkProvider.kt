@@ -1,18 +1,14 @@
 package io.github.cdgeass.codeInsight.daemon
 
 import com.google.common.base.CaseFormat
-import com.intellij.codeInsight.daemon.GutterIconNavigationHandler
 import com.intellij.codeInsight.daemon.LineMarkerInfo
 import com.intellij.codeInsight.daemon.LineMarkerProviderDescriptor
 import com.intellij.codeInsight.daemon.MergeableLineMarkerInfo
-import com.intellij.codeInsight.navigation.NavigationGutterIconBuilder
 import com.intellij.database.psi.DbElement
 import com.intellij.database.util.DasUtil
 import com.intellij.database.util.DbImplUtil
 import com.intellij.database.util.DbUtil
 import com.intellij.database.view.DbNavigationUtils
-import com.intellij.icons.AllIcons
-import com.intellij.navigation.NavigationItem
 import com.intellij.openapi.editor.markup.GutterIconRenderer
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiClass
@@ -25,9 +21,6 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlTag
 import icons.DatabaseIcons
 import io.github.cdgeass.codeInsight.reference.MyJavaClassReference
-import org.jetbrains.annotations.Nls
-import java.util.function.Function
-import java.util.function.Supplier
 import javax.swing.Icon
 
 /**
