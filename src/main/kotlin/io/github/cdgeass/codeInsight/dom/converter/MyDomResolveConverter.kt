@@ -87,9 +87,13 @@ class MyDomResolveConverter : ResolvingConverter<DomElement>() {
         return if (s.contains(".")) {
             val namespace = s.substringBeforeLast(".")
             val domManager = DomManager.getDomManager(context.project)
-            val xmlFile = findByNamespace(namespace, context.project).first()
+            val xmlFiles = findByNamespace(namespace, context.project)
+            if (xmlFiles.isEmpty()) return null
+
+            val xmlFile = xmlFiles.first()
             val fileDescription: DomFileDescription<*>? = domManager.getDomFileDescription(xmlFile)
-            (fileDescription as MergingMapperDescription).getMergedRoot(
+            if (fileDescription !is MergingMapperDescription) return null
+            fileDescription.getMergedRoot(
                 domManager.getFileElement(
                     xmlFile,
                     Mapper::class.java

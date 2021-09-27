@@ -22,6 +22,14 @@ class DomResolveConverterTest : BasePlatformTestCase() {
         assertEquals("BaseResultMap", (psiElement as XmlTag).getAttributeValue("id"))
     }
 
+    fun testReferenceWithNoReference() {
+        val reference = myFixture.getReferenceAtCaretPositionWithAssertion("DomResolveConverterWithNoReference.xml")
+        assertNotNull(reference)
+
+        val psiElement = reference.resolve();
+        assertNull(psiElement)
+    }
+
     fun testReferenceWithNamespace() {
         val reference = myFixture.getReferenceAtCaretPositionWithAssertion("DomResolveConverterWithNamespace2.xml", "DomResolveConverterWithNamespace1.xml")
         assertNotNull(reference)
