@@ -142,7 +142,23 @@ class AddStatementFix(
         val mappers = xmlFiles.mapNotNull { it.rootTag }.map { domManager.getDomElement(it) as Mapper }
 
         if (returnType is PsiClassType) {
-            val returnClass = returnType.resolve()
+            // 判断返回值是否为泛型类型
+            val returnClass = if (returnType.isRaw) {
+                returnType.resolve()
+            } else {
+                val substitutionMap = returnType.resolveGenerics().substitutor.substitutionMap
+                // 如果有多个泛型参数直接使用原类型
+                if (substitutionMap.size != 1) {
+                    returnType.resolve()
+                } else {
+                    val psiTye = substitutionMap.values.first()
+                    if (psiTye is PsiClassType) {
+                        psiTye.resolve()
+                    } else {
+                        null
+                    }
+                }
+            }
             if (returnClass != null) {
                 mappers.forEach { mapper ->
                     mapper.getResultMaps().forEach { rm ->
