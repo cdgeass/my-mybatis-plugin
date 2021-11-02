@@ -10,6 +10,7 @@ import com.intellij.psi.xml.XmlFile
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.xml.DomElement
 import com.intellij.util.xml.DomManager
+import io.github.cdgeass.codeInsight.dom.element.Configuration
 import io.github.cdgeass.codeInsight.dom.element.Mapper
 import io.github.cdgeass.codeInsight.dom.element.Statement
 import io.github.cdgeass.codeInsight.dom.element.WithIdDomElement
@@ -18,6 +19,12 @@ import io.github.cdgeass.codeInsight.dom.element.WithIdDomElement
  * @author cdgeass
  * @since 2021/3/20
  */
+fun getConfigurations(project: Project): List<Configuration> {
+    val xmlFiles = findByNamespace("mybatis.configuration", project)
+    val domManager = DomManager.getDomManager(project)
+    return xmlFiles.mapNotNull { domManager.getFileElement(it, Configuration::class.java)?.rootElement }
+}
+
 fun getMappers(namespace: String, project: Project): List<Mapper> {
     val xmlFiles = findByNamespace(namespace, project)
     val domManager = DomManager.getDomManager(project)

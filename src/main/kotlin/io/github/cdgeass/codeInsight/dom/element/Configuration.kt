@@ -2,12 +2,7 @@ package io.github.cdgeass.codeInsight.dom.element
 
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiPackage
-import com.intellij.util.xml.Convert
-import com.intellij.util.xml.DomElement
-import com.intellij.util.xml.GenericAttributeValue
-import com.intellij.util.xml.PsiPackageConverter
-import com.intellij.util.xml.SubTag
-import com.intellij.util.xml.SubTagList
+import com.intellij.util.xml.*
 import io.github.cdgeass.codeInsight.dom.converter.MyPsiClassConverter
 
 /**
@@ -18,7 +13,12 @@ interface Configuration : DomElement {
 
     @SubTag("typeAliases")
     fun getTypeAliases(): TypeAliases
+
+    @SubTag("settings")
+    fun getSettings(): Settings
 }
+
+// --- typeAliases
 
 interface TypeAliases : DomElement {
 
@@ -41,4 +41,11 @@ interface Package : DomElement {
 
     @Convert(PsiPackageConverter::class)
     fun getName(): GenericAttributeValue<PsiPackage>
+}
+
+// --- settings
+
+interface Settings : DomElement {
+
+    fun getUseActualParamName(): GenericAttributeValue<Boolean>
 }

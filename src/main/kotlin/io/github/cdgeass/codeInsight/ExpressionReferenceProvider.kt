@@ -57,13 +57,13 @@ class ExpressionReferenceProvider : PsiReferenceProvider() {
         var lastIndex = 0
         while (index < length) {
             val char = expression[index]
-            if (char == ' ') {
+            if (char == ' ' || char == ',') {
                 if (index != lastIndex) {
                     val subExpression = expression.substring(lastIndex, index)
                     references.addAll(convertToReferences(element, subExpression, startOffset + lastIndex))
                 }
                 // 跳过空格
-                while (index < length && expression[index] == ' ') {
+                while (index < length && (expression[index] == ' ' || expression[index] == ',')) {
                     index++
                 }
                 lastIndex = index
