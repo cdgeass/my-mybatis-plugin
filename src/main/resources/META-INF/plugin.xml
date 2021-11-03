@@ -32,9 +32,9 @@
         <codeInsight.lineMarkerProvider language="XML"
                                         implementationClass="io.github.cdgeass.codeInsight.daemon.XmlLineMarkerProvider"/>
         <psi.referenceContributor language="XML"
-                                  implementation="io.github.cdgeass.codeInsight.ExpressionReferenceContributor"/>
+                                  implementation="io.github.cdgeass.codeInsight.MyLiteralExpressionReferenceContributor"/>
         <completion.contributor language="any"
-                                implementationClass="io.github.cdgeass.codeInsight.ExpressionCompletionContributor"/>
+                                implementationClass="io.github.cdgeass.codeInsight.MyLiteralExpressionCompletionContributor"/>
         <!-- inspection -->
         <localInspection language="JAVA"
                          key="inspection.invalidBoundStatement"

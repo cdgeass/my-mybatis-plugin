@@ -1,5 +1,11 @@
 package io.github.cdgeass.util
 
+import com.intellij.codeInsight.completion.JavaLookupElementBuilder
+import com.intellij.codeInsight.lookup.LookupElement
+import com.intellij.codeInsight.lookup.LookupElementBuilder
+import com.intellij.icons.AllIcons
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Iconable
 import com.intellij.psi.*
 import com.intellij.psi.impl.light.LightMethodBuilder
 import com.jetbrains.rd.util.first
@@ -22,19 +28,31 @@ fun resolveGeneric(psiType: PsiType): PsiClass? {
     return null
 }
 
-fun resolveLombokField(psiField: PsiField): PsiElement {
-    return resolveLombokFields(listOf(psiField)).first()
+fun createArrayClass(project: Project): PsiClass {
+    val psiElementFactory = PsiElementFactory.getInstance(project)
+    return psiElementFactory.createClass("array")
 }
 
-fun resolveLombokFields(psiFields: Collection<PsiField>): Collection<PsiElement> {
-    return psiFields.map { psiField ->
-        val fieldName = psiField.name
-        // TODO boolean
-        val getMethodName = "get" + fieldName[0].uppercaseChar() + fieldName.substring(1)
-        val psiClass = psiField.parent as PsiClass
-        val lombokGetMethod = psiClass.allMethods.find { method ->
-            method.name == getMethodName && method is LightMethodBuilder
+fun createIntClass(project: Project): PsiClass {
+    val psiElementFactory = PsiElementFactory.getInstance(project)
+    return psiElementFactory.createClass("int")
+}
+
+fun createLookupElement(name: String, element: PsiElement): LookupElement {
+    return when (element) {
+        is PsiField -> {
+            JavaLookupElementBuilder.forField(element, name, null)
         }
-        lombokGetMethod ?: psiField
+        is LightMethodBuilder -> {
+            LookupElementBuilder.create(element, name)
+                .withIcon(element.getIcon(Iconable.ICON_FLAG_VISIBILITY))
+        }
+        is PsiMethod -> {
+            JavaLookupElementBuilder.forMethod(element, name, PsiSubstitutor.EMPTY, null)
+        }
+        else -> {
+            LookupElementBuilder.create(element, name)
+                .withIcon(AllIcons.Gutter.ExtAnnotation)
+        }
     }
 }
