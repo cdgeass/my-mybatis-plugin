@@ -196,7 +196,7 @@ class MyLiteralExpressionResolver(
      * 处理 <foreach/>
      */
     private fun resolveForeachContext(element: PsiElement, paramNameMap: MutableMap<String, MyLiteralExpressionParameter>) {
-        val tag = PsiTreeUtil.findFirstParent(element) { it is XmlTag && it.name == "foreach" }
+        val tag = PsiTreeUtil.findFirstParent(element, true) { it is XmlTag && it.name == "foreach" }
             ?.let { it as XmlTag }
             ?: return
 
