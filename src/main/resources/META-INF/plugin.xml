@@ -34,7 +34,8 @@
         <psi.referenceContributor language="XML"
                                   implementation="io.github.cdgeass.codeInsight.MyLiteralExpressionReferenceContributor"/>
         <completion.contributor language="any"
-                                implementationClass="io.github.cdgeass.codeInsight.MyLiteralExpressionCompletionContributor"/>
+                                implementationClass="io.github.cdgeass.codeInsight.MyLiteralExpressionCompletionContributor"
+                                order="first"/>
         <!-- inspection -->
         <localInspection language="JAVA"
                          key="inspection.invalidBoundStatement"
