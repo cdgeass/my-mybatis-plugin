@@ -1,5 +1,6 @@
 package io.github.cdgeass.codeInsight.reference
 
+import com.intellij.analysis.AnalysisBundle
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
@@ -87,7 +88,7 @@ class MyLiteralExpressionReference(
     }
 
     private fun advancedResolveInner(containingFile: PsiFile): Array<ResolveResult> {
-        val context = context!!
+        val context = context ?: return ResolveResult.EMPTY_ARRAY
 
         val subElementNameMap = getAllSubElement(context)
         val target = subElementNameMap[myText] ?: return ResolveResult.EMPTY_ARRAY
@@ -99,8 +100,7 @@ class MyLiteralExpressionReference(
     }
 
     override fun getUnresolvedMessagePattern(): String {
-        // TODO
-        return ""
+        return AnalysisBundle.message("cannot.resolve.symbol")
     }
 
     override fun getContext(): PsiElement? {

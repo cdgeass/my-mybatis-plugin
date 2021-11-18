@@ -103,6 +103,7 @@ class MyLiteralExpressionReferenceProvider : GenericReferenceProvider() {
         return when {
             expression == "null" -> false
             expression.startsWith("'") -> false
+            expression == "and" || expression == "or" || expression == "&gt;" || expression == "&lt;" || expression == "&amp;" || expression == "&apos;" || expression == "&quot;" -> false
             NumberUtils.isCreatable(expression) -> false
             else -> true
         }
