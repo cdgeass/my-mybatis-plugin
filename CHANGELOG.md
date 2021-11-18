@@ -4,6 +4,13 @@
 
 ## [Unreleased]
 
+### Changed
+
+- Improve xml reference
+- 改进xml解析
+
+## [2.0.2]
+
 ### Added
 
 - Add check if mapper method was bind to valid xml tag
