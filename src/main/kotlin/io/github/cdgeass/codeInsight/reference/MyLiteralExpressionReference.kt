@@ -100,7 +100,7 @@ class MyLiteralExpressionReference(
     }
 
     override fun getUnresolvedMessagePattern(): String {
-        return AnalysisBundle.message("cannot.resolve.symbol")
+        return AnalysisBundle.message("cannot.resolve.symbol", myText)
     }
 
     override fun getContext(): PsiElement? {
