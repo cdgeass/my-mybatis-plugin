@@ -62,6 +62,9 @@ jobs:
           path: ~/.gradle/wrapper
           key: ${{ runner.os }}-gradle-wrapper-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
 
+      - name: Change wrapper permissions
+        run: chmod +x ./gradlew
+
       # Run detekt, ktlint and tests
       - name: Run Linters and Test
         run: ./gradlew check
