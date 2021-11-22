@@ -1,6 +1,6 @@
 <idea-plugin>
     <id>io.github.cdgeass.mybatis</id>
-    <name>my-mybatis</name>
+    <name>My Mybatis</name>
     <vendor email="cdgeass97@gmail.com" url="https://github.com/cdgeass/my-mybatis-plugin">cdgeass</vendor>
 
     <!-- please see https://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html

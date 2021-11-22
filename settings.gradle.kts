@@ -1,1 +1,1 @@
-rootProject.name = "my-mybatis-plugin"
+rootProject.name = "My MyBatis Plugin"

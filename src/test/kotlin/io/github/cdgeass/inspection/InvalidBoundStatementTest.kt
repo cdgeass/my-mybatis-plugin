@@ -17,6 +17,10 @@ class InvalidBoundStatementTest : BasePlatformTestCase() {
         myFixture.enableInspections(localInspectionTool)
         val allQuickFixes = myFixture.getAllQuickFixes("InvalidBoundStatement.java", "InvalidBoundStatement.xml")
         assertNotEmpty(allQuickFixes)
-        assertTrue(allQuickFixes.any { it.familyName == "Add statement in InvalidBoundStatement.xml" })
+        allQuickFixes.forEach { println(it.familyName) }
+        assertTrue(allQuickFixes.any {
+            it.familyName == "Add statement in InvalidBoundStatement.xml" ||
+                    it.familyName == "添加 statement 到 InvalidBoundStatement.xml"
+        })
     }
 }
