@@ -26,6 +26,9 @@ jobs:
         with:
           ref: ${{ github.event.release.tag_name }}
 
+      - name: Change wrapper permissions
+        run: chmod +x ./gradlew
+
       # Publish the plugin to the Marketplace
       - name: Publish Plugin
         env:
@@ -69,5 +72,5 @@ jobs:
       - name: Push changes
         uses: ad-m/github-push-action@master
         with:
-          branch: main
+          branch: master
           github_token: ${{ secrets.GITHUB_TOKEN }}
