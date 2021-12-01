@@ -3,6 +3,8 @@
 # My-MyBatis Plugin Changelog
 
 ## [Unreleased]
+
+## [2.0.4]
 ### Changed
 - Compatible with 2021.3
 - 适配 2021.3
