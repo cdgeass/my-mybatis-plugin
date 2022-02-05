@@ -133,12 +133,16 @@ class MyBatisGeneratorAction : AnAction() {
                 PluginBundle.message("generator.module.selector.model.title")
             )
 
+            if (modelPackage == null || clientPackage == null) {
+                return;
+            }
+
             schemaPackages[schema] = mapOf(Pair(modelPackage, clientPackage))
         }
         settings.schemaPackages = schemaPackages
     }
 
-    private fun selectModuleAndPackage(modules: Array<Module>, title: String): String {
+    private fun selectModuleAndPackage(modules: Array<Module>, title: String): String? {
         val module = selectModule(modules, title)
         if (module != null) {
             val psiPackage = selectPackage(module, title)
@@ -146,7 +150,7 @@ class MyBatisGeneratorAction : AnAction() {
                 return module.name + ":" + psiPackage.qualifiedName
             }
         }
-        throw RuntimeException()
+        return null
     }
 
     private fun selectModule(modules: Array<Module>, title: String): Module? {
