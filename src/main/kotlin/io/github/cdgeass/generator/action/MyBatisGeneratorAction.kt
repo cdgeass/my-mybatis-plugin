@@ -60,7 +60,9 @@ class MyBatisGeneratorAction : AnAction() {
     }
 
     private fun generateTables(project: Project, selectedTables: Set<DbTable>) {
-        computeModuleAndPackage(project, selectedTables)
+        if (!computeModuleAndPackage(project, selectedTables)) {
+            return
+        }
 
         val dataSourceMap = selectedTables.groupBy { DbImplUtil.getLocalDataSource(it.dataSource) }
         val configuration = Configuration()
@@ -112,7 +114,7 @@ class MyBatisGeneratorAction : AnAction() {
     private fun computeModuleAndPackage(
         project: Project,
         selectedTables: Set<DbTable>
-    ) {
+    ): Boolean {
         val moduleManager = ModuleManager.getInstance(project)
         val modules = moduleManager.modules
 
@@ -134,12 +136,14 @@ class MyBatisGeneratorAction : AnAction() {
             )
 
             if (modelPackage == null || clientPackage == null) {
-                return;
+                return false
             }
 
             schemaPackages[schema] = mapOf(Pair(modelPackage, clientPackage))
         }
         settings.schemaPackages = schemaPackages
+
+        return true
     }
 
     private fun selectModuleAndPackage(modules: Array<Module>, title: String): String? {
