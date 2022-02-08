@@ -3,6 +3,8 @@
 # My-MyBatis Plugin Changelog
 
 ## [Unreleased]
+
+## [2.0.5]
 ### Add
 - Generator allow remove table prefix and suffix with regex
 - Generator add model type as generic when rootInterface has generic param T
