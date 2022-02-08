@@ -103,6 +103,10 @@ tasks {
         })
     }
 
+    runPluginVerifier {
+        ideVersions.set(properties("pluginVerifierIdeVersions").split(","))
+    }
+
     publishPlugin {
         dependsOn("patchChangelog")
         token.set(System.getenv("PUBLISH_TOKEN"))
