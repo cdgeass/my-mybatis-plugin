@@ -3,6 +3,11 @@
 # My-MyBatis Plugin Changelog
 
 ## [Unreleased]
+### Add
+- Generator allow remove table prefix and suffix with regex
+- Generator add model type as generic when rootInterface has generic param T
+- Generator 允许通过正则去除标名的前缀和后缀
+- Generator 在生成接口时如果设置了 rootInterface 并且有泛型参数 T 时会将 model 的类型作为接口泛型
 
 ## [2.0.4]
 ### Changed
