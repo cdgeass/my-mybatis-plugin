@@ -4,6 +4,7 @@ import org.mybatis.generator.api.IntrospectedTable
 import org.mybatis.generator.api.PluginAdapter
 import org.mybatis.generator.api.dom.java.FullyQualifiedJavaType
 import org.mybatis.generator.api.dom.java.Interface
+import org.mybatis.generator.api.dom.java.TopLevelClass
 
 /**
  * @author cdgeass
@@ -15,19 +16,27 @@ class RootInterfaceGenericPlugin : PluginAdapter() {
         return true
     }
 
+    private var domainType: String? = null
+
+    override fun modelBaseRecordClassGenerated(
+        topLevelClass: TopLevelClass?,
+        introspectedTable: IntrospectedTable?
+    ): Boolean {
+        domainType = topLevelClass?.type?.fullyQualifiedName
+
+        return super.modelBaseRecordClassGenerated(topLevelClass, introspectedTable)
+    }
+
     override fun clientGenerated(interfaze: Interface, introspectedTable: IntrospectedTable): Boolean {
         val superInterface =
             interfaze.superInterfaceTypes.firstOrNull()
                 ?: return super.clientGenerated(interfaze, introspectedTable)
         if (superInterface.typeArguments.contains(FullyQualifiedJavaType("T"))) {
             superInterface.typeArguments.clear()
+            if (domainType != null) {
+                superInterface.typeArguments.add(FullyQualifiedJavaType(domainType))
+            }
         }
-        val schema = introspectedTable.tableConfiguration.schema
-        val domainObjectName = introspectedTable.tableConfiguration.domainObjectName
-//        val selectedModelPackage = MyBatisGeneratorSettings.getInstance().schemaModelPackages[schema]
-//        if (selectedModelPackage != null) {
-//            superInterface.typeArguments.add(FullyQualifiedJavaType("$selectedModelPackage.$domainObjectName"))
-//        }
 
         return super.clientGenerated(interfaze, introspectedTable)
     }

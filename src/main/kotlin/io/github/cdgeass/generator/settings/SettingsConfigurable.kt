@@ -20,18 +20,24 @@ class SettingsConfigurable(project: Project) : BoundConfigurable("MyBatis Genera
 
     override fun createPanel(): DialogPanel {
         return panel {
-            titledRow("") {
+            row {
                 row(PluginBundle.message("generator.settings.sourceFolder")) {
                     textField(settings::sourceDir)
                 }
                 row(PluginBundle.message("generator.settings.resourcesFolder")) {
                     textField(settings::resourcesDir)
                 }
-                row(PluginBundle.message("generator.settings.modelNamePattern")) {
-                    textField(settings::modelNamePattern)
+                row(PluginBundle.message("generator.settings.modelNamePrefixPattern")) {
+                    textField(settings::modelNamePrefixPattern)
                 }
-                row(PluginBundle.message("generator.settings.clientNamePattern")) {
-                    textField(settings::clientNamePattern)
+                row(PluginBundle.message("generator.settings.modelNameSuffixPattern")) {
+                    textField(settings::modelNameSuffixPattern)
+                }
+                row(PluginBundle.message("generator.settings.modelNameFormat")) {
+                    textField(settings::modelNameFormat)
+                }
+                row(PluginBundle.message("generator.settings.clientNameFormat")) {
+                    textField(settings::clientNameFormat)
                 }
             }
             titledRow(PluginBundle.message("generator.settings.schemaPackage")) {
@@ -43,6 +49,7 @@ class SettingsConfigurable(project: Project) : BoundConfigurable("MyBatis Genera
             titledRow(PluginBundle.message("generator.settings.plugins")) {
                 row {
                     checkBox(PluginBundle.message("generator.settings.plugins.lombok"), settings::enableLombok)
+                    checkBox(PluginBundle.message("generator.settings.plugins.generic"), settings::enableGeneric)
                 }
             }
         }

@@ -38,21 +38,39 @@ class Settings : PersistentStateComponent<SettingsState> {
             state.schemaPackages = value
         }
 
-    var modelNamePattern: String
-        get() = state.modelNamePattern ?: ""
+    var modelNamePrefixPattern: String
+        get() = state.modelNamePrefixPattern ?: ""
         set(value) {
-            state.modelNamePattern = value
+            state.modelNamePrefixPattern = value
         }
 
-    var clientNamePattern: String
-        get() = state.clientNamePattern ?: ""
+    var modelNameSuffixPattern: String
+        get() = state.modelNameSuffixPattern ?: ""
         set(value) {
-            state.clientNamePattern = value
+            state.modelNameSuffixPattern = value
+        }
+
+    var modelNameFormat: String
+        get() = state.modelNameFormat ?: ""
+        set(value) {
+            state.modelNameFormat = value
+        }
+
+    var clientNameFormat: String
+        get() = state.clientNameFormat ?: ""
+        set(value) {
+            state.clientNameFormat = value
         }
 
     var enableLombok: Boolean
         get() = state.enableLombok
         set(value) {
             state.enableLombok = value
+        }
+
+    var enableGeneric: Boolean
+        get() = state.enableGeneric
+        set(value) {
+            state.enableGeneric = value
         }
 }

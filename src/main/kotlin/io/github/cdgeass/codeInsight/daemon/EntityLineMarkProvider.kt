@@ -11,11 +11,7 @@ import com.intellij.database.util.DbUtil
 import com.intellij.database.view.DbNavigationUtils
 import com.intellij.openapi.editor.markup.GutterIconRenderer
 import com.intellij.openapi.util.TextRange
-import com.intellij.psi.PsiClass
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiIdentifier
-import com.intellij.psi.PsiKeyword
-import com.intellij.psi.PsiWhiteSpace
+import com.intellij.psi.*
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlTag
@@ -103,11 +99,15 @@ class EntityLineMarkProvider : LineMarkerProviderDescriptor() {
         for (dataSource in dataSources) {
             val tables = DasUtil.getTables(dataSource)
             for (table in tables) {
-                val generatedModelName = settings.modelNamePattern.let { it.ifBlank { "%s" } }
+                val tableName = table.name
+                    .replace(Regex("^${settings.modelNamePrefixPattern}"), "")
+                    .replace(Regex("${settings.modelNameSuffixPattern}$"), "")
+
+                val generatedModelName = settings.modelNameFormat.let { it.ifBlank { "%s" } }
                     .format(
                         CaseFormat.LOWER_UNDERSCORE.to(
                             CaseFormat.UPPER_CAMEL,
-                            table.name
+                            tableName
                         )
                     )
                 if (entityName == generatedModelName) {
