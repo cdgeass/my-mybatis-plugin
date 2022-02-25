@@ -1,18 +1,8 @@
 package io.github.cdgeass.inspection
 
-import com.intellij.codeInspection.AbstractBaseJavaLocalInspectionTool
-import com.intellij.codeInspection.InspectionManager
-import com.intellij.codeInspection.LocalQuickFix
-import com.intellij.codeInspection.ProblemDescriptor
-import com.intellij.codeInspection.ProblemHighlightType
+import com.intellij.codeInspection.*
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiArrayType
-import com.intellij.psi.PsiClassType
-import com.intellij.psi.PsiMethod
-import com.intellij.psi.PsiPrimitiveType
-import com.intellij.psi.PsiType
-import com.intellij.psi.SmartPointerManager
-import com.intellij.psi.SmartPsiElementPointer
+import com.intellij.psi.*
 import com.intellij.psi.xml.XmlFile
 import com.intellij.util.xml.DomManager
 import io.github.cdgeass.PluginBundle
@@ -35,6 +25,15 @@ class InvalidBoundStatementInspection : AbstractBaseJavaLocalInspectionTool() {
         manager: InspectionManager,
         isOnTheFly: Boolean
     ): Array<ProblemDescriptor>? {
+        // 基于注解的 statement
+        if (method.annotations.any { annotation ->
+                val annotationQualifiedName = annotation.qualifiedName ?: return@any false
+                annotationQualifiedName.startsWith("org.apache.ibatis.annotations")
+                        && annotationQualifiedName.endsWith("Provider")
+            }) {
+            return null
+        }
+
         val qName = method.containingClass?.qualifiedName ?: return null
         val xmlFiles = findByNamespace(qName, method.project)
 
