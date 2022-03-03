@@ -89,7 +89,13 @@ class MyBatisGeneratorAction : AnAction() {
         val warnings = mutableListOf<String>()
         val myBatisGenerator = MyBatisGenerator(configuration, DefaultShellCallback(true), warnings)
 
-        myBatisGenerator.generate(GenerateProgressCallback(warnings))
+        try {
+            myBatisGenerator.generate(GenerateProgressCallback(warnings))
+        } catch (e: Exception) {
+            TODO("连接异常删除已存储的密码")
+//            val credentialAttributes = CredentialAttributes(generateServiceName("my-mybatis", dataSource.url!!))
+//            PasswordSafe.instance.setPassword(credentialAttributes, null)
+        }
     }
 
     /**
@@ -112,12 +118,12 @@ class MyBatisGeneratorAction : AnAction() {
 
             val modelPackage = modelAndClientPackage?.keys?.first() ?: selectModuleAndPackage(
                 modules,
-                PluginBundle.message("generator.module.selector.client.title")
+                PluginBundle.message("generator.module.selector.model.title")
             )
 
             val clientPackage = modelAndClientPackage?.values?.first() ?: selectModuleAndPackage(
                 modules,
-                PluginBundle.message("generator.module.selector.model.title")
+                PluginBundle.message("generator.module.selector.client.title")
             )
 
             if (modelPackage == null || clientPackage == null) {
