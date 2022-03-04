@@ -4,9 +4,12 @@ import com.intellij.openapi.options.BoundConfigurable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogPanel
 import com.intellij.ui.ToolbarDecorator
-import com.intellij.ui.layout.panel
+import com.intellij.ui.dsl.builder.bindSelected
+import com.intellij.ui.dsl.builder.bindText
+import com.intellij.ui.dsl.builder.panel
 import com.intellij.ui.table.JBTable
 import io.github.cdgeass.PluginBundle
+import java.awt.Dimension
 import javax.swing.JPanel
 import javax.swing.table.DefaultTableModel
 
@@ -20,36 +23,36 @@ class SettingsConfigurable(project: Project) : BoundConfigurable("MyBatis Genera
 
     override fun createPanel(): DialogPanel {
         return panel {
-            row {
+            indent {
                 row(PluginBundle.message("generator.settings.sourceFolder")) {
-                    textField(settings::sourceDir)
+                    textField().bindText(settings::sourceDir)
                 }
                 row(PluginBundle.message("generator.settings.resourcesFolder")) {
-                    textField(settings::resourcesDir)
+                    textField().bindText(settings::resourcesDir)
                 }
                 row(PluginBundle.message("generator.settings.modelNamePrefixPattern")) {
-                    textField(settings::modelNamePrefixPattern)
+                    textField().bindText(settings::modelNamePrefixPattern)
                 }
                 row(PluginBundle.message("generator.settings.modelNameSuffixPattern")) {
-                    textField(settings::modelNameSuffixPattern)
+                    textField().bindText(settings::modelNameSuffixPattern)
                 }
                 row(PluginBundle.message("generator.settings.modelNameFormat")) {
-                    textField(settings::modelNameFormat)
+                    textField().bindText(settings::modelNameFormat)
                 }
                 row(PluginBundle.message("generator.settings.clientNameFormat")) {
-                    textField(settings::clientNameFormat)
+                    textField().bindText(settings::clientNameFormat)
                 }
             }
-            titledRow(PluginBundle.message("generator.settings.schemaPackage")) {
+            group(PluginBundle.message("generator.settings.schemaPackage")) {
                 row {
-                    panel("", table(), false)
+                    cell(table())
+                        .comment(PluginBundle.message("generator.settings.schemaPackage.note"))
                 }
-                noteRow(PluginBundle.message("generator.settings.schemaPackage.note"))
             }
-            titledRow(PluginBundle.message("generator.settings.plugins")) {
+            group(PluginBundle.message("generator.settings.plugins")) {
                 row {
-                    checkBox(PluginBundle.message("generator.settings.plugins.lombok"), settings::enableLombok)
-                    checkBox(PluginBundle.message("generator.settings.plugins.generic"), settings::enableGeneric)
+                    checkBox(PluginBundle.message("generator.settings.plugins.lombok")).bindSelected(settings::enableLombok)
+                    checkBox(PluginBundle.message("generator.settings.plugins.generic")).bindSelected(settings::enableGeneric)
                 }
             }
         }
@@ -96,6 +99,7 @@ class SettingsConfigurable(project: Project) : BoundConfigurable("MyBatis Genera
                 val selectedRow = jbTable.selectedRow
                 tableModel.removeRow(selectedRow)
             }
+            .setPreferredSize(Dimension(600, 200))
             .createPanel()
     }
 }
