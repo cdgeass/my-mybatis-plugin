@@ -105,9 +105,9 @@ tasks {
         })
     }
 
-//    runPluginVerifier {
-//        ideVersions.set(properties("pluginVerifierIdeVersions").split(","))
-//    }
+    runPluginVerifier {
+        ideVersions.set(properties("pluginVerifierIdeVersions").split(","))
+    }
 
     publishPlugin {
         dependsOn("patchChangelog")

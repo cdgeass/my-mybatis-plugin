@@ -1,6 +1,5 @@
 package io.github.cdgeass.formatter
 
-import org.apache.commons.lang3.RegExUtils
 import org.apache.commons.lang3.tuple.MutablePair
 import java.util.regex.Pattern
 
@@ -60,7 +59,13 @@ fun format(text: String): List<String> {
                 }
                 if (last != null) {
                     last!!.value.right = parametersStr
-                    val parameters = last!!.value.right.split(", ").map { it.trim() }
+                    val parameters = last!!.value.right
+                        // 兼容 json
+                        .replace("null", "null()")
+                        .split("), ")
+                        .map {
+                            (it.trim() + ")").replace("null()", "null")
+                        }
                     val sql = format(last!!.value.left, parameters)
                     sqlList.add(sql)
                 }
@@ -93,7 +98,7 @@ private fun format(preparing: String, parametersWithType: List<String>): String 
 
     val parameterStrings = parameters(parametersWithType)
     for (parameterString in parameterStrings) {
-        preparing = RegExUtils.replaceFirst(preparing, "\\?", parameterString)
+        preparing = preparing.replaceFirst("?", parameterString)
     }
 
     return "$preparing;"
