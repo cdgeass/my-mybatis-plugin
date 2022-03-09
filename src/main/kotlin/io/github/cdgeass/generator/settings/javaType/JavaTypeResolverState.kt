@@ -1,12 +1,12 @@
-package io.github.cdgeass.generator.settings.state
+package io.github.cdgeass.generator.settings.javaType
 
 import com.intellij.openapi.components.BaseState
 
 /**
  * @author cdgeass
- * @since 2021-02-18
+ * @since 2021-02-14
  */
-class JavaModelGeneratorState : BaseState() {
+class JavaTypeResolverState : BaseState() {
 
     var propertiesMap by map<String, String>()
 

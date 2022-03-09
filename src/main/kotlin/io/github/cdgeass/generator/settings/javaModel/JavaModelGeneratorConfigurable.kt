@@ -1,9 +1,11 @@
-package io.github.cdgeass.generator.settings
+package io.github.cdgeass.generator.settings.javaModel
 
 import com.intellij.openapi.options.BoundConfigurable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogPanel
-import com.intellij.ui.layout.panel
+import com.intellij.ui.dsl.builder.panel
+import com.intellij.ui.dsl.gridLayout.HorizontalAlign
+import com.intellij.ui.dsl.gridLayout.VerticalAlign
 import io.github.cdgeass.generator.ui.PropertiesTable
 
 /**
@@ -28,12 +30,13 @@ class JavaModelGeneratorConfigurable(project: Project) : BoundConfigurable("Java
 
     override fun createPanel(): DialogPanel {
         return panel {
-            row {
-                panel(
-                    "Properties:",
-                    PropertiesTable(PROPERTIES, javaModelGenerator::properties).withToolbarDecorator(),
-                    false
-                )
+            group("Properties:") {
+                row {
+                    cell(PropertiesTable(PROPERTIES, javaModelGenerator::properties).withToolbarDecorator())
+                        .horizontalAlign(HorizontalAlign.FILL)
+                        .verticalAlign(VerticalAlign.FILL)
+                        .resizableColumn()
+                }.resizableRow()
             }
         }
     }

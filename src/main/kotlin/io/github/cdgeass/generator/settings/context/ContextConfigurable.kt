@@ -1,11 +1,13 @@
-package io.github.cdgeass.generator.settings
+package io.github.cdgeass.generator.settings.context
 
+import com.intellij.codeInspection.javaDoc.JavadocUIUtil.bindItem
 import com.intellij.openapi.options.BoundConfigurable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogPanel
-import com.intellij.ui.layout.panel
+import com.intellij.ui.dsl.builder.panel
+import com.intellij.ui.dsl.gridLayout.HorizontalAlign
+import com.intellij.ui.dsl.gridLayout.VerticalAlign
 import io.github.cdgeass.generator.ui.PropertiesTable
-import javax.swing.DefaultComboBoxModel
 
 /**
  * @author cdgeass
@@ -14,8 +16,8 @@ import javax.swing.DefaultComboBoxModel
 class ContextConfigurable(project: Project) : BoundConfigurable("Context") {
 
     companion object {
-        val DEFAULT_MODEL_TYPE = arrayOf("conditional", "flat", "hierarchical")
-        val TARGET_RUNTIME = arrayOf(
+        val DEFAULT_MODEL_TYPE = listOf("conditional", "flat", "hierarchical")
+        val TARGET_RUNTIME = listOf(
             "MyBatis3DynamicSql", "MyBatis3Kotlin", "MyBatis3", "MyBatis3Simple", "MyBatis3DynamicSqlV1"
         )
         val PROPERTIES = linkedMapOf(
@@ -33,23 +35,20 @@ class ContextConfigurable(project: Project) : BoundConfigurable("Context") {
     override fun createPanel(): DialogPanel {
         return panel {
             row("DefaultModelType:") {
-                comboBox(
-                    DefaultComboBoxModel(DEFAULT_MODEL_TYPE),
-                    context::defaultModelType
-                )
+                comboBox(DEFAULT_MODEL_TYPE)
+                    .bindItem(context::defaultModelType)
             }
             row("TargetRuntime:") {
-                comboBox(
-                    DefaultComboBoxModel(TARGET_RUNTIME),
-                    context::targetRuntime
-                )
+                comboBox(TARGET_RUNTIME)
+                    .bindItem(context::targetRuntime)
             }
-            row {
-                panel(
-                    "Properties:",
-                    PropertiesTable(PROPERTIES, context::properties).withToolbarDecorator(),
-                    false
-                )
+            group("Properties:") {
+                row {
+                    cell(PropertiesTable(PROPERTIES, context::properties).withToolbarDecorator())
+                        .horizontalAlign(HorizontalAlign.FILL)
+                        .verticalAlign(VerticalAlign.FILL)
+                        .resizableColumn()
+                }.resizableRow()
             }
         }
     }

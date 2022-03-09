@@ -1,4 +1,4 @@
-package io.github.cdgeass.generator.settings.state
+package io.github.cdgeass.generator.settings.javaClient
 
 import com.intellij.openapi.components.BaseState
 
@@ -6,7 +6,9 @@ import com.intellij.openapi.components.BaseState
  * @author cdgeass
  * @since 2021-02-18
  */
-class SqlMapGeneratorState : BaseState() {
+class JavaClientGeneratorState : BaseState() {
+
+    var type by string("XMLMAPPER")
 
     var propertiesMap by map<String, String>()
 

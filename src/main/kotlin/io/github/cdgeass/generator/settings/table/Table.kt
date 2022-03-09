@@ -1,9 +1,8 @@
-package io.github.cdgeass.generator.settings
+package io.github.cdgeass.generator.settings.table
 
 import com.intellij.openapi.components.PersistentStateComponent
 import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
-import io.github.cdgeass.generator.settings.state.TableState
 
 /**
  * @author cdgeass
@@ -50,6 +49,12 @@ class Table : PersistentStateComponent<TableState> {
             state.enableUpdateByPrimaryKey = value
         }
 
+    var enableUpdateByExample: Boolean
+        get() = state.enableUpdateByExample
+        set(value) {
+            state.enableUpdateByExample = value
+        }
+
     var enableDeleteByPrimaryKey: Boolean
         get() = state.enableDeleteByPrimaryKey
         set(value) {
@@ -68,9 +73,4 @@ class Table : PersistentStateComponent<TableState> {
             state.enableCountByExample = value
         }
 
-    var enableUpdateByExample: Boolean
-        get() = state.enableUpdateByExample
-        set(value) {
-            state.enableUpdateByExample = value
-        }
 }

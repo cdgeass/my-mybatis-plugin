@@ -1,9 +1,8 @@
-package io.github.cdgeass.generator.settings
+package io.github.cdgeass.generator.settings.javaType
 
 import com.intellij.openapi.components.PersistentStateComponent
 import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
-import io.github.cdgeass.generator.settings.state.JavaTypeResolverState
 
 /**
  * @author cdgeass

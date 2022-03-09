@@ -1,11 +1,13 @@
-package io.github.cdgeass.generator.settings
+package io.github.cdgeass.generator.settings.javaClient
 
+import com.intellij.codeInspection.javaDoc.JavadocUIUtil.bindItem
 import com.intellij.openapi.options.BoundConfigurable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogPanel
-import com.intellij.ui.layout.panel
+import com.intellij.ui.dsl.builder.panel
+import com.intellij.ui.dsl.gridLayout.HorizontalAlign
+import com.intellij.ui.dsl.gridLayout.VerticalAlign
 import io.github.cdgeass.generator.ui.PropertiesTable
-import javax.swing.DefaultComboBoxModel
 
 /**
  * @author cdgeass
@@ -14,7 +16,7 @@ import javax.swing.DefaultComboBoxModel
 class JavaClientGeneratorConfigurable(project: Project) : BoundConfigurable("JavaClientGenerator") {
 
     companion object {
-        val TYPE = arrayOf(
+        val TYPE = listOf(
             "ANNOTATEDMAPPER", "MIXEDMAPPER", "XMLMAPPER"
         )
         val PROPERTIES = linkedMapOf(
@@ -29,17 +31,16 @@ class JavaClientGeneratorConfigurable(project: Project) : BoundConfigurable("Jav
     override fun createPanel(): DialogPanel {
         return panel {
             row("Type:") {
-                comboBox(
-                    DefaultComboBoxModel(TYPE),
-                    javaClientGenerator::type
-                )
+                comboBox(TYPE)
+                    .bindItem(javaClientGenerator::type)
             }
-            row {
-                panel(
-                    "Properties:",
-                    PropertiesTable(PROPERTIES, javaClientGenerator::properties).withToolbarDecorator(),
-                    false
-                )
+            group("Properties:") {
+                row {
+                    cell(PropertiesTable(PROPERTIES, javaClientGenerator::properties).withToolbarDecorator())
+                        .horizontalAlign(HorizontalAlign.FILL)
+                        .verticalAlign(VerticalAlign.FILL)
+                        .resizableColumn()
+                }.resizableRow()
             }
         }
     }

@@ -1,12 +1,16 @@
-package io.github.cdgeass.generator.settings.state
+package io.github.cdgeass.generator.settings.context
 
 import com.intellij.openapi.components.BaseState
 
 /**
  * @author cdgeass
- * @since 2021-02-18
+ * @since 2021-01-26
  */
-class CommentGeneratorState : BaseState() {
+class ContextState : BaseState() {
+
+    var defaultModelType by string("conditional")
+
+    var targetRuntime by string("MyBatis3")
 
     var propertiesMap by map<String, String>()
 
@@ -14,8 +18,7 @@ class CommentGeneratorState : BaseState() {
         get() {
             if (propertiesMap.isEmpty()) {
                 return mutableMapOf(
-                    Pair("suppressDate", "true"),
-                    Pair("addRemarkComments", "true")
+                    Pair("javaFileEncoding", "UTF-8")
                 )
             }
             return propertiesMap
