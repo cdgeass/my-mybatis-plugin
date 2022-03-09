@@ -21,11 +21,16 @@ import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.ui.SelectFromListDialog
 import com.intellij.psi.PsiPackage
 import io.github.cdgeass.PluginBundle
-import io.github.cdgeass.generator.settings.*
+import io.github.cdgeass.generator.settings.comment.CommentGenerator
+import io.github.cdgeass.generator.settings.javaClient.JavaClientGenerator
+import io.github.cdgeass.generator.settings.javaModel.JavaModelGenerator
+import io.github.cdgeass.generator.settings.javaType.JavaTypeResolver
+import io.github.cdgeass.generator.settings.settings.Settings
+import io.github.cdgeass.generator.settings.sqlMap.SqlMapGenerator
+import io.github.cdgeass.generator.settings.table.Table
 import org.codehaus.plexus.util.StringUtils
 import org.mybatis.generator.api.MyBatisGenerator
 import org.mybatis.generator.config.*
-import org.mybatis.generator.config.Context
 import org.mybatis.generator.internal.DefaultShellCallback
 import javax.swing.ListSelectionModel
 
@@ -193,7 +198,7 @@ class MyBatisGeneratorAction : AnAction() {
     }
 
     private fun buildContext(project: Project, dataSource: LocalDataSource): Context {
-        val context = project.getService(io.github.cdgeass.generator.settings.Context::class.java)
+        val context = project.getService(io.github.cdgeass.generator.settings.context.Context::class.java)
         return Context(ModelType.getModelType(context.defaultModelType))
             .apply {
                 id = dataSource.name

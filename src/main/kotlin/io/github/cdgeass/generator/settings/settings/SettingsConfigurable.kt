@@ -1,4 +1,4 @@
-package io.github.cdgeass.generator.settings
+package io.github.cdgeass.generator.settings.settings
 
 import com.intellij.openapi.options.BoundConfigurable
 import com.intellij.openapi.project.Project
@@ -7,9 +7,10 @@ import com.intellij.ui.ToolbarDecorator
 import com.intellij.ui.dsl.builder.bindSelected
 import com.intellij.ui.dsl.builder.bindText
 import com.intellij.ui.dsl.builder.panel
+import com.intellij.ui.dsl.gridLayout.HorizontalAlign
+import com.intellij.ui.dsl.gridLayout.VerticalAlign
 import com.intellij.ui.table.JBTable
 import io.github.cdgeass.PluginBundle
-import java.awt.Dimension
 import javax.swing.JPanel
 import javax.swing.table.DefaultTableModel
 
@@ -46,8 +47,11 @@ class SettingsConfigurable(project: Project) : BoundConfigurable("MyBatis Genera
             group(PluginBundle.message("generator.settings.schemaPackage")) {
                 row {
                     cell(table())
+                        .horizontalAlign(HorizontalAlign.FILL)
+                        .verticalAlign(VerticalAlign.FILL)
+                        .resizableColumn()
                         .comment(PluginBundle.message("generator.settings.schemaPackage.note"))
-                }
+                }.resizableRow()
             }
             group(PluginBundle.message("generator.settings.plugins")) {
                 row {
@@ -69,7 +73,7 @@ class SettingsConfigurable(project: Project) : BoundConfigurable("MyBatis Genera
         }
 
         val jbTable = JBTable(tableModel)
-        tableModel.addTableModelListener { e ->
+        tableModel.addTableModelListener {
             val changedSchemaPackages = mutableMapOf<String, Map<String, String>>()
             var row = 0
             while (row < tableModel.rowCount) {
@@ -99,7 +103,6 @@ class SettingsConfigurable(project: Project) : BoundConfigurable("MyBatis Genera
                 val selectedRow = jbTable.selectedRow
                 tableModel.removeRow(selectedRow)
             }
-            .setPreferredSize(Dimension(600, 200))
             .createPanel()
     }
 }

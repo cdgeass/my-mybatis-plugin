@@ -17,6 +17,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlTag
 import icons.DatabaseIcons
 import io.github.cdgeass.codeInsight.reference.MyJavaClassReference
+import io.github.cdgeass.generator.settings.settings.Settings
 import javax.swing.Icon
 
 /**
@@ -91,7 +92,7 @@ class EntityLineMarkProvider : LineMarkerProviderDescriptor() {
         val project = element.project
         val entityName = element.text
 
-        val settings = project.getService(io.github.cdgeass.generator.settings.Settings::class.java)
+        val settings = project.getService(Settings::class.java)
 
         val dbElementList = mutableListOf<DbElement>()
 

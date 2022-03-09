@@ -1,4 +1,4 @@
-package io.github.cdgeass.generator.settings.state
+package io.github.cdgeass.generator.settings.settings
 
 import com.intellij.openapi.components.BaseState
 
