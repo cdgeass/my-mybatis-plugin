@@ -234,14 +234,19 @@ class MyLiteralExpressionResolver(
             if (expressionType is PsiClassType) {
                 val expressionClass = expressionType.resolve()!!
                 val genericTypeMap = expressionType.resolveGenerics().substitutor.substitutionMap
-                if (expressionClass.supers.any { it.qualifiedName == "java.util.Collection" }) {
+                if (expressionClass.supers.any { it.qualifiedName == "java.lang.Iterable" || it.qualifiedName == "java.util.Collection" }) {
                     // 集合
                     val itemType = genericTypeMap.first().value
                     paramNameMap[item] = MyLiteralExpressionParameter(item, itemType, resolveGeneric(itemType)!!, false)
 
                     index?.let {
                         paramNameMap[index] =
-                            MyLiteralExpressionParameter(item, PsiPrimitiveType.INT, createIntClass(element.project), false)
+                            MyLiteralExpressionParameter(
+                                item,
+                                PsiPrimitiveType.INT,
+                                createIntClass(element.project),
+                                false
+                            )
                     }
                 } else if (expressionClass.supers.any { it.qualifiedName == "java.util.Map" }) {
                     // map

@@ -97,6 +97,7 @@ class MyLiteralExpressionReferenceProvider : GenericReferenceProvider() {
      * 是否是合法表达式
      * 过滤 null
      * 过滤字符串
+     * 过滤 bool
      * 过滤数字
      */
     private fun isValid(expression: String): Boolean {
@@ -104,6 +105,7 @@ class MyLiteralExpressionReferenceProvider : GenericReferenceProvider() {
             expression == "null" -> false
             expression.startsWith("'") -> false
             expression == "and" || expression == "or" || expression == "&gt;" || expression == "&lt;" || expression == "&amp;" || expression == "&apos;" || expression == "&quot;" -> false
+            expression == "false" || expression == "true" -> false
             NumberUtils.isCreatable(expression) -> false
             else -> true
         }
