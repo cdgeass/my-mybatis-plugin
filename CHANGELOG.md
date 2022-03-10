@@ -3,6 +3,15 @@
 # My-MyBatis Plugin Changelog
 
 ## [Unreleased]
+### Changed
+- Migrate to Kotlin UI DSL Version 2
+- Use inner method to get db password
+- 迁移到 Kotlin UI DSL Version 2
+- 使用内部方法获取 db 密码
+
+### Fixed
+- Fix param completion in <foreach/> with the collection's type is java.lang.Collection
+- 修复了 <foreach/> 标签内 collection 类型为 Collection 时的参数提示
 
 ## [2.0.5]
 ### Add
