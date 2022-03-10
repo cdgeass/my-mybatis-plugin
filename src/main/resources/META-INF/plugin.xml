@@ -85,6 +85,7 @@
                           displayName="CommentGenerator"
                           nonDefaultProject="false"/>
         </projectConfigurable>
+        <notificationGroup displayType="BALLOON" id="Generator Error" key="generator.title"/>
     </extensions>
 
     <actions>

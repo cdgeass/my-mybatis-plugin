@@ -1,16 +1,17 @@
 package io.github.cdgeass.generator.action
 
 import com.google.common.base.CaseFormat
-import com.intellij.credentialStore.CredentialAttributes
-import com.intellij.credentialStore.generateServiceName
+import com.intellij.database.access.DatabaseCredentials
+import com.intellij.database.dataSource.DatabaseCredentialsAuthProvider
+import com.intellij.database.dataSource.DatabaseCredentialsAuthProviderUi
 import com.intellij.database.dataSource.LocalDataSource
 import com.intellij.database.psi.DbTable
 import com.intellij.database.util.DasUtil
 import com.intellij.database.util.DbImplUtil
-import com.intellij.database.view.DatabaseView
-import com.intellij.icons.AllIcons
-import com.intellij.ide.passwordSafe.PasswordSafe
+import com.intellij.database.view.getSelectedDbElements
 import com.intellij.ide.util.PackageChooserDialog
+import com.intellij.notification.NotificationGroupManager
+import com.intellij.notification.NotificationType
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.module.Module
@@ -20,6 +21,7 @@ import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.ui.SelectFromListDialog
 import com.intellij.psi.PsiPackage
+import com.intellij.util.containers.JBIterable
 import io.github.cdgeass.PluginBundle
 import io.github.cdgeass.generator.settings.comment.CommentGenerator
 import io.github.cdgeass.generator.settings.javaClient.JavaClientGenerator
@@ -32,6 +34,7 @@ import org.codehaus.plexus.util.StringUtils
 import org.mybatis.generator.api.MyBatisGenerator
 import org.mybatis.generator.config.*
 import org.mybatis.generator.internal.DefaultShellCallback
+import java.sql.SQLException
 import javax.swing.ListSelectionModel
 
 /**
@@ -41,15 +44,14 @@ import javax.swing.ListSelectionModel
 class MyBatisGeneratorAction : AnAction() {
 
     override fun actionPerformed(e: AnActionEvent) {
-        val selectedTables = DatabaseView.getSelectedElements(e.dataContext, DbTable::class.java)
-        if (selectedTables.isEmpty()) {
+        val selectedTables = e.dataContext.getSelectedDbElements(DbTable::class.java)
+        if (selectedTables.isEmpty) {
             return
         }
-
-        generateTables(e.project!!, selectedTables)
+        generateTables(e.project!!, selectedTables, 0)
     }
 
-    private fun generateTables(project: Project, selectedTables: Set<DbTable>) {
+    private fun generateTables(project: Project, selectedTables: JBIterable<DbTable>, depth: Int) {
         if (!computeModuleAndPackage(project, selectedTables)) {
             return
         }
@@ -67,7 +69,7 @@ class MyBatisGeneratorAction : AnAction() {
             schemaMap.forEach { (schema, schemaDbTables) ->
                 val context = buildContext(project, dataSource)
                     .apply {
-                        jdbcConnectionConfiguration = buildJdbcConnectionConfiguration(project, dataSource)
+                        jdbcConnectionConfiguration = buildJdbcConnectionConfiguration(dataSource)
                         javaTypeResolverConfiguration = buildJavaTypeResolverConfiguration(project)
                         commentGeneratorConfiguration = buildCommentGeneratorConfiguration(project)
                         buildPlugins(project).forEach { addPluginConfiguration(it) }
@@ -97,9 +99,22 @@ class MyBatisGeneratorAction : AnAction() {
         try {
             myBatisGenerator.generate(GenerateProgressCallback(warnings))
         } catch (e: Exception) {
-            TODO("连接异常删除已存储的密码")
-//            val credentialAttributes = CredentialAttributes(generateServiceName("my-mybatis", dataSource.url!!))
-//            PasswordSafe.instance.setPassword(credentialAttributes, null)
+            if (e is SQLException && depth == 0) {
+                // 连接异常 请求密码
+                dataSourceMap.forEach { (dataSource, _) ->
+                    DatabaseCredentialsAuthProviderUi.askCredentials(
+                        e.localizedMessage, true,
+                        dataSource.mutableConfig,
+                        project,
+                        DatabaseCredentials.getInstance()
+                    )
+                }
+                generateTables(project, selectedTables, 1)
+            } else {
+                NotificationGroupManager.getInstance().getNotificationGroup("Generator Error")
+                    .createNotification(e.message ?: "", NotificationType.ERROR)
+                    .notify(project)
+            }
         }
     }
 
@@ -109,7 +124,7 @@ class MyBatisGeneratorAction : AnAction() {
      */
     private fun computeModuleAndPackage(
         project: Project,
-        selectedTables: Set<DbTable>
+        selectedTables: JBIterable<DbTable>
     ): Boolean {
         val moduleManager = ModuleManager.getInstance(project)
         val modules = moduleManager.modules
@@ -208,22 +223,9 @@ class MyBatisGeneratorAction : AnAction() {
     }
 
     private fun buildJdbcConnectionConfiguration(
-        project: Project,
         dataSource: LocalDataSource
     ): JDBCConnectionConfiguration {
-        val password: String
-        val credentialAttributes = CredentialAttributes(generateServiceName("my-mybatis", dataSource.url!!))
-        val credentials = PasswordSafe.instance.get(credentialAttributes)
-        if (credentials?.getPasswordAsString() != null) {
-            password = credentials.getPasswordAsString()!!
-        } else {
-            password = Messages.showPasswordDialog(
-                project, PluginBundle.message("generator.datasource.password.input.title", dataSource.name),
-                PluginBundle.message("generator.title"), AllIcons.Actions.Commit
-            )!!
-            PasswordSafe.instance.setPassword(credentialAttributes, password)
-        }
-
+        val password = DatabaseCredentialsAuthProvider.getCredentials(dataSource)?.getPasswordAsString()
         return JDBCConnectionConfiguration()
             .apply {
                 connectionURL = dataSource.url
