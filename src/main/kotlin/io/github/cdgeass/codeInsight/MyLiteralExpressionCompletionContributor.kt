@@ -35,14 +35,12 @@ class MyLiteralExpressionCompletionContributor : CompletionContributor() {
                     context,
                     result
                 )
-                result.stopHere()
             } else {
                 reference.contextResolve()?.apply {
                     reference.processSubElement(
                         this,
                         result.withPrefixMatcher("")
                     )
-                    result.stopHere()
                 } ?: findElement(parameters)?.apply {
                     if (isValid(this)) {
                         val map = MyLiteralExpressionResolver(this).resolve()
@@ -50,7 +48,6 @@ class MyLiteralExpressionCompletionContributor : CompletionContributor() {
                             result.withPrefixMatcher(getOriginText(reference.myText))
                                 .consume(createLookupElement(name, param.ref))
                         }
-                        result.stopHere()
                     }
                 }
             }
@@ -62,7 +59,6 @@ class MyLiteralExpressionCompletionContributor : CompletionContributor() {
                         result.withPrefixMatcher(getOriginText(parameters.position.text))
                             .consume(createLookupElement(name, param.ref))
                     }
-                    result.stopHere()
                 }
             }
         }

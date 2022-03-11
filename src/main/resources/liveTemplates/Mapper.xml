@@ -1,0 +1,55 @@
+<templateSet group="Mapper">
+  <template name="for"
+            value="&lt;foreach collection=&quot;$COLLECTION$&quot; item=&quot;$ITEM$&quot; open=&quot;(&quot; separator=&quot;,&quot; close=&quot;)&quot;&gt;&#10;    #{$ITEM$}&#10;&lt;/foreach&gt;"
+            description="Create foreach tag"
+            toReformat="false"
+            toShortenFQNames="true">
+    <variable name="COLLECTION" expression="" defaultValue="" alwaysStopAt="true" />
+    <variable name="ITEM" expression="" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="MAPPER" value="true" />
+    </context>
+  </template>
+  <template name="fori"
+            value="&lt;foreach collection=&quot;$COLLECTION$&quot; index=&quot;$INDEX$&quot; item=&quot;$ITEM$&quot; open=&quot;(&quot; separator=&quot;,&quot; close=&quot;)&quot;&gt;&#10;    #{$ITEM$}&#10;&lt;/foreach&gt;"
+            description="Create foreach tag with index"
+            toReformat="false"
+            toShortenFQNames="true">
+    <variable name="COLLECTION" expression="" defaultValue="" alwaysStopAt="true" />
+    <variable name="INDEX" expression="suggestIndexName()" defaultValue="" alwaysStopAt="true" />
+    <variable name="ITEM" expression="" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="MAPPER" value="true" />
+    </context>
+  </template>
+  <template name="nn"
+            value="&lt;if test=&quot;$PARAM$ != null&quot;&gt;&#10;    $END$&#10;&lt;/if&gt;"
+            description="Create if tag check param is not null"
+            toReformat="false"
+            toShortenFQNames="true">
+    <variable name="PARAM" expression="" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="MAPPER" value="true" />
+    </context>
+  </template>
+  <template name="ne"
+            value="&lt;if test=&quot;$PARAM$ != null and $PARAM$.size &gt; 0&quot;&gt;&#10;    $END$&#10;&lt;/if&gt;"
+            description="Create if tag check param is not empty"
+            toReformat="false"
+            toShortenFQNames="true">
+    <variable name="PARAM" expression="" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="MAPPER" value="true" />
+    </context>
+  </template>
+  <template name="nb"
+            value="&lt;if test=&quot;$PARAM$ != null and $PARAM$ != ''&quot;&gt;&#10;    $END$&#10;&lt;/if&gt;"
+            description="Create if tag check param is not blank"
+            toReformat="false"
+            toShortenFQNames="true">
+    <variable name="PARAM" expression="" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="MAPPER" value="true" />
+    </context>
+  </template>
+</templateSet>
