@@ -1,18 +1,8 @@
 package io.github.cdgeass.inspection
 
-import com.intellij.codeInspection.AbstractBaseJavaLocalInspectionTool
-import com.intellij.codeInspection.InspectionManager
-import com.intellij.codeInspection.LocalQuickFix
-import com.intellij.codeInspection.ProblemDescriptor
-import com.intellij.codeInspection.ProblemHighlightType
+import com.intellij.codeInspection.*
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiArrayType
-import com.intellij.psi.PsiClassType
-import com.intellij.psi.PsiMethod
-import com.intellij.psi.PsiPrimitiveType
-import com.intellij.psi.PsiType
-import com.intellij.psi.SmartPointerManager
-import com.intellij.psi.SmartPsiElementPointer
+import com.intellij.psi.*
 import com.intellij.psi.xml.XmlFile
 import com.intellij.util.xml.DomManager
 import io.github.cdgeass.PluginBundle
@@ -30,11 +20,36 @@ class InvalidBoundStatementInspection : AbstractBaseJavaLocalInspectionTool() {
         return "InvalidBoundStatement"
     }
 
+    /**
+     * 根据方法注解判断是否是基于注解的 statement
+     */
+    private fun isStatementAnnotation(annotation: PsiAnnotation): Boolean {
+        var annotationQualifiedName = annotation.qualifiedName ?: return false
+        if (!annotationQualifiedName.startsWith("org.apache.ibatis.annotations")) {
+            return false
+        }
+        annotationQualifiedName = annotationQualifiedName.split(".").let { it[it.size - 1] }
+        return annotationQualifiedName.endsWith("Provider")
+                || annotationQualifiedName == "Insert"
+                || annotationQualifiedName == "Update"
+                || annotationQualifiedName == "Delete"
+                || annotationQualifiedName == "Select"
+    }
+
     override fun checkMethod(
         method: PsiMethod,
         manager: InspectionManager,
         isOnTheFly: Boolean
     ): Array<ProblemDescriptor>? {
+        // 跳过基于注解的方法
+        if (method.annotations.any { annotation -> isStatementAnnotation(annotation) }) {
+            return null
+        }
+        // 跳过 default 方法
+        if (method.modifierList.hasExplicitModifier("default")) {
+            return null
+        }
+
         val qName = method.containingClass?.qualifiedName ?: return null
         val xmlFiles = findByNamespace(qName, method.project)
 
