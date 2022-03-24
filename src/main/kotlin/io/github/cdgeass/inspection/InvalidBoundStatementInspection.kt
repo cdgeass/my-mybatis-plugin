@@ -20,17 +20,33 @@ class InvalidBoundStatementInspection : AbstractBaseJavaLocalInspectionTool() {
         return "InvalidBoundStatement"
     }
 
+    /**
+     * 根据方法注解判断是否是基于注解的 statement
+     */
+    private fun isStatementAnnotation(annotation: PsiAnnotation): Boolean {
+        var annotationQualifiedName = annotation.qualifiedName ?: return false
+        if (!annotationQualifiedName.startsWith("org.apache.ibatis.annotations")) {
+            return false
+        }
+        annotationQualifiedName = annotationQualifiedName.split(".").let { it -> it[it.size - 1] }
+        return annotationQualifiedName.endsWith("Provider")
+                || annotationQualifiedName == "Insert"
+                || annotationQualifiedName == "Update"
+                || annotationQualifiedName == "Delete"
+                || annotationQualifiedName == "Select"
+    }
+
     override fun checkMethod(
         method: PsiMethod,
         manager: InspectionManager,
         isOnTheFly: Boolean
     ): Array<ProblemDescriptor>? {
-        // 基于注解的 statement
-        if (method.annotations.any { annotation ->
-                val annotationQualifiedName = annotation.qualifiedName ?: return@any false
-                annotationQualifiedName.startsWith("org.apache.ibatis.annotations")
-                        && annotationQualifiedName.endsWith("Provider")
-            }) {
+        // 跳过基于注解的方法
+        if (method.annotations.any { annotation -> isStatementAnnotation(annotation) }) {
+            return null
+        }
+        // 跳过 default 方法
+        if (method.modifierList.hasExplicitModifier("default")) {
             return null
         }
 
