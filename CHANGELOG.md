@@ -4,6 +4,11 @@
 
 ## [Unreleased]
 
+## [2.0.6]
+### Fixed
+- Mapper interface check ignore some method [#11](https://github.com/cdgeass/my-mybatis-plugin/issues/11)
+- mapper 接口检查忽略基于注解和 default 方法 [#11](https://github.com/cdgeass/my-mybatis-plugin/issues/11)
+
 ## [2.0.5]
 ### Add
 - Generator allow remove table prefix and suffix with regex
