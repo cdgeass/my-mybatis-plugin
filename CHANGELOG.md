@@ -3,6 +3,8 @@
 # My-MyBatis Plugin Changelog
 
 ## [Unreleased]
+
+## [2.1.0]
 ### Changed
 - Migrate to Kotlin UI DSL Version 2
 - Use inner method to get db password
