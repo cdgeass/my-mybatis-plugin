@@ -101,6 +101,13 @@
             <add-to-group group-id="EditorPopupMenu" anchor="first"/>
             <add-to-group group-id="ConsoleEditorPopupMenu" anchor="first"/>
         </action>
+        <action id="io.github.cdgeass.formatter.FormatAndCopyAction"
+                class="io.github.cdgeass.formatter.FormatAndCopyAction"
+                text="Copy Log"
+                icon="/icons/mybatis_logo.png">
+            <add-to-group group-id="EditorPopupMenu" anchor="first"/>
+            <add-to-group group-id="ConsoleEditorPopupMenu" anchor="first"/>
+        </action>
         <!-- generator -->
         <action id="io.github.cdgeass.generator.action.MyBatisGeneratorAction"
                 class="io.github.cdgeass.generator.action.MyBatisGeneratorAction"
