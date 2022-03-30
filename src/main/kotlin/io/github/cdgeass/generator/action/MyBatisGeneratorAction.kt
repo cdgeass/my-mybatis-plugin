@@ -322,6 +322,7 @@ class MyBatisGeneratorAction : AnAction() {
         return TableConfiguration(context)
             .apply {
                 schema = DasUtil.getSchema(selectedTable)
+                catalog = schema
                 tableName = selectedTable.name
 
                 val finalTableName = tableName
