@@ -9,7 +9,7 @@ plugins {
     // Kotlin support
     id("org.jetbrains.kotlin.jvm") version "1.6.0"
     // gradle-intellij-plugin - read more: https://github.com/JetBrains/gradle-intellij-plugin
-    id("org.jetbrains.intellij") version "1.4.0"
+    id("org.jetbrains.intellij") version "1.5.3"
     // gradle-changelog-plugin - read more: https://github.com/JetBrains/gradle-changelog-plugin
     id("org.jetbrains.changelog") version "1.3.1"
     // Gradle Qodana Plugin
@@ -107,6 +107,10 @@ tasks {
 
     runPluginVerifier {
         ideVersions.set(properties("pluginVerifierIdeVersions").split(","))
+    }
+
+    val test by getting(Test::class) {
+        isScanForTestClasses = false
     }
 
     publishPlugin {

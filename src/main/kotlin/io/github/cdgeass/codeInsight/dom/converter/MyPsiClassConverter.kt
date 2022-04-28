@@ -9,15 +9,12 @@ import com.intellij.psi.impl.source.resolve.reference.impl.providers.JavaClassRe
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.JavaClassReferenceSet
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.xml.XmlAttributeValue
-import com.intellij.util.xml.ConvertContext
-import com.intellij.util.xml.Converter
-import com.intellij.util.xml.CustomReferenceConverter
-import com.intellij.util.xml.DomManager
-import com.intellij.util.xml.GenericDomValue
+import com.intellij.util.xml.*
 import io.github.cdgeass.codeInsight.dom.element.Configuration
 import io.github.cdgeass.codeInsight.reference.MyJavaClassReference
 import io.github.cdgeass.codeInsight.util.findByNamespace
-import java.util.Locale
+import java.math.BigDecimal
+import java.util.*
 
 /**
  * @author cdgeass
@@ -28,14 +25,64 @@ class MyPsiClassConverter : Converter<PsiClass>(), CustomReferenceConverter<PsiC
     // mybatis 预定义的限定名
     companion object {
         private val MYBATIS_SHORT_TYPE_NAME_MAP = mapOf(
-            Pair("boolean", "java.lang.Boolean"),
+            Pair("string", "java.lang.String"),
+
             Pair("byte", "java.lang.Byte"),
+            Pair("long", "java.lang.Long"),
             Pair("short", "java.lang.Short"),
             Pair("int", "java.lang.Integer"),
             Pair("integer", "java.lang.Integer"),
-            Pair("long", "java.lang.Long"),
+            Pair("double", "java.lang.Double"),
             Pair("float", "java.lang.Float"),
-            Pair("double", "java.lang.Double")
+            Pair("boolean", "java.lang.Boolean"),
+
+            Pair("byte[]", "java.lang.Byte"),
+            Pair("long[]", "java.lang.Long"),
+            Pair("short[]", "java.lang.Short"),
+            Pair("int[]", "java.lang.Integer"),
+            Pair("integer[]", "java.lang.Integer"),
+            Pair("double[]", "java.lang.Double"),
+            Pair("float[]", "java.lang.Float"),
+            Pair("boolean[]", "java.lang.Boolean"),
+
+            Pair("_byte", "java.lang.Byte"),
+            Pair("_long", "java.lang.Long"),
+            Pair("_short", "java.lang.Short"),
+            Pair("_int", "java.lang.Integer"),
+            Pair("_integer", "java.lang.Integer"),
+            Pair("_double", "java.lang.Double"),
+            Pair("_float", "java.lang.Float"),
+            Pair("_boolean", "java.lang.Boolean"),
+
+            Pair("_byte[]", "java.lang.Byte"),
+            Pair("_long[]", "java.lang.Long"),
+            Pair("_short[]", "java.lang.Short"),
+            Pair("_int[]", "java.lang.Integer"),
+            Pair("_integer[]", "java.lang.Integer"),
+            Pair("_double[]", "java.lang.Double"),
+            Pair("_float[]", "java.lang.Float"),
+            Pair("_boolean[]", "java.lang.Boolean"),
+
+            Pair("date", "java.util.Date"),
+            Pair("decimal", "java.math.BigDecimal"),
+            Pair("bigdecimal", "java.math.BigDecimal"),
+            Pair("biginteger", "java.math.BigInteger"),
+            Pair("object", "java.lang.Object"),
+
+            Pair("date[]", "java.util.Date"),
+            Pair("decimal[]", "java.math.BigDecimal"),
+            Pair("bigdecimal[]", "java.math.BigDecimal"),
+            Pair("biginteger[]", "java.math.BigInteger"),
+            Pair("object[]", "java.lang.Object"),
+
+            Pair("map", "java.util.Map"),
+            Pair("hashmap", "java.util.HashMap"),
+            Pair("list", "java.util.List"),
+            Pair("arraylist", "java.util.ArrayList"),
+            Pair("collection", "java.util.Collection"),
+            Pair("iterator", "java.util.Iterator"),
+
+            Pair("resultset", "java.sql.ResultSet"),
         )
     }
 
