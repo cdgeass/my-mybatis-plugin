@@ -3,6 +3,9 @@
 # My-MyBatis Plugin Changelog
 
 ## [Unreleased]
+### Fixed
+- Add escape single quote
+- 添加对单引号的转义
 
 ## [2.1.1]
 ### Fixed

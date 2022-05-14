@@ -66,6 +66,9 @@ fun format(text: String): List<String> {
                         .map {
                             (it.trim() + ")").replace("null()", "null")
                         }
+                        .map {
+                            it.replace("'", "''")
+                        }
                     val sql = format(last!!.value.left, parameters)
                     sqlList.add(sql)
                 }
