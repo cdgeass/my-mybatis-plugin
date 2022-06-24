@@ -12,6 +12,7 @@ import io.github.cdgeass.codeInsight.util.getConfigurations
 import io.github.cdgeass.codeInsight.util.isStatementTag
 import io.github.cdgeass.util.createArrayClass
 import io.github.cdgeass.util.createIntClass
+import io.github.cdgeass.util.isSub
 import java.util.*
 
 /**
@@ -223,10 +224,17 @@ class MyLiteralExpressionResolver(
         }
 
         // 计算 collection 内表达式
-        val expressionElement = calculateExpression(expression, paramNameMap)?.ref
+        val expressionElement = calculateExpression(expression, paramNameMap)?.let { param ->
+            if (param.hasAnno) {
+                param.type
+            } else {
+                param.ref
+            }
+        }
         // 获取 index 和 item 的值
         if (expressionElement != null) {
             val expressionType = when (expressionElement) {
+                is PsiType -> expressionElement
                 is PsiField -> expressionElement.type
                 is PsiMethod -> expressionElement.returnType
                 else -> null
@@ -234,7 +242,7 @@ class MyLiteralExpressionResolver(
             if (expressionType is PsiClassType) {
                 val expressionClass = expressionType.resolve()!!
                 val genericTypeMap = expressionType.resolveGenerics().substitutor.substitutionMap
-                if (expressionClass.supers.any { it.qualifiedName == "java.lang.Iterable" || it.qualifiedName == "java.util.Collection" }) {
+                if (isSub(expressionClass, arrayOf("java.lang.Iterable"))) {
                     // 集合
                     val itemType = genericTypeMap.first().value
                     paramNameMap[item] = MyLiteralExpressionParameter(item, itemType, resolveGeneric(itemType)!!, false)
@@ -248,15 +256,17 @@ class MyLiteralExpressionResolver(
                                 false
                             )
                     }
-                } else if (expressionClass.supers.any { it.qualifiedName == "java.util.Map" }) {
+                } else if (isSub(expressionClass, arrayOf("java.util.Map"))) {
                     // map
                     val typeParameters = expressionClass.typeParameters
                     val kGenericType = genericTypeMap[typeParameters[0]]!!
                     index?.let {
-                        paramNameMap[index] = MyLiteralExpressionParameter(index, kGenericType, resolveGeneric(kGenericType)!!, false)
+                        paramNameMap[index] =
+                            MyLiteralExpressionParameter(index, kGenericType, resolveGeneric(kGenericType)!!, false)
                     }
                     val vGenericType = genericTypeMap[typeParameters[1]]!!
-                    paramNameMap[item] = MyLiteralExpressionParameter(item, vGenericType, resolveGeneric(vGenericType)!!, false)
+                    paramNameMap[item] =
+                        MyLiteralExpressionParameter(item, vGenericType, resolveGeneric(vGenericType)!!, false)
                 }
             } else if (expressionType is PsiArrayType) {
                 // 数组

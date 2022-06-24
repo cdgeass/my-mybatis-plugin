@@ -8,26 +8,11 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Iconable
 import com.intellij.psi.*
 import com.intellij.psi.impl.light.LightMethodBuilder
-import com.jetbrains.rd.util.first
 
 /**
  * @author cdgeass
  * @since 2021-04-01
  */
-fun resolveGeneric(psiType: PsiType): PsiClass? {
-    if (psiType is PsiClassType) {
-        val substitutionMap = psiType.resolveGenerics().substitutor.substitutionMap
-        if (substitutionMap.isEmpty()) return null
-        val genericType = substitutionMap.first().value
-        if (genericType is PsiClassType) {
-            return genericType.resolve()
-        }
-    } else if (psiType is PsiArrayType) {
-        return null
-    }
-    return null
-}
-
 fun createArrayClass(project: Project): PsiClass {
     val psiElementFactory = PsiElementFactory.getInstance(project)
     return psiElementFactory.createClass("array")
@@ -35,7 +20,19 @@ fun createArrayClass(project: Project): PsiClass {
 
 fun createIntClass(project: Project): PsiClass {
     val psiElementFactory = PsiElementFactory.getInstance(project)
-    return psiElementFactory.createClass("int")
+    return psiElementFactory.createClass("X")
+}
+
+// 是否是指定限定名的子类
+fun isSub(psiClass: PsiClass, superClassNames: Array<String>): Boolean {
+    if (psiClass.supers.isNotEmpty()) {
+        return if (psiClass.supers.any { superClassNames.contains(it.qualifiedName) }) {
+            true
+        } else {
+            psiClass.supers.any { isSub(it, superClassNames) }
+        }
+    }
+    return superClassNames.contains(psiClass.qualifiedName)
 }
 
 fun createLookupElement(name: String, element: PsiElement): LookupElement {
