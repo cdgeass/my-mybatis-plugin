@@ -20,7 +20,7 @@ fun createArrayClass(project: Project): PsiClass {
 
 fun createIntClass(project: Project): PsiClass {
     val psiElementFactory = PsiElementFactory.getInstance(project)
-    return psiElementFactory.createClass("X")
+    return psiElementFactory.createClass("int")
 }
 
 // 是否是指定限定名的子类

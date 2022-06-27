@@ -33,7 +33,10 @@
                                         implementationClass="io.github.cdgeass.codeInsight.daemon.XmlLineMarkerProvider"/>
         <psi.referenceContributor language="XML"
                                   implementation="io.github.cdgeass.codeInsight.MyLiteralExpressionReferenceContributor"/>
-        <completion.contributor language="any"
+        <completion.contributor language="XML"
+                                implementationClass="io.github.cdgeass.codeInsight.MyLiteralExpressionCompletionContributor"
+                                order="first"/>
+        <completion.contributor language="SQL"
                                 implementationClass="io.github.cdgeass.codeInsight.MyLiteralExpressionCompletionContributor"
                                 order="first"/>
         <!-- inspection -->

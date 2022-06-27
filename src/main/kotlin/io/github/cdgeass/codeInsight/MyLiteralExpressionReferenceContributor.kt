@@ -1,9 +1,12 @@
 package io.github.cdgeass.codeInsight
 
+import com.intellij.patterns.PatternCondition
 import com.intellij.patterns.XmlPatterns
 import com.intellij.psi.PsiReferenceContributor
 import com.intellij.psi.PsiReferenceRegistrar
+import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlToken
+import com.intellij.util.ProcessingContext
 
 /**
  * @author cdgeass
@@ -23,7 +26,11 @@ class MyLiteralExpressionReferenceContributor : PsiReferenceContributor() {
         )
         registrar.registerReferenceProvider(
             XmlPatterns.xmlAttributeValue().withParent(
-                XmlPatterns.xmlAttribute().withName("collection")
+                XmlPatterns.xmlAttribute().without(object : PatternCondition<XmlAttribute>(null) {
+                    override fun accepts(t: XmlAttribute, context: ProcessingContext?): Boolean {
+                        return t.name == "index"
+                    }
+                })
                     .withParent(XmlPatterns.xmlTag().withName("foreach"))
             ),
             expressionReferenceProvider
