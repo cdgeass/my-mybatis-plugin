@@ -5,6 +5,7 @@ import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.roots.LanguageLevelProjectExtension
 import com.intellij.openapi.util.Iconable
 import com.intellij.psi.*
 import com.intellij.psi.impl.light.LightMethodBuilder
@@ -15,12 +16,12 @@ import com.intellij.psi.impl.light.LightMethodBuilder
  */
 fun createArrayClass(project: Project): PsiClass {
     val psiElementFactory = PsiElementFactory.getInstance(project)
-    return psiElementFactory.createClass("array")
+    return psiElementFactory.getArrayClass(LanguageLevelProjectExtension.getInstance(project).languageLevel)
 }
 
-fun createIntClass(project: Project): PsiClass {
+fun createIntClass(project: Project): PsiElement {
     val psiElementFactory = PsiElementFactory.getInstance(project)
-    return psiElementFactory.createClass("int")
+    return psiElementFactory.createKeyword("int")
 }
 
 // 是否是指定限定名的子类

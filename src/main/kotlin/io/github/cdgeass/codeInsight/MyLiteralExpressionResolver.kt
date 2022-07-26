@@ -237,6 +237,7 @@ class MyLiteralExpressionResolver(
                 is PsiType -> expressionElement
                 is PsiField -> expressionElement.type
                 is PsiMethod -> expressionElement.returnType
+                is PsiParameter -> expressionElement.type
                 else -> null
             }
             if (expressionType is PsiClassType) {
