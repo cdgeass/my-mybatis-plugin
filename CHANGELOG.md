@@ -3,6 +3,13 @@
 # My-MyBatis Plugin Changelog
 
 ## [Unreleased]
+### Changed
+- Reduce the scope when parse xml
+- 减小了解析 XML 时影响的文件
+
+### Fixed
+- Fix parse the item attribute in <foreach \/>
+- 修复了 <foreach \> 中的 item 属性的解析
 
 ## [2.1.2]
 ### Fixed
@@ -26,8 +33,8 @@
 - 可以直接复制日志
 
 ### Fixed
-- Fix param completion in <foreach/> with the collection's type is java.lang.Collection
-- 修复了 <foreach/> 标签内 collection 类型为 Collection 时的参数提示
+- Fix param completion in <foreach\/> with the collection's type is java.lang.Collection
+- 修复了 <foreach\/> 标签内 collection 类型为 Collection 时的参数提示
 
 ## [2.0.6]
 ### Fixed
