@@ -3,6 +3,8 @@
 # My-MyBatis Plugin Changelog
 
 ## [Unreleased]
+
+## [2.1.3]
 ### Changed
 - Reduce the scope when parse xml
 - 减小了解析 XML 时影响的文件
