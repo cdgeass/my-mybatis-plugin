@@ -3,6 +3,8 @@
 # My-MyBatis Plugin Changelog
 
 ## [Unreleased]
+
+## [2.1.4]
 ### Fixed
 - Fix issues
 - 修复了一些问题
