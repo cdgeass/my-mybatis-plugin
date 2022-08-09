@@ -246,7 +246,10 @@ class MyLiteralExpressionResolver(
                 if (isSub(expressionClass, arrayOf("java.lang.Iterable"))) {
                     // 集合
                     val itemType = genericTypeMap.first().value
-                    paramNameMap[item] = MyLiteralExpressionParameter(item, itemType, resolveGeneric(itemType)!!, false)
+                    val genericElement = resolveGeneric(itemType)
+                    if (genericElement != null) {
+                        paramNameMap[item] = MyLiteralExpressionParameter(item, itemType, genericElement, false)
+                    }
 
                     index?.let {
                         paramNameMap[index] =

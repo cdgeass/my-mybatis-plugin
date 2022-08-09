@@ -3,6 +3,9 @@
 # My-MyBatis Plugin Changelog
 
 ## [Unreleased]
+### Fixed
+- Fix issues
+- 修复了一些问题
 
 ## [2.1.3]
 ### Changed
