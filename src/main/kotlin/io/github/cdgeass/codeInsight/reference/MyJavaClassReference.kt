@@ -14,15 +14,15 @@ import com.intellij.psi.infos.ClassCandidateInfo
  */
 class MyJavaClassReference(
     referenceSet: JavaClassReferenceSet,
-    range: TextRange?,
+    range: TextRange,
     index: Int,
-    val text: String?,
+    val text: String,
     staticImport: Boolean,
-    val psiClass: PsiClass
+    private val psiClass: PsiClass
 ) : JavaClassReference(referenceSet, range, index, text, staticImport) {
 
     override fun advancedResolve(incompleteCode: Boolean): JavaResolveResult {
-        return if (text?.contains(".") != true) {
+        return if (!text.contains(".")) {
             ClassCandidateInfo(psiClass, PsiSubstitutor.EMPTY, false, element)
         } else {
             super.advancedResolve(incompleteCode)

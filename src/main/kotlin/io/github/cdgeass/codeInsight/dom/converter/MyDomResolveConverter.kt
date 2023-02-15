@@ -5,14 +5,7 @@ import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.containers.SoftFactoryMap
-import com.intellij.util.xml.ConvertContext
-import com.intellij.util.xml.DomElement
-import com.intellij.util.xml.DomFileDescription
-import com.intellij.util.xml.DomManager
-import com.intellij.util.xml.DomUtil
-import com.intellij.util.xml.ElementPresentationManager
-import com.intellij.util.xml.GenericDomValue
-import com.intellij.util.xml.ResolvingConverter
+import com.intellij.util.xml.*
 import io.github.cdgeass.codeInsight.dom.description.MergingMapperDescription
 import io.github.cdgeass.codeInsight.dom.element.Mapper
 import io.github.cdgeass.codeInsight.util.findByNamespace
@@ -27,8 +20,8 @@ class MyDomResolveConverter : ResolvingConverter<DomElement>() {
 
     private val myResolveCache =
         object : SoftFactoryMap<DomElement, CachedValue<Map<Pair<Type, String>, DomElement>>>() {
-            override fun create(scope: DomElement?): CachedValue<Map<Pair<Type, String>, DomElement>> {
-                val domManager = scope?.manager ?: throw AssertionError("Null DomManager for " + scope!!.javaClass)
+            override fun create(scope: DomElement): CachedValue<Map<Pair<Type, String>, DomElement>> {
+                val domManager = scope.manager
                 val project = domManager.project
                 return CachedValuesManager.getManager(project)
                     .createCachedValue(

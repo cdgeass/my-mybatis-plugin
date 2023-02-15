@@ -100,14 +100,14 @@
         <action id="io.github.cdgeass.formatter.FormatAction"
                 class="io.github.cdgeass.formatter.FormatAction"
                 text="Format Log"
-                icon="/icons/mybatis_logo.png">
+                icon="/icons/pluginIcon.svg">
             <add-to-group group-id="EditorPopupMenu" anchor="first"/>
             <add-to-group group-id="ConsoleEditorPopupMenu" anchor="first"/>
         </action>
         <action id="io.github.cdgeass.formatter.FormatAndCopyAction"
                 class="io.github.cdgeass.formatter.FormatAndCopyAction"
                 text="Copy Log"
-                icon="/icons/mybatis_logo.png">
+                icon="/icons/pluginIcon.svg">
             <add-to-group group-id="EditorPopupMenu" anchor="first"/>
             <add-to-group group-id="ConsoleEditorPopupMenu" anchor="first"/>
         </action>
