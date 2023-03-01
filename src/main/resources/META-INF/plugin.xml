@@ -18,7 +18,7 @@
         <additionalTextAttributes scheme="Darcula" file="colorScheme/editor.xml"/>
         <!-- formatter -->
         <toolWindow id="My MyBatis" anchor="right" factoryClass="io.github.cdgeass.formatter.FormatToolWindowFactory"
-                    icon="/icons/mybatis_logo.png"/>
+                    icon="MyIcons.ToolWindow"/>
         <!-- codeInsight -->
         <fileBasedIndex implementation="io.github.cdgeass.codeInsight.MyXmlNamespaceIndex"/>
         <dom.fileMetaData implementation="io.github.cdgeass.codeInsight.dom.description.ConfigurationDescription"
@@ -100,14 +100,14 @@
         <action id="io.github.cdgeass.formatter.FormatAction"
                 class="io.github.cdgeass.formatter.FormatAction"
                 text="Format Log"
-                icon="/icons/pluginIcon.svg">
+                icon="MyIcons.Action">
             <add-to-group group-id="EditorPopupMenu" anchor="first"/>
             <add-to-group group-id="ConsoleEditorPopupMenu" anchor="first"/>
         </action>
         <action id="io.github.cdgeass.formatter.FormatAndCopyAction"
                 class="io.github.cdgeass.formatter.FormatAndCopyAction"
                 text="Copy Log"
-                icon="/icons/pluginIcon.svg">
+                icon="MyIcons.Action">
             <add-to-group group-id="EditorPopupMenu" anchor="first"/>
             <add-to-group group-id="ConsoleEditorPopupMenu" anchor="first"/>
         </action>
