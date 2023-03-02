@@ -64,7 +64,11 @@ fun format(text: String): List<String> {
                         .replace("null", "null()")
                         .split("), ")
                         .map {
-                            (it.trim() + ")").replace("null()", "null")
+                            var trim = it.trim()
+                            if (!trim.endsWith(")")) {
+                                trim += ")"
+                            }
+                            trim.replace("null()", "null")
                         }
                         .map {
                             it.replace("'", "''")
