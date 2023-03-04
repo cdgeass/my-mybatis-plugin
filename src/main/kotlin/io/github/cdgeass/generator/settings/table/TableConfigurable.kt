@@ -3,10 +3,9 @@ package io.github.cdgeass.generator.settings.table
 import com.intellij.openapi.options.BoundConfigurable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogPanel
+import com.intellij.ui.dsl.builder.Align
 import com.intellij.ui.dsl.builder.bindSelected
 import com.intellij.ui.dsl.builder.panel
-import com.intellij.ui.dsl.gridLayout.HorizontalAlign
-import com.intellij.ui.dsl.gridLayout.VerticalAlign
 import io.github.cdgeass.generator.ui.PropertiesTable
 
 /**
@@ -62,8 +61,7 @@ class TableConfigurable(project: Project) : BoundConfigurable("Table") {
             group("Properties:") {
                 row {
                     cell(PropertiesTable(PROPERTIES, table::properties).withToolbarDecorator())
-                        .horizontalAlign(HorizontalAlign.FILL)
-                        .verticalAlign(VerticalAlign.FILL)
+                        .align(Align.FILL)
                         .resizableColumn()
                 }.resizableRow()
             }

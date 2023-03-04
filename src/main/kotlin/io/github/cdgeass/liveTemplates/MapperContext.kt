@@ -11,7 +11,7 @@ import io.github.cdgeass.codeInsight.dom.element.Mapper
  * @author  cdgeass
  * @since   2022-03-11
  */
-class MapperContext : TemplateContextType("MAPPER", "Mapper") {
+class MapperContext : TemplateContextType("Mapper") {
 
     override fun isInContext(templateActionContext: TemplateActionContext): Boolean {
         val file = templateActionContext.file

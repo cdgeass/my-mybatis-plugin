@@ -40,7 +40,6 @@ class MyLiteralExpressionReferenceSet(
                     this,
                     myElement,
                     textRange,
-                    myStartInElement + lastOffset,
                     subExpression,
                     index++,
                     myProvider
@@ -54,7 +53,6 @@ class MyLiteralExpressionReferenceSet(
                     this,
                     myElement,
                     textRange,
-                    myStartInElement + lastOffset,
                     subExpression,
                     index++,
                     myProvider

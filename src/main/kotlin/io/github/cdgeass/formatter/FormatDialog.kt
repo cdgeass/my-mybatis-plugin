@@ -5,7 +5,7 @@ import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.Messages
 import com.intellij.sql.psi.SqlLanguage
 import com.intellij.ui.EditorTextField
-import com.intellij.ui.layout.panel
+import com.intellij.ui.dsl.builder.panel
 import io.github.cdgeass.PluginBundle
 import java.awt.Dimension
 import java.awt.Toolkit
@@ -56,7 +56,7 @@ class FormatDialog(
     override fun createCenterPanel(): JComponent {
         return panel {
             row {
-                component(editorTextField).constraints(grow)
+                cell(editorTextField)
             }
         }
     }

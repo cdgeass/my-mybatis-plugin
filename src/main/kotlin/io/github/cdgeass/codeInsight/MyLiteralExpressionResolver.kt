@@ -255,7 +255,7 @@ class MyLiteralExpressionResolver(
                         paramNameMap[index] =
                             MyLiteralExpressionParameter(
                                 item,
-                                PsiPrimitiveType.INT,
+                                PsiTypes.intType(),
                                 createIntClass(element.project),
                                 false
                             )
@@ -277,7 +277,8 @@ class MyLiteralExpressionResolver(
                 val componentType = expressionType.componentType
                 paramNameMap[item] = MyLiteralExpressionParameter(item, componentType, resolveGeneric(componentType)!!, false)
                 index?.let {
-                    paramNameMap[index] = MyLiteralExpressionParameter(item, PsiPrimitiveType.INT, createIntClass(element.project), false)
+                    paramNameMap[index] =
+                        MyLiteralExpressionParameter(item, PsiTypes.intType(), createIntClass(element.project), false)
                 }
             }
         }

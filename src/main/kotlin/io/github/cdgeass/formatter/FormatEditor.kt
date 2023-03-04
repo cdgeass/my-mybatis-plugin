@@ -34,8 +34,7 @@ fun editorTextField(
     language: Language? = null,
     project: Project? = null,
     text: String = "",
-    dimension: Dimension? = null,
-    editable: Boolean = false
+    dimension: Dimension? = null
 ): EditorTextField {
     // 根据当前主题设置编辑框字体
     val editorColorsManager = EditorColorsManager.getInstance()
@@ -78,12 +77,12 @@ fun EditorTextField.clean(): EditorTextField {
  * 格式化 SQL 并高亮
  */
 fun EditorTextField.format(project: Project, text: String? = null): EditorTextField {
-    var text = text ?: this.text
-    if (canFormat(text)) {
-        text = format(text).joinToString("$LINE_SEPARATOR$SEPARATOR_LINE$LINE_SEPARATOR")
+    var sql = text ?: this.text
+    if (canFormat(sql)) {
+        sql = format(sql).joinToString("$LINE_SEPARATOR$SEPARATOR_LINE$LINE_SEPARATOR")
 
         // 使用 codeStyle 进行 Reformat
-        val psiFileFromText = PsiFileFactory.getInstance(project).createFileFromText(SqlLanguage.INSTANCE, text)
+        val psiFileFromText = PsiFileFactory.getInstance(project).createFileFromText(SqlLanguage.INSTANCE, sql)
         WriteCommandAction.runWriteCommandAction(project) {
             CodeStyleManager.getInstance(project).reformat(psiFileFromText)
         }

@@ -21,15 +21,10 @@ class MyLiteralExpressionReference(
     private val myLiteralExpressionReferenceSet: MyLiteralExpressionReferenceSet,
     private val myElement: PsiElement,
     private val myTextRange: TextRange,
-    private val myStartInElement: Int,
     val myText: String,
     private val myIndex: Int,
     myProvider: MyLiteralExpressionReferenceProvider
 ) : GenericReference(myProvider), PsiPolyVariantReference {
-
-    fun getReferenceSet(): MyLiteralExpressionReferenceSet {
-        return myLiteralExpressionReferenceSet
-    }
 
     override fun getElement(): PsiElement {
         return myLiteralExpressionReferenceSet.getElement()
@@ -61,18 +56,18 @@ class MyLiteralExpressionReference(
     }
 
     override fun multiResolve(incompleteCode: Boolean): Array<ResolveResult> {
-        val resolveResult = advancedResolve(incompleteCode)
+        val resolveResult = advancedResolve()
         return if (resolveResult == null) ResolveResult.EMPTY_ARRAY else arrayOf(resolveResult)
     }
 
-    private fun advancedResolve(incompleteCode: Boolean): ResolveResult? {
+    private fun advancedResolve(): ResolveResult? {
         val file = myElement.containingFile
         val resolveCache = ResolveCache.getInstance(file.project)
         val cachedResolveResults = resolveCache.resolveWithCaching(this, MyResolver.INSTANCE, false, false, file)
         return if (cachedResolveResults.isEmpty()) null else cachedResolveResults[0]
     }
 
-    private fun doAdvancedResolve(containingFile: PsiFile): Array<ResolveResult> {
+    private fun doAdvancedResolve(): Array<ResolveResult> {
         val element = element
 
         if (!element.isValid) return ResolveResult.EMPTY_ARRAY
@@ -84,10 +79,10 @@ class MyLiteralExpressionReference(
             return PsiElementResolveResult.createResults(target.ref)
         }
 
-        return advancedResolveInner(containingFile)
+        return advancedResolveInner()
     }
 
-    private fun advancedResolveInner(containingFile: PsiFile): Array<ResolveResult> {
+    private fun advancedResolveInner(): Array<ResolveResult> {
         val context = context ?: return ResolveResult.EMPTY_ARRAY
 
         val subElementNameMap = getAllSubElement(context)
@@ -96,7 +91,7 @@ class MyLiteralExpressionReference(
     }
 
     override fun resolveInner(): PsiElement? {
-        return advancedResolve(true)?.element
+        return advancedResolve()?.element
     }
 
     override fun getUnresolvedMessagePattern(): String {
@@ -119,7 +114,7 @@ class MyLiteralExpressionReference(
             containingFile: PsiFile,
             incompleteCode: Boolean
         ): Array<ResolveResult> {
-            return ref.doAdvancedResolve(containingFile)
+            return ref.doAdvancedResolve()
         }
 
         companion object {

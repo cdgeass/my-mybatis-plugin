@@ -1,10 +1,6 @@
 package io.github.cdgeass.codeInsight.reference
 
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiField
-import com.intellij.psi.PsiMethod
-import com.intellij.psi.PsiReferenceBase
-import com.intellij.psi.PsiType
+import com.intellij.psi.*
 import com.intellij.psi.impl.light.LightMethodBuilder
 
 /**
@@ -38,7 +34,7 @@ class MyPsiFieldReference(
         if (method.parameterList.isEmpty) {
             return false
         }
-        if (method.returnType != PsiType.VOID) {
+        if (method.returnType != PsiTypes.voidType()) {
             return false
         }
         val methodName = method.name

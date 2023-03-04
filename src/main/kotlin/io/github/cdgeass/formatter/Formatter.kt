@@ -97,18 +97,18 @@ fun format(text: String): List<String> {
  * 替换 log 中的 ？
  */
 private fun format(preparing: String, parametersWithType: List<String>): String {
-    var preparing = preparing
+    var preparingStr = preparing
 
-    if (preparing.isBlank() && parametersWithType.isEmpty()) {
+    if (preparingStr.isBlank() && parametersWithType.isEmpty()) {
         return ""
     }
 
     val parameterStrings = parameters(parametersWithType)
     for (parameterString in parameterStrings) {
-        preparing = preparing.replaceFirst("?", parameterString)
+        preparingStr = preparingStr.replaceFirst("?", parameterString)
     }
 
-    return "$preparing;"
+    return "$preparingStr;"
 }
 
 /**

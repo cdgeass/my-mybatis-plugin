@@ -146,7 +146,7 @@ class AddStatementFix(
 
     private fun addReturnType(select: Select) {
         val returnType = myMethod.element?.returnType
-        if (returnType == null || returnType == PsiType.VOID || returnType == PsiType.NULL) {
+        if (returnType == null || returnType == PsiTypes.voidType() || returnType == PsiTypes.nullType()) {
             return
         }
 

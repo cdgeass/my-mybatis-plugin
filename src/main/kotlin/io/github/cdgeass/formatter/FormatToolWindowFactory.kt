@@ -8,7 +8,7 @@ import com.intellij.openapi.wm.ToolWindowFactory
 import com.intellij.sql.psi.SqlLanguage
 import com.intellij.ui.content.Content
 import com.intellij.ui.content.ContentFactory
-import com.intellij.ui.layout.panel
+import com.intellij.ui.dsl.builder.panel
 import io.github.cdgeass.PluginBundle
 import java.awt.Dimension
 import java.awt.Toolkit
@@ -31,7 +31,7 @@ class FormatToolWindowFactory : ToolWindowFactory, DumbAware {
     }
 
     private fun createFormatContent(project: Project, factory: ContentFactory): Content {
-        val unformattedEditorTextField = editorTextField(dimension = Dimension(500, 500), editable = true)
+        val unformattedEditorTextField = editorTextField(dimension = Dimension(500, 500))
         val formattedEditorTextField = editorTextField(SqlLanguage.INSTANCE, project, dimension = Dimension(500, 500))
 
         return factory.createContent(
@@ -40,13 +40,13 @@ class FormatToolWindowFactory : ToolWindowFactory, DumbAware {
                     label(PluginBundle.message("formatter.toolwindow.unformatted"))
                 }
                 row {
-                    component(unformattedEditorTextField).constraints(growX)
+                    cell(unformattedEditorTextField)
                 }
                 row {
                     button(PluginBundle.message("formatter.toolwindow.clean")) {
                         unformattedEditorTextField.clean()
                         formattedEditorTextField.clean()
-                    }.constraints(growX)
+                    }
                     button(PluginBundle.message("formatter.toolwindow.copy")) {
                         Toolkit.getDefaultToolkit().systemClipboard.setContents(
                             StringSelection(formattedEditorTextField.text),
@@ -56,16 +56,16 @@ class FormatToolWindowFactory : ToolWindowFactory, DumbAware {
                             PluginBundle.message("formatter.toolwindow.copy.success"),
                             PluginBundle.message("title"),
                         )
-                    }.constraints(growX)
+                    }
                     button(PluginBundle.message("formatter.toolwindow.format")) {
                         formattedEditorTextField.format(project, unformattedEditorTextField.text)
-                    }.constraints(pushX)
+                    }
                 }
                 row {
                     label(PluginBundle.message("formatter.toolwindow.formatted"))
                 }
                 row {
-                    component(formattedEditorTextField).constraints(growX)
+                    cell(formattedEditorTextField)
                 }
             },
             PluginBundle.message("formatter.toolwindow.title"),

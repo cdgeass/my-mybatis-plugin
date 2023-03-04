@@ -4,11 +4,10 @@ import com.intellij.openapi.options.BoundConfigurable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogPanel
 import com.intellij.ui.ToolbarDecorator
+import com.intellij.ui.dsl.builder.Align
 import com.intellij.ui.dsl.builder.bindSelected
 import com.intellij.ui.dsl.builder.bindText
 import com.intellij.ui.dsl.builder.panel
-import com.intellij.ui.dsl.gridLayout.HorizontalAlign
-import com.intellij.ui.dsl.gridLayout.VerticalAlign
 import com.intellij.ui.table.JBTable
 import io.github.cdgeass.PluginBundle
 import javax.swing.JPanel
@@ -47,8 +46,7 @@ class SettingsConfigurable(project: Project) : BoundConfigurable("MyBatis Genera
             group(PluginBundle.message("generator.settings.schemaPackage")) {
                 row {
                     cell(table())
-                        .horizontalAlign(HorizontalAlign.FILL)
-                        .verticalAlign(VerticalAlign.FILL)
+                        .align(Align.FILL)
                         .resizableColumn()
                         .comment(PluginBundle.message("generator.settings.schemaPackage.note"))
                 }.resizableRow()

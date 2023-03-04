@@ -49,7 +49,7 @@
                          implementationClass="io.github.cdgeass.inspection.InvalidBoundStatementInspection"/>
         <!-- liveTemplates -->
         <defaultLiveTemplates file="/liveTemplates/Mapper.xml"/>
-        <liveTemplateContext implementation="io.github.cdgeass.liveTemplates.MapperContext"/>
+        <liveTemplateContext contextId="MAPPER" implementation="io.github.cdgeass.liveTemplates.MapperContext"/>
         <!-- generator -->
         <projectService serviceImplementation="io.github.cdgeass.generator.settings.settings.Settings"/>
         <projectService serviceImplementation="io.github.cdgeass.generator.settings.context.Context"/>

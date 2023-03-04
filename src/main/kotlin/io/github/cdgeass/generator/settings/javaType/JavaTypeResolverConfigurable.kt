@@ -3,9 +3,8 @@ package io.github.cdgeass.generator.settings.javaType
 import com.intellij.openapi.options.BoundConfigurable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogPanel
+import com.intellij.ui.dsl.builder.Align
 import com.intellij.ui.dsl.builder.panel
-import com.intellij.ui.dsl.gridLayout.HorizontalAlign
-import com.intellij.ui.dsl.gridLayout.VerticalAlign
 import io.github.cdgeass.generator.ui.PropertiesTable
 
 /**
@@ -28,8 +27,7 @@ class JavaTypeResolverConfigurable(project: Project) : BoundConfigurable("JavaTy
             group("Properties:") {
                 row {
                     cell(PropertiesTable(PROPERTIES, javaTypeResolver::properties).withToolbarDecorator())
-                        .horizontalAlign(HorizontalAlign.FILL)
-                        .verticalAlign(VerticalAlign.FILL)
+                        .align(Align.FILL)
                         .resizableColumn()
                 }.resizableRow()
             }
