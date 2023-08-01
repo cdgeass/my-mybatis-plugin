@@ -13,7 +13,6 @@ import com.intellij.util.xml.*
 import io.github.cdgeass.codeInsight.dom.element.Configuration
 import io.github.cdgeass.codeInsight.reference.MyJavaClassReference
 import io.github.cdgeass.codeInsight.util.findByNamespace
-import java.math.BigDecimal
 import java.util.*
 
 /**
@@ -159,7 +158,7 @@ class MyPsiClassConverter : Converter<PsiClass>(), CustomReferenceConverter<PsiC
 
     private fun getReferences(psiClass: PsiClass, str: String, element: PsiElement): Array<JavaClassReference> {
         return object :
-            JavaClassReferenceSet(str, element, 1, false, JavaClassReferenceProvider().apply { isSoft = true }) {
+            JavaClassReferenceSet(str, element, 0, false, JavaClassReferenceProvider().apply { isSoft = true }) {
             override fun createReference(
                 refIndex: Int,
                 subRefText: String,
