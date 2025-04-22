@@ -69,7 +69,7 @@ class MyBatisGeneratorAction : AnAction() {
             schemaMap.forEach { (schema, schemaDbTables) ->
                 val context = buildContext(project, dataSource)
                     .apply {
-                        jdbcConnectionConfiguration = buildJdbcConnectionConfiguration(dataSource)
+                        setJdbcConnectionConfiguration(buildJdbcConnectionConfiguration(dataSource))
                         javaTypeResolverConfiguration = buildJavaTypeResolverConfiguration(project)
                         commentGeneratorConfiguration = buildCommentGeneratorConfiguration(project)
                         buildPlugins(project).forEach { addPluginConfiguration(it) }
